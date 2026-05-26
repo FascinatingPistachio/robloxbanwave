@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir \"c:\\\\Users\\\\necro\\\\OneDrive\\\\Documents\\\\Github\\\\robloxbanwave\")",
+      "Bash(dir \"c:\\\\Users\\\\necro\\\\OneDrive\\\\Documents\\\\Github\\\\robloxbanwave\\\\api\")"
+    ]
+  }
+}
