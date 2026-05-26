@@ -267,6 +267,7 @@
   .source-hackers    { background: rgba(94,55,200,0.2); color: #a78bfa; border: 1px solid rgba(94,55,200,0.4); }
   .source-roblox     { background: rgba(88,166,255,0.1); color: var(--blue); border: 1px solid rgba(88,166,255,0.3); }
   .source-exploiting { background: rgba(210,153,34,0.15); color: var(--amber); border: 1px solid rgba(210,153,34,0.35); }
+  .source-github     { background: rgba(63,185,80,0.12); color: var(--green); border: 1px solid rgba(63,185,80,0.3); }
 
   .card-title {
     font-size: 13px;
@@ -451,6 +452,10 @@
       <div class="stat-value" style="color:var(--amber)" id="statExploiting">—</div>
     </div>
     <div class="stat">
+      <div class="stat-label">GitHub Issues</div>
+      <div class="stat-value" style="color:var(--green)" id="statGithub">—</div>
+    </div>
+    <div class="stat">
       <div class="stat-label">Last Refresh</div>
       <div class="stat-value" style="font-size:13px;color:var(--muted)" id="statTime">—</div>
     </div>
@@ -469,6 +474,7 @@
     <button class="filter-btn" data-filter="hackers" onclick="setFilter('hackers',this)">r/robloxhackers</button>
     <button class="filter-btn" data-filter="roblox" onclick="setFilter('roblox',this)">r/roblox</button>
     <button class="filter-btn" data-filter="exploiting" onclick="setFilter('exploiting',this)">r/robloxexploiting</button>
+    <button class="filter-btn" data-filter="github" onclick="setFilter('github',this)">GitHub Issues</button>
     <input class="search-input" id="searchInput" placeholder="Search posts..." oninput="renderCards()">
     <select class="sort-select" id="sortSelect" onchange="renderCards()">
       <option value="new">Sort: Newest</option>
@@ -609,6 +615,13 @@ async function fetchSubreddit(sub, opts = {}) {
   return (data.data?.children || []).map(c => ({ ...c.data, _source: sub }));
 }
 
+async function fetchGithub() {
+  try {
+    const posts = await apiFetch('/api/github');
+    return (posts || []).map(p => ({ ...p, _source: 'github' }));
+  } catch { return []; }
+}
+
 async function fetchPostComments(post) {
   try {
     const p = new URLSearchParams({
@@ -670,16 +683,17 @@ async function loadAll() {
     '<div class="loading-overlay"><div class="spinner"></div><br>Fetching posts from Reddit…</div>';
 
   try {
-    const [hackersNew, robloxSearch, exploitingNew] = await Promise.all([
+    const [hackersNew, robloxSearch, exploitingNew, githubIssues] = await Promise.all([
       fetchSubreddit('robloxhackers', { sort: 'new', limit: 50 }),
       fetchSubreddit('roblox', { search: SEARCH_QUERY, limit: 50 }),
-      fetchSubreddit('robloxexploiting', { sort: 'new', limit: 50 }).catch(() => [])
+      fetchSubreddit('robloxexploiting', { sort: 'new', limit: 50 }).catch(() => []),
+      fetchGithub(),
     ]);
 
     // Deduplicate
     const seen = new Set();
     allPosts = [];
-    for (const p of [...hackersNew, ...robloxSearch, ...exploitingNew]) {
+    for (const p of [...hackersNew, ...robloxSearch, ...exploitingNew, ...githubIssues]) {
       if (seen.has(p.id)) continue;
       seen.add(p.id);
       const baseText = postBaseText(p);
@@ -702,9 +716,10 @@ async function loadAll() {
 
     // ── Phase 2: scan comments ────────────────────────────────────────────
     let scanned = 0;
-    showProgress(0, allPosts.length);
+    const scanTotal = allPosts.filter(p => p._source !== 'github').length;
+    showProgress(0, scanTotal);
 
-    const tasks = allPosts.map(post => async () => {
+    const tasks = allPosts.filter(p => p._source !== 'github').map(post => async () => {
       const commentBodies = await fetchPostComments(post);
       const evidenceFound = [];
 
@@ -731,7 +746,7 @@ async function loadAll() {
       }
 
       scanned++;
-      showProgress(scanned, allPosts.length);
+      showProgress(scanned, scanTotal);
       if (scanned % 10 === 0) { updateStats(); renderCards(); }
     });
 
@@ -740,7 +755,7 @@ async function loadAll() {
     commentScanDone = true;
     updateStats();
     renderCards();
-    showProgress(allPosts.length, allPosts.length);
+    showProgress(scanTotal, scanTotal);
     setTimeout(removeProgress, 2000);
 
     const now = new Date();
@@ -766,12 +781,14 @@ function updateStats() {
   const hackers    = allPosts.filter(p => p._source === 'robloxhackers');
   const roblox     = allPosts.filter(p => p._source === 'roblox');
   const exploiting = allPosts.filter(p => p._source === 'robloxexploiting');
+  const github     = allPosts.filter(p => p._source === 'github');
 
   document.getElementById('statTotal').textContent      = allPosts.length;
   document.getElementById('statAlerts').textContent     = alerts.length;
   document.getElementById('statHackers').textContent    = hackers.length;
   document.getElementById('statRoblox').textContent     = roblox.length;
   document.getElementById('statExploiting').textContent = exploiting.length;
+  document.getElementById('statGithub').textContent     = github.length;
 
   const banner = document.getElementById('alertBanner');
   if (alerts.length > 0) {
@@ -825,6 +842,7 @@ function renderCards() {
     if (currentFilter === 'hackers')    return p._source === 'robloxhackers';
     if (currentFilter === 'roblox')     return p._source === 'roblox';
     if (currentFilter === 'exploiting') return p._source === 'robloxexploiting';
+    if (currentFilter === 'github')     return p._source === 'github';
     return true;
   });
 
@@ -849,18 +867,15 @@ function renderCards() {
   }
 
   container.innerHTML = posts.map(p => {
-    const sourceClass = p._source === 'robloxhackers'
-      ? 'source-hackers'
-      : p._source === 'robloxexploiting'
-        ? 'source-exploiting'
-        : 'source-roblox';
-    const sourceLabel = p._source === 'robloxhackers'
-      ? 'r/robloxhackers'
-      : p._source === 'robloxexploiting'
-        ? 'r/robloxexploiting'
-        : 'r/roblox';
+    const SOURCE_META = {
+      robloxhackers:  { cls: 'source-hackers',    label: 'r/robloxhackers' },
+      roblox:         { cls: 'source-roblox',      label: 'r/roblox' },
+      robloxexploiting:{ cls: 'source-exploiting', label: 'r/robloxexploiting' },
+      github:         { cls: 'source-github',      label: 'GitHub' },
+    };
+    const { cls: sourceClass, label: sourceLabel } = SOURCE_META[p._source] || { cls: 'source-roblox', label: p._source };
     const rawPermalink = (p.permalink || '').replace(/['"<>]/g, '');
-    const url = 'https://reddit.com' + rawPermalink;
+    const url = rawPermalink.startsWith('http') ? rawPermalink : 'https://reddit.com' + rawPermalink;
     const upvoteClass = p.score >= 0 ? 'upvote-pos' : 'upvote-neg';
 
     let badgeHtml = '';
