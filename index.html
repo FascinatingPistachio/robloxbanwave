@@ -4,13 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Roblox Ban Wave — Live Exploit Status</title>
-<meta name="description" content="Real-time Roblox executor ban wave tracker. Know before you exploit.">
+<meta name="description" content="Real-time Roblox executor ban wave tracker. Community-verified reports from r/robloxhackers. Know before you exploit.">
 <meta property="og:title" content="Roblox Ban Wave — Live Status">
-<meta property="og:description" content="Is there an active Roblox executor ban wave right now?">
+<meta property="og:description" content="Is there an active Roblox executor ban wave right now? Real-time community tracker.">
+<meta property="og:image" content="https://robloxbanwave.vercel.app/favicon.svg">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="alternate" type="application/rss+xml" title="Roblox Ban Wave Monitor" href="/api/rss">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <style>
-/* ── Reset ──────────────────────────────────────────────────────── */
+/* ── Reset ────────────────────────────────────────────────────── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
 :root{
@@ -33,21 +36,28 @@ body.clear   {--accent:#22c55e;--accent-dim:rgba(34,197,94,.08); --accent-glow:r
 body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;line-height:1.6;-webkit-font-smoothing:antialiased;transition:background .4s}
 body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.025) 2px,rgba(0,0,0,.025) 4px);pointer-events:none;z-index:9999}
 
-/* ── Header ─────────────────────────────────────────────────────── */
+/* ── Header ──────────────────────────────────────────────────── */
 header{position:sticky;top:0;z-index:100;height:56px;display:flex;align-items:center;gap:10px;padding:0 28px;background:rgba(6,10,20,.88);backdrop-filter:blur(20px) saturate(1.5);border-bottom:1px solid var(--border)}
 .logo{display:flex;align-items:center;gap:9px;font-family:var(--display);font-size:15px;font-weight:800;letter-spacing:-.3px;color:var(--text);text-decoration:none}
 .logo-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent-glow);flex-shrink:0;transition:background var(--t),box-shadow var(--t)}
 body.active .logo-dot,body.warning .logo-dot{animation:dot-pulse 1s ease-in-out infinite}
 @keyframes dot-pulse{0%,100%{opacity:1;box-shadow:0 0 10px var(--accent-glow)}50%{opacity:.4;box-shadow:0 0 3px var(--accent-glow)}}
 .header-badge{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:100px;background:var(--accent-dim);border:1px solid var(--accent-border);color:var(--accent);transition:all var(--t)}
-.header-right{margin-left:auto;display:flex;align-items:center;gap:14px}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:10px}
 .last-check{font-family:var(--mono);font-size:10px;color:var(--text3)}
+.countdown{font-family:var(--mono);font-size:10px;color:var(--text3);display:flex;align-items:center;gap:5px}
+.countdown-ring{width:14px;height:14px;flex-shrink:0}
+.countdown-ring circle{fill:none;stroke:var(--border);stroke-width:2}
+.countdown-ring .prog{stroke:var(--accent);stroke-width:2;stroke-linecap:round;transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dashoffset 1s linear,stroke var(--t)}
+.hdr-icon-btn{background:none;border:none;padding:5px;cursor:pointer;color:var(--text3);display:flex;align-items:center;transition:color var(--t);border-radius:6px}
+.hdr-icon-btn:hover{color:var(--text2);background:var(--surface-h)}
+.hdr-icon-btn svg{width:16px;height:16px}
 .refresh-btn{background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:5px 13px;border-radius:8px;font-family:var(--mono);font-size:11px;cursor:pointer;transition:all var(--t);display:flex;align-items:center;gap:6px}
 .refresh-btn:hover{background:var(--surface-h);border-color:var(--border-h);color:var(--text)}
 .refresh-btn:disabled{opacity:.4;cursor:not-allowed}
 .refresh-btn svg{width:13px;height:13px}
 
-/* ── Hero ───────────────────────────────────────────────────────── */
+/* ── Hero ────────────────────────────────────────────────────── */
 .hero{position:relative;min-height:72vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 24px 60px;overflow:hidden}
 .hero::before{content:'';position:absolute;top:-10%;left:50%;transform:translateX(-50%);width:700px;height:500px;background:radial-gradient(ellipse at center,var(--accent-glow) 0%,transparent 70%);pointer-events:none;transition:background .6s;z-index:0}
 body.active .hero::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(-55deg,transparent,transparent 40px,rgba(239,68,68,.018) 40px,rgba(239,68,68,.018) 80px);pointer-events:none;z-index:0}
@@ -73,12 +83,12 @@ body.clear   .status-headline{color:#22c55e}
 .meter-track{width:120px;height:3px;background:var(--border);border-radius:100px;overflow:hidden}
 .meter-fill{height:100%;background:var(--accent);border-radius:100px;transition:width .8s cubic-bezier(.4,0,.2,1),background var(--t)}
 
-/* ── Section divider ────────────────────────────────────────────── */
+/* ── Section divider ─────────────────────────────────────────── */
 .sep{display:flex;align-items:center;gap:14px;padding:0 28px;margin-bottom:20px}
 .sep span{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);white-space:nowrap}
 .sep::before,.sep::after{content:'';flex:1;height:1px;background:var(--border)}
 
-/* ── Feed ───────────────────────────────────────────────────────── */
+/* ── Feed ────────────────────────────────────────────────────── */
 .feed{max-width:720px;margin:0 auto;padding:0 20px 32px}
 .feed-controls{display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap}
 .filter-btn{background:var(--surface);border:1px solid var(--border);color:var(--text3);padding:5px 14px;border-radius:8px;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all var(--t)}
@@ -94,14 +104,15 @@ body.clear   .status-headline{color:#22c55e}
 .pc-votes-lbl{font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:2px}
 .pc-body{min-width:0}
 .pc-title{font-size:13px;font-weight:500;color:var(--text);line-height:1.45;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px}
-.pc-meta{display:flex;gap:10px;align-items:center;font-family:var(--mono);font-size:10px;color:var(--text3)}
+.pc-meta{display:flex;gap:8px;align-items:center;font-family:var(--mono);font-size:10px;color:var(--text3);flex-wrap:wrap}
 .tag{padding:1px 7px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
 .tag-alert{background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent-border)}
 .tag-question{background:rgba(148,163,184,.07);color:#64748b;border:1px solid rgba(148,163,184,.15)}
+.tag-verified{background:rgba(34,197,94,.1);color:#22c55e;border:1px solid rgba(34,197,94,.25);cursor:default}
 .pc-link-icon{color:var(--text3);font-size:16px;transition:color var(--t)}
 .post-card:hover .pc-link-icon{color:var(--text2)}
 
-/* ── Graph ──────────────────────────────────────────────────────── */
+/* ── Graph ───────────────────────────────────────────────────── */
 .graph-wrap{max-width:720px;margin:0 auto;padding:0 20px 32px}
 .graph-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px 24px 16px}
 .graph-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:12px;flex-wrap:wrap}
@@ -119,8 +130,27 @@ body.clear   .status-headline{color:#22c55e}
 .graph-labels{display:flex;gap:3px}
 .g-lbl{flex:1;font-family:var(--mono);font-size:8px;color:var(--text3);text-align:center;line-height:1.2}
 
-/* ── Webhooks ───────────────────────────────────────────────────── */
-.wh-wrap{max-width:720px;margin:0 auto;padding:0 20px 60px}
+/* ── About / Info cards ──────────────────────────────────────── */
+.section-wrap{max-width:720px;margin:0 auto;padding:0 20px 32px}
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.info-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px}
+.info-card-icon{font-size:20px;margin-bottom:10px;display:block}
+.info-card-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px}
+.info-card-body{font-size:12px;color:var(--text2);line-height:1.65}
+.info-card-body a{color:var(--accent);text-decoration:none}
+.info-card-body a:hover{text-decoration:underline}
+
+/* ── Resources ───────────────────────────────────────────────── */
+.resource-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.resource-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;text-decoration:none;display:flex;align-items:flex-start;gap:12px;transition:background var(--t),border-color var(--t)}
+.resource-card:hover{background:var(--surface-h);border-color:var(--border-h)}
+.rc-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.rc-title{font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px}
+.rc-desc{font-size:11px;color:var(--text3);line-height:1.4}
+.rc-tag{font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:4px}
+
+/* ── Webhooks ────────────────────────────────────────────────── */
+.wh-wrap{max-width:720px;margin:0 auto;padding:0 20px 32px}
 .wh-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px 24px}
 .wh-title{font-size:14px;font-weight:600;margin-bottom:4px}
 .wh-desc{font-size:12px;color:var(--text2);margin-bottom:18px;line-height:1.6}
@@ -131,6 +161,9 @@ body.clear   .status-headline{color:#22c55e}
 .wh-btn{background:var(--accent);color:#fff;border:none;padding:9px 18px;border-radius:8px;font-family:var(--mono);font-size:12px;font-weight:700;cursor:pointer;transition:opacity var(--t);white-space:nowrap}
 .wh-btn:hover{opacity:.85}
 .wh-btn:disabled{opacity:.4;cursor:not-allowed}
+.wh-btn-secondary{background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:9px 18px;border-radius:8px;font-family:var(--mono);font-size:12px;font-weight:700;cursor:pointer;transition:all var(--t);white-space:nowrap}
+.wh-btn-secondary:hover{background:var(--surface-h);border-color:var(--border-h);color:var(--text)}
+.wh-btn-secondary:disabled{opacity:.4;cursor:not-allowed}
 .wh-btn-danger{background:transparent;border:1px solid var(--border);color:var(--text2)}
 .wh-btn-danger:hover{border-color:#ef4444;color:#ef4444}
 .wh-active-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
@@ -139,34 +172,110 @@ body.clear   .status-headline{color:#22c55e}
 .wh-msg{margin-top:12px;font-family:var(--mono);font-size:11px;padding:7px 11px;border-radius:7px;display:none}
 .wh-msg.ok {background:rgba(34,197,94,.1); color:#22c55e;border:1px solid rgba(34,197,94,.25);display:block}
 .wh-msg.err{background:rgba(239,68,68,.1); color:#ef4444;border:1px solid rgba(239,68,68,.25);display:block}
-.wh-privacy{margin-top:14px;font-family:var(--mono);font-size:10px;color:var(--text3);line-height:1.6}
+.wh-privacy{margin-top:14px;font-family:var(--mono);font-size:10px;color:var(--text3);line-height:1.6;display:flex;gap:8px;align-items:flex-start}
+.wh-privacy-icon{flex-shrink:0;margin-top:1px}
 .wh-privacy span{color:var(--text2)}
 
-/* ── Spinner / empty ────────────────────────────────────────────── */
+/* ── Report Ban ──────────────────────────────────────────────── */
+.report-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px 24px;display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap}
+.report-left{flex:1;min-width:200px}
+.report-title{font-size:14px;font-weight:600;margin-bottom:4px}
+.report-desc{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:14px}
+.report-count-row{display:flex;align-items:center;gap:10px}
+.report-count-badge{background:var(--accent-dim);border:1px solid var(--accent-border);color:var(--accent);font-family:var(--mono);font-size:11px;font-weight:700;padding:4px 12px;border-radius:100px}
+.report-count-label{font-family:var(--mono);font-size:11px;color:var(--text3)}
+.report-btn{background:var(--accent);color:#fff;border:none;padding:10px 22px;border-radius:8px;font-family:var(--mono);font-size:12px;font-weight:700;cursor:pointer;transition:opacity var(--t);white-space:nowrap;flex-shrink:0;margin-top:4px}
+.report-btn:hover{opacity:.85}
+
+/* ── FAQ ─────────────────────────────────────────────────────── */
+.faq-list{display:flex;flex-direction:column;gap:4px}
+.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color var(--t)}
+.faq-item.open{border-color:var(--border-h)}
+.faq-q{width:100%;background:none;border:none;color:var(--text);font-family:var(--sans);font-size:13px;font-weight:500;padding:14px 18px;text-align:left;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;transition:background var(--t)}
+.faq-q:hover{background:var(--surface-h)}
+.faq-chevron{flex-shrink:0;width:16px;height:16px;color:var(--text3);transition:transform var(--t)}
+.faq-item.open .faq-chevron{transform:rotate(180deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .3s cubic-bezier(.4,0,.2,1)}
+.faq-item.open .faq-a{max-height:400px}
+.faq-a-inner{padding:0 18px 16px;font-size:12px;color:var(--text2);line-height:1.7;border-top:1px solid var(--border)}
+.faq-a-inner a{color:var(--accent);text-decoration:none}
+.faq-a-inner a:hover{text-decoration:underline}
+.faq-a-inner strong{color:var(--text)}
+
+/* ── Modal ───────────────────────────────────────────────────── */
+.modal-overlay{position:fixed;inset:0;background:rgba(6,10,20,.85);backdrop-filter:blur(8px);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity var(--t)}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:#0c1220;border:1px solid var(--border-h);border-radius:18px;padding:28px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;transform:scale(.96);transition:transform var(--t)}
+.modal-overlay.open .modal{transform:scale(1)}
+.modal-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;gap:12px}
+.modal-title{font-size:16px;font-weight:700;color:var(--text)}
+.modal-sub{font-size:12px;color:var(--text2);margin-top:3px}
+.modal-close{background:none;border:none;color:var(--text3);cursor:pointer;padding:4px;border-radius:6px;font-size:18px;line-height:1;transition:color var(--t)}
+.modal-close:hover{color:var(--text)}
+.drop-zone{border:2px dashed var(--border);border-radius:12px;padding:32px 20px;text-align:center;cursor:pointer;transition:border-color var(--t),background var(--t);margin-bottom:16px;position:relative}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--accent-border);background:var(--accent-dim)}
+.drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.drop-icon{font-size:28px;margin-bottom:8px;display:block}
+.drop-text{font-size:13px;color:var(--text2);margin-bottom:4px}
+.drop-sub{font-family:var(--mono);font-size:10px;color:var(--text3)}
+.drop-preview{display:none;max-width:100%;border-radius:8px;margin-top:10px;max-height:160px;object-fit:contain}
+.ocr-status{font-family:var(--mono);font-size:11px;padding:8px 12px;border-radius:8px;margin-bottom:14px;display:none}
+.ocr-status.scanning{background:rgba(245,158,11,.08);color:#f59e0b;border:1px solid rgba(245,158,11,.2);display:block}
+.ocr-status.pass{background:rgba(34,197,94,.08);color:#22c55e;border:1px solid rgba(34,197,94,.2);display:block}
+.ocr-status.fail{background:rgba(239,68,68,.08);color:#ef4444;border:1px solid rgba(239,68,68,.2);display:block}
+.ocr-bar{height:3px;background:var(--border);border-radius:100px;margin-top:6px;overflow:hidden;display:none}
+.ocr-bar.show{display:block}
+.ocr-bar-fill{height:100%;background:#f59e0b;border-radius:100px;width:0;transition:width .2s}
+.form-row{margin-bottom:14px}
+.form-label{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;display:block}
+.form-select,.form-input-plain{width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:8px;font-family:var(--mono);font-size:12px;outline:none;transition:border-color var(--t);cursor:pointer;appearance:none;-webkit-appearance:none}
+.form-select:focus,.form-input-plain:focus{border-color:var(--accent-border)}
+.form-select option{background:#0c1220}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modal-footer{margin-top:18px;display:flex;flex-direction:column;gap:10px}
+.modal-submit{background:var(--accent);color:#fff;border:none;padding:11px;border-radius:9px;font-family:var(--mono);font-size:13px;font-weight:700;cursor:pointer;transition:opacity var(--t);width:100%}
+.modal-submit:hover{opacity:.85}
+.modal-submit:disabled{opacity:.35;cursor:not-allowed}
+.modal-note{font-family:var(--mono);font-size:10px;color:var(--text3);text-align:center;line-height:1.5}
+
+/* ── Toasts ──────────────────────────────────────────────────── */
+.toast-container{position:fixed;bottom:24px;right:24px;z-index:600;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.toast{background:#0c1220;border:1px solid var(--border-h);border-radius:10px;padding:10px 16px;font-family:var(--mono);font-size:12px;color:var(--text);max-width:300px;box-shadow:0 8px 32px rgba(0,0,0,.5);animation:toastIn .25s cubic-bezier(.4,0,.2,1) both;display:flex;align-items:center;gap:10px}
+.toast.leaving{animation:toastOut .25s cubic-bezier(.4,0,.2,1) forwards}
+.toast-icon{font-size:14px;flex-shrink:0}
+@keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+@keyframes toastOut{to{opacity:0;transform:translateX(20px)}}
+
+/* ── Spinner / empty ─────────────────────────────────────────── */
 .state-box{text-align:center;padding:60px 24px;color:var(--text3);font-family:var(--mono);font-size:12px}
 .spinner{display:inline-block;width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:10px}
 @keyframes spin{to{transform:rotate(360deg)}}
+.divider{height:1px;background:var(--border);margin:4px 0}
 
-/* ── Footer ─────────────────────────────────────────────────────── */
-footer{text-align:center;padding:24px;font-family:var(--mono);font-size:10px;color:var(--text3);border-top:1px solid var(--border)}
+/* ── Footer ──────────────────────────────────────────────────── */
+footer{text-align:center;padding:24px;font-family:var(--mono);font-size:10px;color:var(--text3);border-top:1px solid var(--border);line-height:2}
 footer a{color:var(--text3);text-decoration:none}
 footer a:hover{color:var(--text2)}
 
-/* ── Responsive ─────────────────────────────────────────────────── */
+/* ── Responsive ──────────────────────────────────────────────── */
 @media(max-width:600px){
-  header{padding:0 16px}
+  header{padding:0 16px;gap:7px}
+  .last-check,.countdown{display:none}
   .hero{padding:60px 16px 40px;min-height:60vh}
   .status-headline{letter-spacing:-2px}
   .post-card{grid-template-columns:36px 1fr auto;gap:10px}
   .graph-head{flex-direction:column}
   .graph-stats{justify-content:flex-start}
   .wh-input-row{flex-direction:column}
+  .form-grid{grid-template-columns:1fr}
+  .info-grid{grid-template-columns:1fr}
+  .report-card{flex-direction:column}
 }
 </style>
 </head>
 <body class="loading">
 
-<!-- ── Header ──────────────────────────────────────────────────────── -->
+<!-- ── Header ────────────────────────────────────────────────────── -->
 <header>
   <a class="logo" href="/">
     <span class="logo-dot"></span>
@@ -174,25 +283,35 @@ footer a:hover{color:var(--text2)}
   </a>
   <span class="header-badge" id="headerBadge">Checking…</span>
   <div class="header-right">
-    <span class="last-check" id="lastCheck">—</span>
-    <button class="refresh-btn" id="refreshBtn" onclick="load()">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
-        <path d="M13.5 8A5.5 5.5 0 1 1 8 2.5c1.8 0 3.4.87 4.4 2.2" stroke-linecap="round"/>
-        <path d="M13.5 2.5v2.2h-2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <span class="countdown" id="countdown" title="Next auto-refresh">
+      <svg class="countdown-ring" viewBox="0 0 14 14">
+        <circle cx="7" cy="7" r="5"/>
+        <circle class="prog" id="cdrProg" cx="7" cy="7" r="5" stroke-dasharray="31.4" stroke-dashoffset="0"/>
       </svg>
+      <span id="cdrText">5:00</span>
+    </span>
+    <span class="last-check" id="lastCheck">—</span>
+    <a class="hdr-icon-btn" href="/api/rss" target="_blank" rel="noopener" title="Subscribe via RSS">
+      <svg viewBox="0 0 16 16" fill="currentColor"><circle cx="3" cy="13" r="1.5"/><path d="M1.5 8.5A5.5 5.5 0 0 1 7 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M1.5 4A9.5 9.5 0 0 1 12 14.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </a>
+    <button class="hdr-icon-btn" onclick="shareStatus()" title="Share current status">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="3" r="1.5"/><circle cx="4" cy="8" r="1.5"/><circle cx="12" cy="13" r="1.5"/><line x1="5.5" y1="7" x2="10.5" y2="4"/><line x1="5.5" y1="9" x2="10.5" y2="12"/></svg>
+    </button>
+    <button class="refresh-btn" id="refreshBtn" onclick="load()">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13.5 8A5.5 5.5 0 1 1 8 2.5c1.8 0 3.4.87 4.4 2.2" stroke-linecap="round"/><path d="M13.5 2.5v2.2h-2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       Refresh
     </button>
   </div>
 </header>
 
-<!-- ── Hero ────────────────────────────────────────────────────────── -->
+<!-- ── Hero ──────────────────────────────────────────────────────── -->
 <section class="hero">
   <div class="hero-inner" id="heroInner">
     <div class="state-box"><div class="spinner"></div><br>Checking r/robloxhackers…</div>
   </div>
 </section>
 
-<!-- ── Feed ────────────────────────────────────────────────────────── -->
+<!-- ── Feed ──────────────────────────────────────────────────────── -->
 <div class="sep" id="feedSep" style="display:none"><span>Recent reports · r/robloxhackers</span></div>
 <div class="feed" id="feedSection" style="display:none">
   <div class="feed-controls">
@@ -204,24 +323,99 @@ footer a:hover{color:var(--text2)}
   <div class="posts" id="postsContainer"></div>
 </div>
 
-<!-- ── Graph ────────────────────────────────────────────────────────── -->
+<!-- ── Graph ──────────────────────────────────────────────────────── -->
 <div class="sep" id="graphSep" style="display:none"><span>Banwave mention frequency</span></div>
 <div class="graph-wrap" id="graphSection" style="display:none">
   <div class="graph-card" id="graphCard"></div>
 </div>
 
-<!-- ── Webhooks ─────────────────────────────────────────────────────── -->
+<!-- ── About Ban Waves ────────────────────────────────────────────── -->
+<div class="sep"><span>About ban waves</span></div>
+<div class="section-wrap">
+  <div class="info-grid">
+    <div class="info-card">
+      <span class="info-card-icon">🌊</span>
+      <div class="info-card-title">What is a ban wave?</div>
+      <div class="info-card-body">
+        A ban wave is when Roblox's moderation system bans large numbers of accounts simultaneously — typically those detected using unauthorized third-party software (executors, scripts, exploits). They often occur after Roblox updates its anti-cheat or runs a sweeping detection pass.
+      </div>
+    </div>
+    <div class="info-card">
+      <span class="info-card-icon">🛡</span>
+      <div class="info-card-title">What is Byfron / Hyperion?</div>
+      <div class="info-card-body">
+        Byfron (now called <strong>Hyperion</strong>) is Roblox's anti-cheat engine, acquired in 2022 and deployed in 2023. It uses kernel-level detection to identify executor signatures, memory manipulation, and other exploit indicators. Updates to Hyperion often trigger ban waves.
+      </div>
+    </div>
+    <div class="info-card">
+      <span class="info-card-icon">📡</span>
+      <div class="info-card-title">How does this tracker work?</div>
+      <div class="info-card-body">
+        We search <a href="https://reddit.com/r/robloxhackers" target="_blank" rel="noopener">r/robloxhackers</a> every 5 minutes for posts containing "ban wave" in the title. Posts are scored by recency and community upvotes. A high enough score triggers the <strong>ACTIVE</strong> or <strong>WARNING</strong> status.
+        <br><br>
+        <strong>This is not 100% accurate</strong> — it can produce false positives from outdated posts and may miss waves that haven't been reported yet.
+      </div>
+    </div>
+    <div class="info-card">
+      <span class="info-card-icon">⚡</span>
+      <div class="info-card-title">What should I do during a wave?</div>
+      <div class="info-card-body">
+        Stop using any executor immediately. Close all external software before launching Roblox. Wait at least 24–48 hours after reports die down before considering use again. Monitor this page and the Discord notifications for updates. When in doubt, don't exploit.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Resources ──────────────────────────────────────────────────── -->
+<div class="sep"><span>Resources &amp; links</span></div>
+<div class="section-wrap">
+  <div class="resource-grid">
+    <a class="resource-card" href="https://www.reddit.com/r/robloxhackers/" target="_blank" rel="noopener">
+      <span class="rc-icon">🔴</span>
+      <div class="rc-body">
+        <div class="rc-title">r/robloxhackers</div>
+        <div class="rc-desc">Primary community source for ban wave reports and exploit news.</div>
+        <div class="rc-tag">reddit.com</div>
+      </div>
+    </a>
+    <a class="resource-card" href="https://en.help.roblox.com/hc/en-us/articles/203313410" target="_blank" rel="noopener">
+      <span class="rc-icon">📋</span>
+      <div class="rc-body">
+        <div class="rc-title">Roblox Community Standards</div>
+        <div class="rc-desc">Official moderation rules — what constitutes a bannable offence.</div>
+        <div class="rc-tag">en.help.roblox.com</div>
+      </div>
+    </a>
+    <a class="resource-card" href="https://robloxbanwave.vercel.app/api/rss" target="_blank" rel="noopener">
+      <span class="rc-icon">📡</span>
+      <div class="rc-body">
+        <div class="rc-title">RSS Feed</div>
+        <div class="rc-desc">Subscribe in your RSS reader to get banwave posts delivered automatically.</div>
+        <div class="rc-tag">robloxbanwave.vercel.app/api/rss</div>
+      </div>
+    </a>
+    <a class="resource-card" href="https://www.reddit.com/r/robloxhackers/search/?q=byfron+hyperion&sort=new" target="_blank" rel="noopener">
+      <span class="rc-icon">🔍</span>
+      <div class="rc-body">
+        <div class="rc-title">Byfron / Hyperion Updates</div>
+        <div class="rc-desc">Reddit search for the latest Hyperion anti-cheat news and bypasses.</div>
+        <div class="rc-tag">reddit.com/r/robloxhackers</div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- ── Discord Notifications ──────────────────────────────────────── -->
 <div class="sep"><span>Discord notifications</span></div>
 <div class="wh-wrap">
   <div class="wh-card">
     <div class="wh-title">Get notified when a ban wave is detected</div>
     <div class="wh-desc">
       Paste your Discord webhook URL below. When this site detects an active ban wave,
-      it will send a message to your Discord server automatically.<br>
-      Your webhook URL is <strong>encrypted end-to-end</strong> — nobody can see it through the network.
+      it sends a message to your Discord server automatically.<br>
+      Your webhook URL is <strong>encrypted end-to-end</strong> — it cannot be seen through network inspection.
     </div>
 
-    <!-- Not registered state -->
     <div id="whForm">
       <div class="wh-input-row">
         <input class="wh-input" id="whInput" type="url"
@@ -232,31 +426,211 @@ footer a:hover{color:var(--text2)}
       <div class="wh-msg" id="whFormMsg"></div>
     </div>
 
-    <!-- Registered state -->
     <div id="whActive" style="display:none">
       <div class="wh-active-row">
         <div class="wh-active-indicator">
           <span class="wh-dot"></span>
           Webhook active — notifications enabled
         </div>
-        <button class="wh-btn wh-btn-danger" onclick="removeWebhook()">Remove webhook</button>
+        <button class="wh-btn-secondary" id="testWHBtn" onclick="testWebhook()">Send Test</button>
+        <button class="wh-btn wh-btn-danger" onclick="removeWebhook()">Remove</button>
       </div>
       <div class="wh-msg" id="whActiveMsg"></div>
     </div>
 
     <div class="wh-privacy">
-      <span>How it works:</span>
-      Your URL is sent once over HTTPS and stored AES-256-GCM encrypted on our server.
-      Only a deletion token (saved in your browser) can remove it.
-      The URL never appears in any outgoing browser request after registration.
+      <span class="wh-privacy-icon">🔒</span>
+      <span>
+        <span>Security:</span> Your URL is sent once over HTTPS and stored AES-256-GCM encrypted.
+        Only a deletion token (saved in your browser) can remove it.
+        The raw URL never appears in any network request after registration.
+        Server-side notifications are sent with a 45-minute cooldown per webhook.
+      </span>
     </div>
+  </div>
+</div>
+
+<!-- ── Report a Ban ───────────────────────────────────────────────── -->
+<div class="sep"><span>Verified bans today</span></div>
+<div class="section-wrap">
+  <div class="report-card">
+    <div class="report-left">
+      <div class="report-title">Community-verified ban reports</div>
+      <div class="report-desc">
+        Got banned during a wave? Submit a screenshot of your ban notice to help the community track which executors are being hit. Reports are anonymous, verified with OCR, and grouped by day.
+        <br><br>
+        <em style="font-size:11px;color:var(--text3)">Note: counts shown on the most recent post in the feed above.</em>
+      </div>
+      <div class="report-count-row">
+        <span class="report-count-badge" id="verifiedCount">—</span>
+        <span class="report-count-label">bans reported today</span>
+      </div>
+    </div>
+    <button class="report-btn" onclick="openReportModal()">Report Your Ban</button>
+  </div>
+</div>
+
+<!-- ── FAQ ───────────────────────────────────────────────────────── -->
+<div class="sep"><span>Frequently asked questions</span></div>
+<div class="section-wrap" style="padding-bottom:60px">
+  <div class="faq-list">
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Is this tracker 100% accurate?
+        <svg class="faq-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="faq-a"><div class="faq-a-inner divider" style="border:none;padding-top:12px">
+        <strong>No.</strong> This tracker relies on community posts from r/robloxhackers and can produce false positives. A single highly-upvoted post can trigger a WARNING status even if no real wave is happening. It can also miss ban waves that haven't been reported yet, or where reports use different wording. Always cross-reference with multiple sources before making decisions.
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        What do ACTIVE / WARNING / CLEAR mean?
+        <svg class="faq-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="faq-a"><div class="faq-a-inner divider" style="border:none;padding-top:12px">
+        <strong>ACTIVE</strong> — significant recent ban wave posts (weighted score ≥ 3.5). High risk, do not use executors.<br><br>
+        <strong>WARNING</strong> — some recent activity (score ≥ 1.0). A wave may be starting or ending. Use extreme caution.<br><br>
+        <strong>CLEAR</strong> — no significant activity in the last two weeks. Lower risk, but this can change at any time.
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        How is the threat score calculated?
+        <svg class="faq-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="faq-a"><div class="faq-a-inner divider" style="border:none;padding-top:12px">
+        Each post is scored: <code>recency × (log₂(votes + 1) + 0.5) × typeWeight</code><br><br>
+        Recency decays exponentially — a post from 14 days ago scores near zero. Posts classified as "alerts" get a 2.5× multiplier; questions get 0.2×. The total score across all recent posts determines the status level. Only posts from the past 14 days affect the score.
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        How often does it update?
+        <svg class="faq-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="faq-a"><div class="faq-a-inner divider" style="border:none;padding-top:12px">
+        Automatically every 5 minutes while the page is open. You can also manually refresh at any time using the Refresh button in the top-right corner. The countdown ring in the header shows time until the next auto-refresh.
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Are my webhook details safe?
+        <svg class="faq-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="faq-a"><div class="faq-a-inner divider" style="border:none;padding-top:12px">
+        Yes. Your Discord webhook URL is never stored in plaintext. It is encrypted server-side with AES-256-GCM before being written to the database. The raw URL only travels over HTTPS once during registration and is never exposed again — not in network responses, browser storage, or logs. A deletion token (stored only in your browser's localStorage) is the only way to remove it.
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Can I trust the verified ban count?
+        <svg class="faq-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="faq-a"><div class="faq-a-inner divider" style="border:none;padding-top:12px">
+        Reports are screened with OCR to verify the screenshot contains Roblox moderation text. However, we cannot guarantee every submission is genuine. The count is a community signal, not an official figure. It is rate-limited (3 per IP per hour) to reduce spam. Use it as one data point alongside the Reddit post feed.
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Which executors are affected during a ban wave?
+        <svg class="faq-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="faq-a"><div class="faq-a-inner divider" style="border:none;padding-top:12px">
+        Any executor can be targeted during a Hyperion detection sweep. Some have better obfuscation than others, but no executor is ban-proof. Community reports in the verified bans section may indicate which ones are being detected. When a wave is active, the safest approach is to stop using all executors regardless of type.
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        How do I set up a Discord webhook?
+        <svg class="faq-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="faq-a"><div class="faq-a-inner divider" style="border:none;padding-top:12px">
+        In your Discord server: <strong>Edit Channel → Integrations → Webhooks → New Webhook</strong>. Copy the webhook URL and paste it into the notification field above. You can also name the webhook "RBX Radar" and set a custom avatar in that settings panel.
+      </div></div>
+    </div>
+
   </div>
 </div>
 
 <footer>
   Data from <a href="https://reddit.com/r/robloxhackers" target="_blank" rel="noopener">r/robloxhackers</a>
-  · <a href="https://robloxbanwave.vercel.app">robloxbanwave.vercel.app</a>
+  &nbsp;·&nbsp; <a href="/api/rss" title="RSS Feed">RSS Feed</a>
+  &nbsp;·&nbsp; <a href="https://robloxbanwave.vercel.app">robloxbanwave.vercel.app</a>
+  <br>
+  <span style="color:var(--text3)">Community tracker — not affiliated with Roblox Corporation. Not 100% accurate; can produce false positives.</span>
 </footer>
+
+<!-- ── Report Ban Modal ───────────────────────────────────────────── -->
+<div class="modal-overlay" id="reportModal" onclick="maybeCloseModal(event)">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modalTitle">Report a Ban</div>
+        <div class="modal-sub">Upload your Roblox ban screenshot to verify and add to today's count</div>
+      </div>
+      <button class="modal-close" onclick="closeReportModal()" aria-label="Close">✕</button>
+    </div>
+
+    <div class="drop-zone" id="dropZone">
+      <input type="file" id="banFile" accept="image/*" onchange="handleFileSelect(event)">
+      <span class="drop-icon">📸</span>
+      <div class="drop-text">Drop your screenshot here or click to browse</div>
+      <div class="drop-sub">PNG, JPG, WEBP — max 8 MB</div>
+      <img class="drop-preview" id="dropPreview" alt="Screenshot preview">
+    </div>
+
+    <div class="ocr-status" id="ocrStatus"></div>
+    <div class="ocr-bar" id="ocrBar"><div class="ocr-bar-fill" id="ocrBarFill"></div></div>
+
+    <div class="form-grid">
+      <div class="form-row">
+        <label class="form-label" for="executorSelect">Executor used</label>
+        <select class="form-select" id="executorSelect">
+          <option value="">Select executor…</option>
+          <option value="synapse z">Synapse Z</option>
+          <option value="wave">Wave</option>
+          <option value="fluxus">Fluxus</option>
+          <option value="krnl">KRNL</option>
+          <option value="solara">Solara</option>
+          <option value="arceus x">Arceus X</option>
+          <option value="delta">Delta</option>
+          <option value="other">Other / Unknown</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="platformSelect">Platform</label>
+        <select class="form-select" id="platformSelect">
+          <option value="">Select platform…</option>
+          <option value="pc">PC / Windows</option>
+          <option value="mobile-android">Mobile — Android</option>
+          <option value="mobile-ios">Mobile — iOS</option>
+          <option value="console">Console</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="modal-submit" id="modalSubmit" onclick="submitBanReport()" disabled>
+        Submit Report
+      </button>
+      <div class="modal-note">
+        Anonymous. Only executor name and platform are stored. Screenshots are processed locally in your browser.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Toast Container ────────────────────────────────────────────── -->
+<div class="toast-container" id="toastContainer"></div>
 
 <script>
 // ── Config ─────────────────────────────────────────────────────────────────
@@ -265,24 +639,34 @@ const SEARCH_TERM  = 'banwave';
 const TITLE_RE     = /ban\s*wave/i;
 const SCORE_ACTIVE = 3.5;
 const SCORE_WARN   = 1.0;
-// localStorage keys
-const LS_TOKEN     = 'rbx_wh_token';
-const LS_STATUS    = 'rbx_last_status';
-const LS_NOTIFIED  = 'rbx_last_notify_at';
+const REFRESH_MS   = 5 * 60 * 1000; // 5 minutes
 
-let allPosts  = [];
-let curFilter = 'all';
-let curStatus = '';
+// localStorage keys
+const LS_TOKEN    = 'rbx_wh_token';
+const LS_STATUS   = 'rbx_last_status';
+const LS_NOTIFIED = 'rbx_last_notify_at';
+
+// Ban keywords for client-side OCR validation
+const BAN_RE = /\b(moderat|terminat|suspend|banned|violation|warning)\b/i;
+
+let allPosts     = [];
+let curFilter    = 'all';
+let curStatus    = '';
+let ocrText      = '';
+let ocrPassed    = false;
+let cdrInterval  = null;
+let cdrEnd       = 0;
+let tesseractLoaded = false;
 
 // ── Utils ───────────────────────────────────────────────────────────────────
 const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
 function timeAgo(utc) {
   const s = Date.now()/1000 - utc;
-  if (s < 3600)        return Math.floor(s/60)+'m ago';
-  if (s < 86400)       return Math.floor(s/3600)+'h ago';
-  if (s < 86400*30)    return Math.floor(s/86400)+'d ago';
-  if (s < 86400*365)   return Math.floor(s/(86400*30))+'mo ago';
+  if (s < 3600)      return Math.floor(s/60)+'m ago';
+  if (s < 86400)     return Math.floor(s/3600)+'h ago';
+  if (s < 86400*30)  return Math.floor(s/86400)+'d ago';
+  if (s < 86400*365) return Math.floor(s/(86400*30))+'mo ago';
   return Math.floor(s/(86400*365))+'y ago';
 }
 
@@ -294,7 +678,7 @@ function fmtNum(n) {
 function classify(title) {
   const t = title.toLowerCase();
   if (/\balert\b|don.?t exploit|not safe|activated|going on|is detected|going through|hours of ban|⚠|banwave\s*-|banwave[!]+|currently|right now|is live/.test(t)) return 'alert';
-  if (/^(is |did |was |when |how |can |does |are |what |where |any )/.test(t) || / over\??| still | end\??|explain|tracker|chances|possible/.test(t)) return 'question';
+  if (/^(is |did |was |when |how |can |does |are |what |where |any )/.test(t)||/ over\??| still | end\??|explain|tracker|chances|possible/.test(t)) return 'question';
   return 'general';
 }
 
@@ -305,6 +689,54 @@ function scorePost(p) {
   const votes   = Math.log2(Math.max(1, p.score||0) + 1);
   const tw      = p._type==='alert' ? 2.5 : p._type==='question' ? 0.2 : 0.5;
   return recency * (votes + 0.5) * tw;
+}
+
+// ── Toast ───────────────────────────────────────────────────────────────────
+function showToast(icon, msg, durationMs = 4000) {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = `<span class="toast-icon">${icon}</span><span>${esc(msg)}</span>`;
+  document.getElementById('toastContainer').appendChild(t);
+  setTimeout(() => {
+    t.classList.add('leaving');
+    setTimeout(() => t.remove(), 260);
+  }, durationMs);
+}
+
+// ── Countdown ───────────────────────────────────────────────────────────────
+function startCountdown() {
+  cdrEnd = Date.now() + REFRESH_MS;
+  clearInterval(cdrInterval);
+  const circ = document.getElementById('cdrProg');
+  const circumference = 2 * Math.PI * 5; // r=5
+  circ.style.strokeDasharray = circumference;
+  cdrInterval = setInterval(() => {
+    const remaining = Math.max(0, cdrEnd - Date.now());
+    const mins = Math.floor(remaining / 60000);
+    const secs = Math.floor((remaining % 60000) / 1000);
+    document.getElementById('cdrText').textContent = `${mins}:${String(secs).padStart(2,'0')}`;
+    const progress = remaining / REFRESH_MS;
+    circ.style.strokeDashoffset = circumference * (1 - progress);
+    if (remaining <= 0) clearInterval(cdrInterval);
+  }, 1000);
+}
+
+// ── FAQ Accordion ───────────────────────────────────────────────────────────
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+// ── Share ───────────────────────────────────────────────────────────────────
+function shareStatus() {
+  const msg = `Roblox ban wave status: ${curStatus.toUpperCase() || 'unknown'} — ${location.href}`;
+  if (navigator.share) {
+    navigator.share({ title: 'Roblox Ban Wave Status', url: location.href }).catch(()=>{});
+  } else {
+    navigator.clipboard.writeText(location.href).then(() => showToast('🔗', 'Link copied to clipboard!'));
+  }
 }
 
 // ── Fetch ───────────────────────────────────────────────────────────────────
@@ -332,7 +764,7 @@ function renderHero(posts, totalScore) {
     status   = 'warning';
     kicker   = '⚠ RECENT ACTIVITY';
     headline = 'USE CAUTION';
-    desc     = 'Recent banwave activity on r/robloxhackers. A wave may still be ongoing —'
+    desc     = 'Recent banwave activity on r/robloxhackers. A wave may be ongoing —'
              + ' check the reports below before using any executor.';
     document.getElementById('headerBadge').textContent = 'WARNING';
   } else {
@@ -354,7 +786,6 @@ function renderHero(posts, totalScore) {
       <div class="rp-title">${esc(recent.title)}</div>
       <div class="rp-meta">
         <span class="votes">▲ ${fmtNum(recent.score)}</span>
-        <span>💬 ${fmtNum(recent.num_comments)}</span>
         <span class="rp-arrow">View on Reddit ↗</span>
       </div>
     </a>` : '';
@@ -373,10 +804,9 @@ function renderHero(posts, totalScore) {
 }
 
 // ── Feed ────────────────────────────────────────────────────────────────────
-function renderFeed() {
+function renderFeed(verifiedCount) {
   const container = document.getElementById('postsContainer');
   const countEl   = document.getElementById('feedCount');
-  // Feed shows last 30 days
   const recent    = allPosts.filter(p => (Date.now()/1000 - p.created_utc) < 30*86400);
   let shown = recent;
   if (curFilter==='alert')    shown = recent.filter(p=>p._type==='alert');
@@ -388,10 +818,13 @@ function renderFeed() {
     return;
   }
 
-  container.innerHTML = shown.map(p => {
+  container.innerHTML = shown.map((p, i) => {
     const tagHtml = p._type==='alert'
       ? '<span class="tag tag-alert">Alert</span>'
       : p._type==='question' ? '<span class="tag tag-question">Question</span>' : '';
+    const verifiedBadge = (i === 0 && verifiedCount > 0)
+      ? `<span class="tag tag-verified" title="Community-verified bans reported today">🛡 ${verifiedCount} verified today</span>`
+      : '';
     return `
       <a class="post-card" data-type="${esc(p._type)}" href="${esc(p._url)}" target="_blank" rel="noopener">
         <div class="pc-votes">
@@ -400,60 +833,47 @@ function renderFeed() {
         </div>
         <div class="pc-body">
           <div class="pc-title">${esc(p.title)}</div>
-          <div class="pc-meta">${tagHtml}<span>${timeAgo(p.created_utc)}</span><span>💬 ${fmtNum(p.num_comments)}</span></div>
+          <div class="pc-meta">${tagHtml}${verifiedBadge}<span>${timeAgo(p.created_utc)}</span></div>
         </div>
         <div class="pc-link-icon">↗</div>
       </a>`;
   }).join('');
 }
 
-function setFilter(f,btn) {
-  curFilter=f;
+function setFilter(f, btn) {
+  curFilter = f;
   document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  renderFeed();
+  renderFeed(window._verifiedCount || 0);
 }
 
 // ── Graph ────────────────────────────────────────────────────────────────────
 function renderGraph(posts) {
   if (!posts.length) return;
-
-  // Group all posts by YYYY-MM
   const counts = {};
   for (const p of posts) {
     const d = new Date(p.created_utc * 1000);
     const k = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
     counts[k] = (counts[k]||0) + 1;
   }
-
-  // Build 18-month window ending this month
-  const now     = new Date();
-  const months  = [];
+  const now    = new Date();
+  const months = [];
   for (let i = 17; i >= 0; i--) {
     const d   = new Date(now.getFullYear(), now.getMonth()-i, 1);
     const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-    months.push({
-      key,
-      label: d.toLocaleDateString('en-US',{month:'short'}),
-      year:  d.getFullYear(),
-      count: counts[key]||0,
-    });
+    months.push({ key, label: d.toLocaleDateString('en-US',{month:'short'}), year: d.getFullYear(), count: counts[key]||0 });
   }
-
   const maxCount  = Math.max(1, ...months.map(m=>m.count));
   const curKey    = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
   const total     = posts.length;
   const last30    = posts.filter(p=>(Date.now()/1000-p.created_utc)<30*86400).length;
   const peakMonth = months.reduce((a,b)=>b.count>a.count?b:a, months[0]);
 
-  const barsHtml = months.map(m=>{
-    const h = m.count>0 ? Math.max(5,(m.count/maxCount)*100) : 2;
+  const barsHtml   = months.map(m=>{
+    const h   = m.count>0 ? Math.max(5,(m.count/maxCount)*100) : 2;
     const tip = `${m.label} ${m.year}: ${m.count} post${m.count!==1?'s':''}`;
-    return `<div class="g-bar${m.count>0?' has-data':''}${m.key===curKey?' cur':''}"
-                 style="height:${h}%"
-                 title="${esc(tip)}"></div>`;
+    return `<div class="g-bar${m.count>0?' has-data':''}${m.key===curKey?' cur':''}" style="height:${h}%" title="${esc(tip)}"></div>`;
   }).join('');
-
   const labelsHtml = months.map((m,i)=>{
     const show = i===0||m.label==='Jan'||i===months.length-1||i%3===0;
     return `<div class="g-lbl">${show?m.label:''}</div>`;
@@ -478,6 +898,19 @@ function renderGraph(posts) {
   document.getElementById('graphSection').style.display = 'block';
 }
 
+// ── Verified Bans ────────────────────────────────────────────────────────────
+async function loadVerifiedCount() {
+  try {
+    const r = await fetch('/api/verify-ban');
+    if (!r.ok) return 0;
+    const d = await r.json();
+    const count = d.count || 0;
+    window._verifiedCount = count;
+    document.getElementById('verifiedCount').textContent = count > 0 ? `${count} ban${count!==1?'s':''}` : '0 bans';
+    return count;
+  } catch { return 0; }
+}
+
 // ── Webhook UI ───────────────────────────────────────────────────────────────
 function refreshWebhookUI() {
   const hasToken = !!localStorage.getItem(LS_TOKEN);
@@ -489,50 +922,38 @@ function showWhMsg(id, type, text) {
   const el = document.getElementById(id);
   el.className = 'wh-msg '+type;
   el.textContent = text;
-  setTimeout(()=>{ el.className='wh-msg'; }, 6000);
+  setTimeout(() => { el.className = 'wh-msg'; }, 7000);
 }
 
 async function addWebhook() {
   const input = document.getElementById('whInput');
   const btn   = document.getElementById('whAddBtn');
   const url   = input.value.trim();
-
   if (!url) { showWhMsg('whFormMsg','err','Enter a webhook URL first.'); return; }
-  if (!url.startsWith('https://discord.com/api/webhooks/')) {
+  if (!/^https:\/\/(discord\.com|discordapp\.com|ptb\.discord\.com|canary\.discord\.com)\/api\/webhooks\/\d+\/.+/.test(url)) {
     showWhMsg('whFormMsg','err','Must be a Discord webhook URL (https://discord.com/api/webhooks/…)');
     return;
   }
-
-  btn.disabled = true;
-  btn.textContent = 'Saving…';
-
+  btn.disabled = true; btn.textContent = 'Saving…';
   try {
-    const res = await fetch('/api/webhooks', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ webhookUrl: url }),
-    });
+    const res  = await fetch('/api/webhooks', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ webhookUrl: url }) });
     const data = await res.json();
     if (!res.ok) { showWhMsg('whFormMsg','err', data.error||'Server error'); return; }
-
     localStorage.setItem(LS_TOKEN, data.token);
     input.value = '';
     refreshWebhookUI();
-    showWhMsg('whActiveMsg','ok','Webhook saved. You\'ll be notified when a ban wave is detected.');
+    showWhMsg('whActiveMsg','ok','Webhook saved! You\'ll be notified when a ban wave is detected.');
   } catch (e) {
     showWhMsg('whFormMsg','err','Network error: '+e.message);
   } finally {
-    btn.disabled = false;
-    btn.textContent = 'Add Webhook';
+    btn.disabled = false; btn.textContent = 'Add Webhook';
   }
 }
 
 async function removeWebhook() {
   const token = localStorage.getItem(LS_TOKEN);
   if (!token) { refreshWebhookUI(); return; }
-
   if (!confirm('Remove your Discord webhook? You will stop receiving ban wave notifications.')) return;
-
   try {
     const res = await fetch('/api/webhooks?token='+encodeURIComponent(token), { method:'DELETE' });
     if (res.ok || res.status===404) {
@@ -544,36 +965,194 @@ async function removeWebhook() {
       const d = await res.json().catch(()=>({}));
       showWhMsg('whActiveMsg','err', d.error||'Removal failed.');
     }
+  } catch (e) { showWhMsg('whActiveMsg','err','Network error: '+e.message); }
+}
+
+async function testWebhook() {
+  const token = localStorage.getItem(LS_TOKEN);
+  if (!token) return;
+  const btn = document.getElementById('testWHBtn');
+  btn.disabled = true; btn.textContent = 'Sending…';
+  try {
+    const res  = await fetch('/api/notify', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ test: true, token }) });
+    const data = await res.json();
+    if (res.ok && data.ok) {
+      showToast('✅', 'Test notification sent to Discord!');
+    } else {
+      showToast('❌', data.error || 'Test failed — check your webhook URL.');
+    }
   } catch (e) {
-    showWhMsg('whActiveMsg','err','Network error: '+e.message);
+    showToast('❌', 'Network error: '+e.message);
+  } finally {
+    btn.disabled = false; btn.textContent = 'Send Test';
   }
 }
 
-// ── Notifications ────────────────────────────────────────────────────────────
+// ── Notifications ─────────────────────────────────────────────────────────────
 async function maybeTriggerNotify(status, topPost) {
   if (status !== 'active') return;
-
-  // Client-side cooldown: don't spam the notify endpoint
   const last = Number(localStorage.getItem(LS_NOTIFIED)||0);
-  if (Date.now() - last < 30 * 60 * 1000) return; // 30 min client-side gate
-
-  // Check if status just became active (wasn't active on last check)
+  if (Date.now() - last < 30 * 60 * 1000) return;
   const prevStatus = localStorage.getItem(LS_STATUS);
-  if (prevStatus === 'active') return; // already known active, don't re-notify
-
+  if (prevStatus === 'active') return;
   try {
-    await fetch('/api/notify', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({
-        topPost: topPost ? { title: topPost.title, url: topPost._url } : null,
-      }),
-    });
+    await fetch('/api/notify', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ topPost: topPost ? { title: topPost.title, url: topPost._url } : null }) });
     localStorage.setItem(LS_NOTIFIED, String(Date.now()));
   } catch {}
 }
 
-// ── Main load ─────────────────────────────────────────────────────────────────
+// ── Report Modal ──────────────────────────────────────────────────────────────
+function openReportModal() {
+  document.getElementById('reportModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeReportModal() {
+  document.getElementById('reportModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function maybeCloseModal(e) {
+  if (e.target === document.getElementById('reportModal')) closeReportModal();
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeReportModal(); });
+
+// ── OCR ───────────────────────────────────────────────────────────────────────
+function loadTesseract() {
+  return new Promise((resolve, reject) => {
+    if (window.Tesseract) { resolve(window.Tesseract); return; }
+    const s = document.createElement('script');
+    s.src = 'https://unpkg.com/tesseract.js@5/dist/tesseract.min.js';
+    s.onload  = () => resolve(window.Tesseract);
+    s.onerror = () => reject(new Error('Failed to load OCR library. Check your connection.'));
+    document.head.appendChild(s);
+  });
+}
+
+function setOcrStatus(type, msg) {
+  const el = document.getElementById('ocrStatus');
+  el.className = 'ocr-status ' + type;
+  el.textContent = msg;
+}
+
+function setOcrProgress(pct) {
+  const bar  = document.getElementById('ocrBar');
+  const fill = document.getElementById('ocrBarFill');
+  bar.classList.add('show');
+  fill.style.width = pct + '%';
+}
+
+async function handleFileSelect(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (file.size > 8 * 1024 * 1024) {
+    setOcrStatus('fail', 'File too large. Please use a screenshot under 8 MB.');
+    return;
+  }
+
+  // Preview
+  const preview = document.getElementById('dropPreview');
+  const reader  = new FileReader();
+  reader.onload  = ev => { preview.src = ev.target.result; preview.style.display = 'block'; };
+  reader.readAsDataURL(file);
+
+  // OCR
+  ocrText   = '';
+  ocrPassed = false;
+  document.getElementById('modalSubmit').disabled = true;
+  setOcrStatus('scanning', 'Analyzing screenshot… this may take a few seconds.');
+  setOcrProgress(0);
+  document.getElementById('ocrBar').classList.add('show');
+
+  try {
+    const Tesseract = await loadTesseract();
+    const { data: { text } } = await Tesseract.recognize(file, 'eng', {
+      logger: m => {
+        if (m.status === 'recognizing text') setOcrProgress(Math.round(m.progress * 100));
+      }
+    });
+    ocrText = text;
+    document.getElementById('ocrBar').classList.remove('show');
+
+    if (BAN_RE.test(text)) {
+      ocrPassed = true;
+      setOcrStatus('pass', '✓ Ban message detected in screenshot.');
+      checkModalReady();
+    } else {
+      setOcrStatus('fail', '✗ No Roblox ban message detected. Make sure to upload your ban notification screenshot.');
+    }
+  } catch (err) {
+    document.getElementById('ocrBar').classList.remove('show');
+    setOcrStatus('fail', '✗ OCR failed: ' + err.message + '. You can still submit — server will re-verify.');
+    // Allow fallback submission without OCR
+    ocrPassed = true;
+    ocrText   = '[ocr-unavailable]';
+    checkModalReady();
+  }
+}
+
+function checkModalReady() {
+  const executor = document.getElementById('executorSelect').value;
+  const platform = document.getElementById('platformSelect').value;
+  document.getElementById('modalSubmit').disabled = !(ocrPassed && executor && platform);
+}
+
+document.getElementById('executorSelect').addEventListener('change', checkModalReady);
+document.getElementById('platformSelect').addEventListener('change', checkModalReady);
+
+// Drag and drop
+const dz = document.getElementById('dropZone');
+dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('drag'); });
+dz.addEventListener('dragleave', ()=> dz.classList.remove('drag'));
+dz.addEventListener('drop', e => {
+  e.preventDefault();
+  dz.classList.remove('drag');
+  const file = e.dataTransfer?.files[0];
+  if (file && file.type.startsWith('image/')) {
+    const dt = new DataTransfer();
+    dt.items.add(file);
+    document.getElementById('banFile').files = dt.files;
+    handleFileSelect({ target: { files: dt.files } });
+  }
+});
+
+async function submitBanReport() {
+  const executor = document.getElementById('executorSelect').value;
+  const platform = document.getElementById('platformSelect').value;
+  if (!ocrPassed || !executor || !platform) return;
+
+  const btn = document.getElementById('modalSubmit');
+  btn.disabled = true; btn.textContent = 'Submitting…';
+
+  try {
+    const res  = await fetch('/api/verify-ban', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ocrText: ocrText.slice(0, 2000), executor, platform }),
+    });
+    const data = await res.json();
+    if (res.ok) {
+      closeReportModal();
+      window._verifiedCount = data.count;
+      document.getElementById('verifiedCount').textContent = `${data.count} ban${data.count!==1?'s':''}`;
+      renderFeed(data.count);
+      showToast('🛡', `Ban reported! Today's total: ${data.count}`);
+      // Reset modal
+      ocrText = ''; ocrPassed = false;
+      document.getElementById('banFile').value = '';
+      document.getElementById('dropPreview').style.display = 'none';
+      document.getElementById('executorSelect').value = '';
+      document.getElementById('platformSelect').value = '';
+      setOcrStatus('', '');
+    } else {
+      showToast('❌', data.error || 'Submission failed.');
+    }
+  } catch (e) {
+    showToast('❌', 'Network error: ' + e.message);
+  } finally {
+    btn.disabled = false; btn.textContent = 'Submit Report';
+  }
+}
+
+// ── Main load ──────────────────────────────────────────────────────────────────
 async function load() {
   const btn = document.getElementById('refreshBtn');
   btn.disabled = true;
@@ -581,32 +1160,32 @@ async function load() {
   document.getElementById('headerBadge').textContent = 'Checking…';
   document.getElementById('heroInner').innerHTML =
     '<div class="state-box"><div class="spinner"></div><br>Checking r/robloxhackers…</div>';
-  document.getElementById('feedSep').style.display = 'none';
+  document.getElementById('feedSep').style.display    = 'none';
   document.getElementById('feedSection').style.display = 'none';
-  document.getElementById('graphSep').style.display = 'none';
+  document.getElementById('graphSep').style.display   = 'none';
   document.getElementById('graphSection').style.display = 'none';
 
   try {
-    const raw = await fetchPosts();
+    const [raw, verifiedCount] = await Promise.all([fetchPosts(), loadVerifiedCount()]);
     allPosts = raw.map(p=>({
       ...p,
       _type: classify(p.title||''),
-      _url:  'https://reddit.com' + (p.permalink||'').replace(/['"<>]/g,''),
+      _url:  (() => { const rp = (p.permalink||'').replace(/['"<>]/g,''); return rp.startsWith('http') ? rp : 'https://reddit.com' + rp; })(),
     })).sort((a,b)=>b.created_utc-a.created_utc);
 
     const totalScore = allPosts.reduce((s,p)=>s+scorePost(p),0);
     renderHero(allPosts, totalScore);
 
     if (allPosts.length) {
-      document.getElementById('feedSep').style.display = 'flex';
+      document.getElementById('feedSep').style.display    = 'flex';
       document.getElementById('feedSection').style.display = 'block';
-      renderFeed();
+      renderFeed(verifiedCount);
       renderGraph(allPosts);
     }
 
     document.getElementById('lastCheck').textContent = 'Checked '+new Date().toLocaleTimeString();
+    startCountdown();
 
-    // Fire Discord notifications if newly active
     await maybeTriggerNotify(curStatus, allPosts[0]||null);
     localStorage.setItem(LS_STATUS, curStatus);
 
@@ -621,12 +1200,11 @@ async function load() {
         <button class="refresh-btn" onclick="load()" style="margin:auto">Try again</button>
       </div>`;
   }
-
   btn.disabled = false;
 }
 
 // Auto-refresh every 5 minutes
-setInterval(load, 5*60*1000);
+setInterval(load, REFRESH_MS);
 refreshWebhookUI();
 load();
 </script>

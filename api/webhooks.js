@@ -1,11 +1,9 @@
 import { kv } from '@vercel/kv';
 import { createCipheriv, createDecipheriv, createHash, randomBytes, randomUUID } from 'node:crypto';
 
-// AES-256-GCM key derived from WEBHOOK_CIPHER_KEY env var.
-// Set this to a random 64-char hex string in your Vercel project settings.
 function getCipherKey() {
   const raw = process.env.WEBHOOK_CIPHER_KEY || 'CHANGE_ME_set_WEBHOOK_CIPHER_KEY_env_var';
-  return createHash('sha256').update(raw).digest(); // always 32 bytes
+  return createHash('sha256').update(raw).digest();
 }
 
 function encrypt(text) {
@@ -25,10 +23,18 @@ export function decrypt(blob) {
   return d.update(enc).toString('utf8') + d.final('utf8');
 }
 
-// One-way hash of the user's deletion token — stored in KV, never the raw token
 function hashToken(token) {
   const salt = process.env.WEBHOOK_CIPHER_KEY || 'CHANGE_ME';
   return createHash('sha256').update(token + salt).digest('hex');
+}
+
+function hashIp(req) {
+  const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'unknown';
+  return createHash('sha256').update(ip).digest('hex').slice(0, 20);
+}
+
+function kvError(e) {
+  return /KV_|UPSTASH|fetch failed/i.test(e?.message ?? '');
 }
 
 const DISCORD_RE = /^https:\/\/(discord\.com|discordapp\.com|ptb\.discord\.com|canary\.discord\.com)\/api\/webhooks\/\d+\/.+/;
@@ -36,10 +42,22 @@ const DISCORD_RE = /^https:\/\/(discord\.com|discordapp\.com|ptb\.discord\.com|c
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
 
+  // ── POST: register a new webhook ──────────────────────────────────────────
   if (req.method === 'POST') {
     const { webhookUrl } = req.body ?? {};
     if (!webhookUrl || !DISCORD_RE.test(webhookUrl)) {
       return res.status(400).json({ error: 'Provide a valid Discord webhook URL.' });
+    }
+
+    // Rate limit: 5 registrations per IP per 24 h
+    const ipHash = hashIp(req);
+    try {
+      const rlKey = `rl:wh:${ipHash}`;
+      const cnt   = await kv.incr(rlKey);
+      if (cnt === 1) await kv.expire(rlKey, 86400);
+      if (cnt > 5) return res.status(429).json({ error: 'Too many registrations today. Try again tomorrow.' });
+    } catch (e) {
+      if (kvError(e)) return res.status(503).json({ error: 'Webhook storage not set up — add Vercel KV to your project.' });
     }
 
     try {
@@ -52,13 +70,12 @@ export default async function handler(req, res) {
 
       return res.status(201).json({ token });
     } catch (e) {
-      if (/KV_|UPSTASH|fetch failed/i.test(e.message ?? '')) {
-        return res.status(503).json({ error: 'Webhook storage not set up — add Vercel KV to your project.' });
-      }
+      if (kvError(e)) return res.status(503).json({ error: 'Webhook storage not set up — add Vercel KV to your project.' });
       return res.status(500).json({ error: 'Server error. Try again.' });
     }
   }
 
+  // ── DELETE: remove a webhook by token ────────────────────────────────────
   if (req.method === 'DELETE') {
     const { token } = req.query;
     if (!token) return res.status(400).json({ error: 'token required' });
@@ -73,9 +90,7 @@ export default async function handler(req, res) {
 
       return res.status(200).json({ ok: true });
     } catch (e) {
-      if (/KV_|UPSTASH|fetch failed/i.test(e.message ?? '')) {
-        return res.status(503).json({ error: 'Webhook storage not configured.' });
-      }
+      if (kvError(e)) return res.status(503).json({ error: 'Webhook storage not configured.' });
       return res.status(500).json({ error: 'Server error.' });
     }
   }
