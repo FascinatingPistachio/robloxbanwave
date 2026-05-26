@@ -61,7 +61,7 @@ export default async function handler(req, res) {
   const sub = encodeURIComponent(subreddit);
   let url;
   if (search) {
-    url = `https://www.reddit.com/r/${sub}/search.rss?q=${encodeURIComponent(search)}&sort=new&t=${encodeURIComponent(t || 'month')}&restrict_sr=1`;
+    url = `https://www.reddit.com/r/${sub}/search.rss?q=${encodeURIComponent(search)}&sort=new&t=${encodeURIComponent(t || 'month')}&limit=${encodeURIComponent(limit || '100')}&restrict_sr=1`;
   } else {
     url = `https://www.reddit.com/r/${sub}/${encodeURIComponent(sort || 'new')}.rss?limit=${encodeURIComponent(limit || '25')}`;
   }

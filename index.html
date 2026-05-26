@@ -4,464 +4,169 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Roblox Ban Wave — Live Exploit Status</title>
-<meta name="description" content="Real-time Roblox executor ban wave status tracker. Know before you exploit.">
+<meta name="description" content="Real-time Roblox executor ban wave tracker. Know before you exploit.">
 <meta property="og:title" content="Roblox Ban Wave — Live Status">
-<meta property="og:description" content="Is there an active Roblox executor ban wave right now? Find out instantly.">
+<meta property="og:description" content="Is there an active Roblox executor ban wave right now?">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <style>
-/* ── Reset & Base ─────────────────────────────────────────────── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* ── Reset ──────────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-:root {
-  --bg:           #060a14;
-  --bg-2:         #090e1a;
-  --surface:      rgba(255,255,255,0.03);
-  --surface-h:    rgba(255,255,255,0.055);
-  --border:       rgba(255,255,255,0.07);
-  --border-h:     rgba(255,255,255,0.13);
-  --text:         #f1f5f9;
-  --text-2:       #94a3b8;
-  --text-3:       #475569;
-  --accent:       #94a3b8;
-  --accent-dim:   rgba(148,163,184,0.08);
-  --accent-glow:  rgba(148,163,184,0.12);
-  --accent-border:rgba(148,163,184,0.25);
-  --font-sans:    'Inter', system-ui, sans-serif;
-  --font-display: 'Syne', sans-serif;
-  --font-mono:    'JetBrains Mono', monospace;
-  --radius:       14px;
-  --transition:   0.2s cubic-bezier(.4,0,.2,1);
+:root{
+  --bg:#060a14;--bg2:#090e1a;
+  --surface:rgba(255,255,255,.03);--surface-h:rgba(255,255,255,.055);
+  --border:rgba(255,255,255,.07);--border-h:rgba(255,255,255,.13);
+  --text:#f1f5f9;--text2:#94a3b8;--text3:#475569;
+  --accent:#94a3b8;--accent-dim:rgba(148,163,184,.08);
+  --accent-glow:rgba(148,163,184,.12);--accent-border:rgba(148,163,184,.25);
+  --green:#22c55e;--red:#ef4444;--amber:#f59e0b;
+  --sans:'Inter',system-ui,sans-serif;
+  --display:'Syne',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --r:14px;--t:.2s cubic-bezier(.4,0,.2,1);
 }
+body.active  {--accent:#ef4444;--accent-dim:rgba(239,68,68,.08);--accent-glow:rgba(239,68,68,.22);--accent-border:rgba(239,68,68,.35);}
+body.warning {--accent:#f59e0b;--accent-dim:rgba(245,158,11,.08);--accent-glow:rgba(245,158,11,.18);--accent-border:rgba(245,158,11,.35);}
+body.clear   {--accent:#22c55e;--accent-dim:rgba(34,197,94,.08); --accent-glow:rgba(34,197,94,.15); --accent-border:rgba(34,197,94,.3);}
 
-/* Status themes — applied to <body> */
-body.active  {
-  --accent:        #ef4444;
-  --accent-dim:    rgba(239,68,68,0.08);
-  --accent-glow:   rgba(239,68,68,0.22);
-  --accent-border: rgba(239,68,68,0.35);
-}
-body.warning {
-  --accent:        #f59e0b;
-  --accent-dim:    rgba(245,158,11,0.08);
-  --accent-glow:   rgba(245,158,11,0.18);
-  --accent-border: rgba(245,158,11,0.35);
-}
-body.clear {
-  --accent:        #22c55e;
-  --accent-dim:    rgba(34,197,94,0.08);
-  --accent-glow:   rgba(34,197,94,0.15);
-  --accent-border: rgba(34,197,94,0.3);
-}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;line-height:1.6;-webkit-font-smoothing:antialiased;transition:background .4s}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.025) 2px,rgba(0,0,0,.025) 4px);pointer-events:none;z-index:9999}
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--font-sans);
-  min-height: 100vh;
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  transition: background 0.4s ease;
-}
+/* ── Header ─────────────────────────────────────────────────────── */
+header{position:sticky;top:0;z-index:100;height:56px;display:flex;align-items:center;gap:10px;padding:0 28px;background:rgba(6,10,20,.88);backdrop-filter:blur(20px) saturate(1.5);border-bottom:1px solid var(--border)}
+.logo{display:flex;align-items:center;gap:9px;font-family:var(--display);font-size:15px;font-weight:800;letter-spacing:-.3px;color:var(--text);text-decoration:none}
+.logo-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent-glow);flex-shrink:0;transition:background var(--t),box-shadow var(--t)}
+body.active .logo-dot,body.warning .logo-dot{animation:dot-pulse 1s ease-in-out infinite}
+@keyframes dot-pulse{0%,100%{opacity:1;box-shadow:0 0 10px var(--accent-glow)}50%{opacity:.4;box-shadow:0 0 3px var(--accent-glow)}}
+.header-badge{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:100px;background:var(--accent-dim);border:1px solid var(--accent-border);color:var(--accent);transition:all var(--t)}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:14px}
+.last-check{font-family:var(--mono);font-size:10px;color:var(--text3)}
+.refresh-btn{background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:5px 13px;border-radius:8px;font-family:var(--mono);font-size:11px;cursor:pointer;transition:all var(--t);display:flex;align-items:center;gap:6px}
+.refresh-btn:hover{background:var(--surface-h);border-color:var(--border-h);color:var(--text)}
+.refresh-btn:disabled{opacity:.4;cursor:not-allowed}
+.refresh-btn svg{width:13px;height:13px}
 
-/* Scanline texture */
-body::before {
-  content: '';
-  position: fixed; inset: 0;
-  background: repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.025) 2px,rgba(0,0,0,0.025) 4px);
-  pointer-events: none; z-index: 9999;
-}
+/* ── Hero ───────────────────────────────────────────────────────── */
+.hero{position:relative;min-height:72vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 24px 60px;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-10%;left:50%;transform:translateX(-50%);width:700px;height:500px;background:radial-gradient(ellipse at center,var(--accent-glow) 0%,transparent 70%);pointer-events:none;transition:background .6s;z-index:0}
+body.active .hero::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(-55deg,transparent,transparent 40px,rgba(239,68,68,.018) 40px,rgba(239,68,68,.018) 80px);pointer-events:none;z-index:0}
+.hero-inner{position:relative;z-index:1;max-width:680px;width:100%;animation:fadeUp .45s cubic-bezier(.4,0,.2,1) both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.live-pill{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:5px 14px;border-radius:100px;border:1px solid var(--accent-border);background:var(--accent-dim);color:var(--accent);margin-bottom:32px;transition:all var(--t)}
+.live-pill-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0}
+body.active .live-pill-dot,body.warning .live-pill-dot{animation:dot-pulse 1s ease-in-out infinite}
+.status-kicker{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;transition:color var(--t)}
+.status-headline{font-family:var(--display);font-size:clamp(44px,9vw,88px);font-weight:800;letter-spacing:-3px;line-height:.96;color:var(--text);margin-bottom:18px}
+body.active  .status-headline{color:#ef4444}
+body.warning .status-headline{color:#f59e0b}
+body.clear   .status-headline{color:#22c55e}
+.status-desc{font-size:15px;color:var(--text2);max-width:440px;margin:0 auto 36px;line-height:1.7}
+.recent-post{background:var(--surface);border:1px solid var(--accent-border);border-radius:var(--r);padding:18px 22px;max-width:520px;margin:0 auto 28px;text-align:left;text-decoration:none;display:block;transition:background var(--t),border-color var(--t),transform var(--t)}
+.recent-post:hover{background:var(--surface-h);transform:translateY(-2px)}
+.rp-source{font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:6px}
+.rp-title{font-size:15px;font-weight:600;color:var(--text);line-height:1.4;margin-bottom:10px}
+.rp-meta{display:flex;gap:14px;font-family:var(--mono);font-size:11px;color:var(--text3)}
+.rp-meta .votes{color:var(--accent);font-weight:700}
+.rp-arrow{margin-left:auto;font-size:13px;color:var(--text3)}
+.score-meter{display:flex;align-items:center;gap:10px;justify-content:center;font-family:var(--mono);font-size:10px;color:var(--text3)}
+.meter-track{width:120px;height:3px;background:var(--border);border-radius:100px;overflow:hidden}
+.meter-fill{height:100%;background:var(--accent);border-radius:100px;transition:width .8s cubic-bezier(.4,0,.2,1),background var(--t)}
 
-/* ── Header ───────────────────────────────────────────────────── */
-header {
-  position: sticky; top: 0; z-index: 100;
-  height: 56px;
-  display: flex; align-items: center; gap: 10px;
-  padding: 0 28px;
-  background: rgba(6,10,20,0.8);
-  backdrop-filter: blur(20px) saturate(1.5);
-  border-bottom: 1px solid var(--border);
-}
+/* ── Section divider ────────────────────────────────────────────── */
+.sep{display:flex;align-items:center;gap:14px;padding:0 28px;margin-bottom:20px}
+.sep span{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);white-space:nowrap}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:var(--border)}
 
-.logo {
-  display: flex; align-items: center; gap: 9px;
-  font-family: var(--font-display);
-  font-size: 15px; font-weight: 800;
-  letter-spacing: -0.3px;
-  color: var(--text);
-  text-decoration: none;
-}
-.logo-dot {
-  width: 8px; height: 8px; border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 10px var(--accent-glow);
-  flex-shrink: 0;
-  transition: background var(--transition), box-shadow var(--transition);
-}
-body.active  .logo-dot { animation: dot-pulse .9s ease-in-out infinite; }
-body.warning .logo-dot { animation: dot-pulse 1.6s ease-in-out infinite; }
-@keyframes dot-pulse {
-  0%,100% { opacity: 1; box-shadow: 0 0 10px var(--accent-glow); }
-  50%      { opacity: .5; box-shadow: 0 0 3px var(--accent-glow); }
-}
+/* ── Feed ───────────────────────────────────────────────────────── */
+.feed{max-width:720px;margin:0 auto;padding:0 20px 32px}
+.feed-controls{display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.filter-btn{background:var(--surface);border:1px solid var(--border);color:var(--text3);padding:5px 14px;border-radius:8px;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all var(--t)}
+.filter-btn:hover{color:var(--text2);border-color:var(--border-h)}
+.filter-btn.active{background:var(--accent-dim);border-color:var(--accent-border);color:var(--accent)}
+.feed-count{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--text3)}
+.posts{display:flex;flex-direction:column;gap:6px}
+.post-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 18px;display:grid;grid-template-columns:44px 1fr auto;gap:14px;align-items:center;text-decoration:none;transition:background var(--t),border-color var(--t),transform var(--t)}
+.post-card:hover{background:var(--surface-h);border-color:var(--border-h);transform:translateX(3px)}
+.post-card[data-type="alert"]{border-left:2px solid var(--accent)}
+.pc-votes{text-align:center}
+.pc-votes-num{font-family:var(--display);font-size:17px;font-weight:800;color:var(--text);line-height:1}
+.pc-votes-lbl{font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:2px}
+.pc-body{min-width:0}
+.pc-title{font-size:13px;font-weight:500;color:var(--text);line-height:1.45;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px}
+.pc-meta{display:flex;gap:10px;align-items:center;font-family:var(--mono);font-size:10px;color:var(--text3)}
+.tag{padding:1px 7px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.tag-alert{background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent-border)}
+.tag-question{background:rgba(148,163,184,.07);color:#64748b;border:1px solid rgba(148,163,184,.15)}
+.pc-link-icon{color:var(--text3);font-size:16px;transition:color var(--t)}
+.post-card:hover .pc-link-icon{color:var(--text2)}
 
-.header-badge {
-  font-family: var(--font-mono);
-  font-size: 10px; font-weight: 700;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  padding: 3px 9px;
-  border-radius: 100px;
-  background: var(--accent-dim);
-  border: 1px solid var(--accent-border);
-  color: var(--accent);
-  transition: all var(--transition);
-}
+/* ── Graph ──────────────────────────────────────────────────────── */
+.graph-wrap{max-width:720px;margin:0 auto;padding:0 20px 32px}
+.graph-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px 24px 16px}
+.graph-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:12px;flex-wrap:wrap}
+.graph-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px}
+.graph-sub{font-family:var(--mono);font-size:10px;color:var(--text3)}
+.graph-stats{display:flex;gap:16px;flex-shrink:0}
+.gs-item{text-align:center}
+.gs-item strong{font-family:var(--display);font-size:18px;font-weight:800;color:var(--text);display:block;line-height:1}
+.gs-item span{font-family:var(--mono);font-size:9px;color:var(--text3)}
+.graph-chart{display:flex;align-items:flex-end;gap:3px;height:88px;margin-bottom:6px}
+.g-bar{flex:1;border-radius:3px 3px 0 0;background:rgba(255,255,255,.05);min-height:2px;cursor:pointer;transition:background var(--t);position:relative}
+.g-bar.has-data{background:rgba(239,68,68,.25)}
+.g-bar.has-data:hover{background:var(--red)}
+.g-bar.cur{outline:1px solid rgba(255,255,255,.15)}
+.graph-labels{display:flex;gap:3px}
+.g-lbl{flex:1;font-family:var(--mono);font-size:8px;color:var(--text3);text-align:center;line-height:1.2}
 
-.header-right {
-  margin-left: auto;
-  display: flex; align-items: center; gap: 14px;
-}
-.last-check {
-  font-family: var(--font-mono);
-  font-size: 10px; color: var(--text-3);
-}
-.refresh-btn {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  color: var(--text-2);
-  padding: 5px 13px;
-  border-radius: 8px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  cursor: pointer;
-  transition: all var(--transition);
-  display: flex; align-items: center; gap: 6px;
-}
-.refresh-btn:hover { background: var(--surface-h); border-color: var(--border-h); color: var(--text); }
-.refresh-btn:disabled { opacity: .4; cursor: not-allowed; }
-.refresh-btn svg { width:13px; height:13px; }
+/* ── Webhooks ───────────────────────────────────────────────────── */
+.wh-wrap{max-width:720px;margin:0 auto;padding:0 20px 60px}
+.wh-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px 24px}
+.wh-title{font-size:14px;font-weight:600;margin-bottom:4px}
+.wh-desc{font-size:12px;color:var(--text2);margin-bottom:18px;line-height:1.6}
+.wh-input-row{display:flex;gap:8px}
+.wh-input{flex:1;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:9px 14px;border-radius:8px;font-family:var(--mono);font-size:12px;outline:none;transition:border-color var(--t)}
+.wh-input::placeholder{color:var(--text3)}
+.wh-input:focus{border-color:var(--accent-border)}
+.wh-btn{background:var(--accent);color:#fff;border:none;padding:9px 18px;border-radius:8px;font-family:var(--mono);font-size:12px;font-weight:700;cursor:pointer;transition:opacity var(--t);white-space:nowrap}
+.wh-btn:hover{opacity:.85}
+.wh-btn:disabled{opacity:.4;cursor:not-allowed}
+.wh-btn-danger{background:transparent;border:1px solid var(--border);color:var(--text2)}
+.wh-btn-danger:hover{border-color:#ef4444;color:#ef4444}
+.wh-active-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.wh-active-indicator{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--text2)}
+.wh-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e;animation:dot-pulse 2s ease-in-out infinite}
+.wh-msg{margin-top:12px;font-family:var(--mono);font-size:11px;padding:7px 11px;border-radius:7px;display:none}
+.wh-msg.ok {background:rgba(34,197,94,.1); color:#22c55e;border:1px solid rgba(34,197,94,.25);display:block}
+.wh-msg.err{background:rgba(239,68,68,.1); color:#ef4444;border:1px solid rgba(239,68,68,.25);display:block}
+.wh-privacy{margin-top:14px;font-family:var(--mono);font-size:10px;color:var(--text3);line-height:1.6}
+.wh-privacy span{color:var(--text2)}
 
-/* ── Hero ─────────────────────────────────────────────────────── */
-.hero {
-  position: relative;
-  min-height: 72vh;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  text-align: center;
-  padding: 80px 24px 60px;
-  overflow: hidden;
-}
+/* ── Spinner / empty ────────────────────────────────────────────── */
+.state-box{text-align:center;padding:60px 24px;color:var(--text3);font-family:var(--mono);font-size:12px}
+.spinner{display:inline-block;width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:10px}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-/* Ambient glow behind hero */
-.hero::before {
-  content: '';
-  position: absolute; top: -10%; left: 50%;
-  transform: translateX(-50%);
-  width: 700px; height: 500px;
-  background: radial-gradient(ellipse at center, var(--accent-glow) 0%, transparent 70%);
-  pointer-events: none;
-  transition: background 0.6s ease;
-  z-index: 0;
-}
+/* ── Footer ─────────────────────────────────────────────────────── */
+footer{text-align:center;padding:24px;font-family:var(--mono);font-size:10px;color:var(--text3);border-top:1px solid var(--border)}
+footer a{color:var(--text3);text-decoration:none}
+footer a:hover{color:var(--text2)}
 
-/* Stripe pattern when active */
-body.active .hero::after {
-  content: '';
-  position: absolute; inset: 0;
-  background: repeating-linear-gradient(
-    -55deg,
-    transparent, transparent 40px,
-    rgba(239,68,68,0.018) 40px, rgba(239,68,68,0.018) 80px
-  );
-  pointer-events: none; z-index: 0;
-}
-
-.hero-inner {
-  position: relative; z-index: 1;
-  max-width: 680px; width: 100%;
-  animation: fadeUp .45s cubic-bezier(.4,0,.2,1) both;
-}
-@keyframes fadeUp {
-  from { opacity:0; transform:translateY(24px); }
-  to   { opacity:1; transform:translateY(0); }
-}
-
-/* Live pill */
-.live-pill {
-  display: inline-flex; align-items: center; gap: 7px;
-  font-family: var(--font-mono);
-  font-size: 10px; font-weight: 700;
-  letter-spacing: .14em; text-transform: uppercase;
-  padding: 5px 14px;
-  border-radius: 100px;
-  border: 1px solid var(--accent-border);
-  background: var(--accent-dim);
-  color: var(--accent);
-  margin-bottom: 32px;
-  transition: all var(--transition);
-}
-.live-pill-dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--accent);
-  flex-shrink: 0;
-}
-body.active  .live-pill-dot { animation: dot-pulse .9s ease-in-out infinite; }
-body.warning .live-pill-dot { animation: dot-pulse 1.6s ease-in-out infinite; }
-
-/* Status headline */
-.status-kicker {
-  font-family: var(--font-mono);
-  font-size: 11px; font-weight: 700;
-  letter-spacing: .18em; text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 10px;
-  transition: color var(--transition);
-}
-
-.status-headline {
-  font-family: var(--font-display);
-  font-size: clamp(44px, 9vw, 88px);
-  font-weight: 800;
-  letter-spacing: -3px;
-  line-height: .96;
-  color: var(--text);
-  margin-bottom: 18px;
-}
-body.active  .status-headline { color: #ef4444; }
-body.warning .status-headline { color: #f59e0b; }
-body.clear   .status-headline { color: #22c55e; }
-
-.status-desc {
-  font-size: 15px;
-  color: var(--text-2);
-  max-width: 440px;
-  margin: 0 auto 36px;
-  line-height: 1.7;
-}
-
-/* Most-recent post card in hero */
-.recent-post {
-  background: var(--surface);
-  border: 1px solid var(--accent-border);
-  border-radius: var(--radius);
-  padding: 18px 22px;
-  max-width: 520px;
-  margin: 0 auto 28px;
-  text-align: left;
-  text-decoration: none;
-  display: block;
-  transition: background var(--transition), border-color var(--transition), transform var(--transition);
-}
-.recent-post:hover { background: var(--surface-h); transform: translateY(-2px); }
-
-.rp-source {
-  font-family: var(--font-mono);
-  font-size: 10px; color: var(--text-3);
-  margin-bottom: 6px;
-}
-.rp-title {
-  font-size: 15px; font-weight: 600;
-  color: var(--text);
-  line-height: 1.4;
-  margin-bottom: 10px;
-}
-.rp-meta {
-  display: flex; gap: 14px;
-  font-family: var(--font-mono);
-  font-size: 11px; color: var(--text-3);
-}
-.rp-meta .votes { color: var(--accent); font-weight: 700; }
-.rp-arrow {
-  margin-left: auto;
-  font-size: 13px;
-  color: var(--text-3);
-}
-
-/* Score meter */
-.score-meter {
-  display: flex; align-items: center; gap: 10px;
-  justify-content: center;
-  font-family: var(--font-mono);
-  font-size: 10px; color: var(--text-3);
-}
-.meter-track {
-  width: 120px; height: 3px;
-  background: var(--border);
-  border-radius: 100px;
-  overflow: hidden;
-}
-.meter-fill {
-  height: 100%;
-  background: var(--accent);
-  border-radius: 100px;
-  transition: width 0.8s cubic-bezier(.4,0,.2,1), background var(--transition);
-}
-
-/* ── Divider ──────────────────────────────────────────────────── */
-.section-divider {
-  display: flex; align-items: center; gap: 14px;
-  padding: 0 28px;
-  margin-bottom: 20px;
-}
-.section-divider span {
-  font-family: var(--font-mono);
-  font-size: 10px; font-weight: 700;
-  letter-spacing: .14em; text-transform: uppercase;
-  color: var(--text-3);
-  white-space: nowrap;
-}
-.section-divider::before,
-.section-divider::after {
-  content: ''; flex: 1; height: 1px;
-  background: var(--border);
-}
-
-/* ── Feed ─────────────────────────────────────────────────────── */
-.feed {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 0 20px 80px;
-}
-
-.feed-controls {
-  display: flex; align-items: center; gap: 8px;
-  margin-bottom: 16px; flex-wrap: wrap;
-}
-.filter-btn {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  color: var(--text-3);
-  padding: 5px 14px;
-  border-radius: 8px;
-  font-family: var(--font-mono);
-  font-size: 10px; font-weight: 700;
-  letter-spacing: .06em; text-transform: uppercase;
-  cursor: pointer;
-  transition: all var(--transition);
-}
-.filter-btn:hover { color: var(--text-2); border-color: var(--border-h); }
-.filter-btn.active {
-  background: var(--accent-dim);
-  border-color: var(--accent-border);
-  color: var(--accent);
-}
-.feed-count {
-  margin-left: auto;
-  font-family: var(--font-mono);
-  font-size: 10px; color: var(--text-3);
-}
-
-.posts { display: flex; flex-direction: column; gap: 6px; }
-
-.post-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 14px 18px;
-  display: grid;
-  grid-template-columns: 44px 1fr auto;
-  gap: 14px;
-  align-items: center;
-  text-decoration: none;
-  transition: background var(--transition), border-color var(--transition), transform var(--transition);
-}
-.post-card:hover {
-  background: var(--surface-h);
-  border-color: var(--border-h);
-  transform: translateX(3px);
-}
-.post-card[data-type="alert"] {
-  border-left: 2px solid var(--accent);
-}
-
-.pc-votes {
-  text-align: center;
-}
-.pc-votes-num {
-  font-family: var(--font-display);
-  font-size: 17px; font-weight: 800;
-  color: var(--text);
-  line-height: 1;
-}
-.pc-votes-lbl {
-  font-family: var(--font-mono);
-  font-size: 9px; color: var(--text-3);
-  margin-top: 2px;
-}
-
-.pc-body { min-width: 0; }
-.pc-title {
-  font-size: 13px; font-weight: 500;
-  color: var(--text);
-  line-height: 1.45;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  margin-bottom: 4px;
-}
-.pc-meta {
-  display: flex; gap: 10px; align-items: center;
-  font-family: var(--font-mono);
-  font-size: 10px; color: var(--text-3);
-}
-.tag {
-  padding: 1px 7px;
-  border-radius: 4px;
-  font-size: 9px; font-weight: 700;
-  letter-spacing: .04em; text-transform: uppercase;
-}
-.tag-alert   { background: var(--accent-dim); color: var(--accent); border: 1px solid var(--accent-border); }
-.tag-question { background: rgba(148,163,184,.07); color: #64748b; border: 1px solid rgba(148,163,184,.15); }
-
-.pc-link-icon {
-  color: var(--text-3);
-  font-size: 16px;
-  transition: color var(--transition);
-}
-.post-card:hover .pc-link-icon { color: var(--text-2); }
-
-/* Empty / loading / error */
-.state-box {
-  text-align: center;
-  padding: 60px 24px;
-  color: var(--text-3);
-  font-family: var(--font-mono);
-  font-size: 12px;
-}
-.spinner {
-  display: inline-block;
-  width: 20px; height: 20px;
-  border: 2px solid var(--border);
-  border-top-color: var(--accent);
-  border-radius: 50%;
-  animation: spin .7s linear infinite;
-  margin-bottom: 10px;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* ── Footer ───────────────────────────────────────────────────── */
-footer {
-  text-align: center;
-  padding: 24px;
-  font-family: var(--font-mono);
-  font-size: 10px; color: var(--text-3);
-  border-top: 1px solid var(--border);
-}
-footer a { color: var(--text-3); text-decoration: none; }
-footer a:hover { color: var(--text-2); }
-
-/* ── Responsive ───────────────────────────────────────────────── */
-@media (max-width: 600px) {
-  header { padding: 0 16px; }
-  .hero { padding: 60px 16px 40px; min-height: 60vh; }
-  .status-headline { letter-spacing: -2px; }
-  .post-card { grid-template-columns: 36px 1fr auto; gap: 10px; }
-  .pc-title { font-size: 12px; }
+/* ── Responsive ─────────────────────────────────────────────────── */
+@media(max-width:600px){
+  header{padding:0 16px}
+  .hero{padding:60px 16px 40px;min-height:60vh}
+  .status-headline{letter-spacing:-2px}
+  .post-card{grid-template-columns:36px 1fr auto;gap:10px}
+  .graph-head{flex-direction:column}
+  .graph-stats{justify-content:flex-start}
+  .wh-input-row{flex-direction:column}
 }
 </style>
 </head>
 <body class="loading">
 
-<!-- ── Header ──────────────────────────────────────────────────── -->
+<!-- ── Header ──────────────────────────────────────────────────────── -->
 <header>
   <a class="logo" href="/">
     <span class="logo-dot"></span>
@@ -480,18 +185,15 @@ footer a:hover { color: var(--text-2); }
   </div>
 </header>
 
-<!-- ── Hero ────────────────────────────────────────────────────── -->
-<section class="hero" id="hero">
+<!-- ── Hero ────────────────────────────────────────────────────────── -->
+<section class="hero">
   <div class="hero-inner" id="heroInner">
     <div class="state-box"><div class="spinner"></div><br>Checking r/robloxhackers…</div>
   </div>
 </section>
 
-<!-- ── Feed ────────────────────────────────────────────────────── -->
-<div class="section-divider" id="feedDivider" style="display:none">
-  <span>Recent reports · r/robloxhackers</span>
-</div>
-
+<!-- ── Feed ────────────────────────────────────────────────────────── -->
+<div class="sep" id="feedSep" style="display:none"><span>Recent reports · r/robloxhackers</span></div>
 <div class="feed" id="feedSection" style="display:none">
   <div class="feed-controls">
     <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
@@ -499,140 +201,166 @@ footer a:hover { color: var(--text-2); }
     <button class="filter-btn" onclick="setFilter('question',this)">Questions</button>
     <span class="feed-count" id="feedCount"></span>
   </div>
-  <div class="posts" id="postsContainer">
-    <div class="state-box"><div class="spinner"></div></div>
+  <div class="posts" id="postsContainer"></div>
+</div>
+
+<!-- ── Graph ────────────────────────────────────────────────────────── -->
+<div class="sep" id="graphSep" style="display:none"><span>Banwave mention frequency</span></div>
+<div class="graph-wrap" id="graphSection" style="display:none">
+  <div class="graph-card" id="graphCard"></div>
+</div>
+
+<!-- ── Webhooks ─────────────────────────────────────────────────────── -->
+<div class="sep"><span>Discord notifications</span></div>
+<div class="wh-wrap">
+  <div class="wh-card">
+    <div class="wh-title">Get notified when a ban wave is detected</div>
+    <div class="wh-desc">
+      Paste your Discord webhook URL below. When this site detects an active ban wave,
+      it will send a message to your Discord server automatically.<br>
+      Your webhook URL is <strong>encrypted end-to-end</strong> — nobody can see it through the network.
+    </div>
+
+    <!-- Not registered state -->
+    <div id="whForm">
+      <div class="wh-input-row">
+        <input class="wh-input" id="whInput" type="url"
+          placeholder="https://discord.com/api/webhooks/…"
+          autocomplete="off" autocorrect="off" spellcheck="false">
+        <button class="wh-btn" id="whAddBtn" onclick="addWebhook()">Add Webhook</button>
+      </div>
+      <div class="wh-msg" id="whFormMsg"></div>
+    </div>
+
+    <!-- Registered state -->
+    <div id="whActive" style="display:none">
+      <div class="wh-active-row">
+        <div class="wh-active-indicator">
+          <span class="wh-dot"></span>
+          Webhook active — notifications enabled
+        </div>
+        <button class="wh-btn wh-btn-danger" onclick="removeWebhook()">Remove webhook</button>
+      </div>
+      <div class="wh-msg" id="whActiveMsg"></div>
+    </div>
+
+    <div class="wh-privacy">
+      <span>How it works:</span>
+      Your URL is sent once over HTTPS and stored AES-256-GCM encrypted on our server.
+      Only a deletion token (saved in your browser) can remove it.
+      The URL never appears in any outgoing browser request after registration.
+    </div>
   </div>
 </div>
 
 <footer>
-  Data sourced from <a href="https://reddit.com/r/robloxhackers" target="_blank" rel="noopener">r/robloxhackers</a> · <a href="https://robloxbanwave.vercel.app">robloxbanwave.vercel.app</a>
+  Data from <a href="https://reddit.com/r/robloxhackers" target="_blank" rel="noopener">r/robloxhackers</a>
+  · <a href="https://robloxbanwave.vercel.app">robloxbanwave.vercel.app</a>
 </footer>
 
 <script>
-// ── Config ────────────────────────────────────────────────────────────────
-const SUBREDDIT   = 'robloxhackers';
-const SEARCH_TERM = 'banwave';
-// Title filter: any post containing "banwave" or "ban wave" (case-insensitive)
-const TITLE_RE = /ban\s*wave/i;
-
-// Thresholds for status score
-const SCORE_ACTIVE  = 3.5;
-const SCORE_WARNING = 1.0;
+// ── Config ─────────────────────────────────────────────────────────────────
+const SUBREDDIT    = 'robloxhackers';
+const SEARCH_TERM  = 'banwave';
+const TITLE_RE     = /ban\s*wave/i;
+const SCORE_ACTIVE = 3.5;
+const SCORE_WARN   = 1.0;
+// localStorage keys
+const LS_TOKEN     = 'rbx_wh_token';
+const LS_STATUS    = 'rbx_last_status';
+const LS_NOTIFIED  = 'rbx_last_notify_at';
 
 let allPosts  = [];
 let curFilter = 'all';
+let curStatus = '';
 
-// ── Helpers ───────────────────────────────────────────────────────────────
-function esc(s) {
-  return String(s || '')
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
+// ── Utils ───────────────────────────────────────────────────────────────────
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
 function timeAgo(utc) {
-  const s = Date.now() / 1000 - utc;
-  if (s < 3600)  return Math.floor(s / 60) + 'm ago';
-  if (s < 86400) return Math.floor(s / 3600) + 'h ago';
-  if (s < 86400 * 30) return Math.floor(s / 86400) + 'd ago';
-  return Math.floor(s / (86400 * 30)) + 'mo ago';
+  const s = Date.now()/1000 - utc;
+  if (s < 3600)        return Math.floor(s/60)+'m ago';
+  if (s < 86400)       return Math.floor(s/3600)+'h ago';
+  if (s < 86400*30)    return Math.floor(s/86400)+'d ago';
+  if (s < 86400*365)   return Math.floor(s/(86400*30))+'mo ago';
+  return Math.floor(s/(86400*365))+'y ago';
 }
 
-function fmtVotes(n) {
-  if (n == null || n === 0) return '—';
-  if (n >= 1000) return (n / 1000).toFixed(1) + 'k';
-  return String(n);
+function fmtNum(n) {
+  if (n==null||n===0) return '—';
+  return n>=1000 ? (n/1000).toFixed(1)+'k' : String(n);
 }
 
-// Classify post by title intent
 function classify(title) {
   const t = title.toLowerCase();
-  // Alert: declares or warns about active ban wave
-  if (/\balert\b|don.?t exploit|not safe|activated|going on|is detected|going through|hours of ban|⚠|banwave -|banwave!|rn[,!.]|right now|currently|is live|ongoing/.test(t)) return 'alert';
-  // Question: asks about state
-  if (/^(is |did |was |when |how |can |does |are |what |where |why |any )/.test(t) ||
-      / over\??| still | end\??|explain|tracker|chances|possible\??/.test(t)) return 'question';
+  if (/\balert\b|don.?t exploit|not safe|activated|going on|is detected|going through|hours of ban|⚠|banwave\s*-|banwave[!]+|currently|right now|is live/.test(t)) return 'alert';
+  if (/^(is |did |was |when |how |can |does |are |what |where |any )/.test(t) || / over\??| still | end\??|explain|tracker|chances|possible/.test(t)) return 'question';
   return 'general';
 }
 
-// Score: higher = more likely an active ban wave right now
 function scorePost(p) {
-  const ageSeconds = Date.now() / 1000 - p.created_utc;
-  const ageDays    = ageSeconds / 86400;
-  if (ageDays > 14) return 0; // ignore posts older than 2 weeks
-  const recency    = Math.pow(0.85, ageDays);           // exponential decay
-  const votes      = Math.log2(Math.max(1, p.score || 0) + 1);
-  const typeW      = p._type === 'alert' ? 2.5
-                   : p._type === 'question' ? 0.2
-                   : 0.5;
-  return recency * (votes + 0.5) * typeW;
+  const ageDays = (Date.now()/1000 - p.created_utc) / 86400;
+  if (ageDays > 14) return 0;
+  const recency = Math.pow(0.85, ageDays);
+  const votes   = Math.log2(Math.max(1, p.score||0) + 1);
+  const tw      = p._type==='alert' ? 2.5 : p._type==='question' ? 0.2 : 0.5;
+  return recency * (votes + 0.5) * tw;
 }
 
-// ── Fetch ─────────────────────────────────────────────────────────────────
+// ── Fetch ───────────────────────────────────────────────────────────────────
 async function fetchPosts() {
-  const params = new URLSearchParams({ subreddit: SUBREDDIT, search: SEARCH_TERM, t: 'month' });
-  const res = await fetch('/api/reddit?' + params);
-  if (!res.ok) throw new Error('Server returned ' + res.status);
-  const data = await res.json();
-  return (data.data?.children || [])
-    .map(c => c.data)
-    .filter(p => TITLE_RE.test(p.title || ''));
+  const p = new URLSearchParams({ subreddit: SUBREDDIT, search: SEARCH_TERM, t: 'year', limit: 100 });
+  const r = await fetch('/api/reddit?' + p);
+  if (!r.ok) throw new Error('Server returned '+r.status);
+  const data = await r.json();
+  return (data.data?.children || []).map(c => c.data).filter(p => TITLE_RE.test(p.title||''));
 }
 
-// ── Render hero ────────────────────────────────────────────────────────────
+// ── Hero ────────────────────────────────────────────────────────────────────
 function renderHero(posts, totalScore) {
-  const body   = document.body;
-  const heroEl = document.getElementById('heroInner');
-  const badge  = document.getElementById('headerBadge');
   const recent = posts[0] || null;
-
-  // Determine status
   let status, kicker, headline, desc;
+
   if (totalScore >= SCORE_ACTIVE) {
     status   = 'active';
     kicker   = '⚠ BAN WAVE DETECTED';
     headline = 'NOT SAFE';
-    desc     = 'An active ban wave is being reported on r/robloxhackers right now.<br>'
-             + 'Do <strong>not</strong> use any Roblox executors until this clears — '
-             + 'accounts are at risk of permanent bans.';
-    badge.textContent = '⚠ ACTIVE';
-  } else if (totalScore >= SCORE_WARNING) {
+    desc     = 'An active ban wave is being reported on r/robloxhackers.<br>'
+             + '<strong>Do not use any Roblox executors</strong> until the wave is confirmed over.';
+    document.getElementById('headerBadge').textContent = '⚠ ACTIVE';
+  } else if (totalScore >= SCORE_WARN) {
     status   = 'warning';
     kicker   = '⚠ RECENT ACTIVITY';
     headline = 'USE CAUTION';
-    desc     = 'Banwave activity has been reported recently on r/robloxhackers.<br>'
-             + 'A wave may still be ongoing — check reports below before exploiting.';
-    badge.textContent = 'WARNING';
+    desc     = 'Recent banwave activity on r/robloxhackers. A wave may still be ongoing —'
+             + ' check the reports below before using any executor.';
+    document.getElementById('headerBadge').textContent = 'WARNING';
   } else {
     status   = 'clear';
     kicker   = '✓ STATUS CLEAR';
     headline = 'LOOKS CLEAR';
-    desc     = 'No significant banwave activity detected in the last two weeks.<br>'
-             + 'This can change at any time — always verify before using any executor.';
-    badge.textContent = 'CLEAR';
+    desc     = 'No significant banwave activity in the last two weeks.<br>'
+             + 'This can change at any time — always verify before exploiting.';
+    document.getElementById('headerBadge').textContent = 'CLEAR';
   }
 
-  body.className = status;
+  document.body.className = status;
+  curStatus = status;
 
-  // Score meter capped at 100%
   const meterPct = Math.min(100, (totalScore / (SCORE_ACTIVE * 1.5)) * 100).toFixed(0);
-
-  // Most recent post card
   const rpHtml = recent ? `
     <a class="recent-post" href="${esc(recent._url)}" target="_blank" rel="noopener">
       <div class="rp-source">r/robloxhackers · ${timeAgo(recent.created_utc)}</div>
       <div class="rp-title">${esc(recent.title)}</div>
       <div class="rp-meta">
-        <span class="votes">▲ ${fmtVotes(recent.score)}</span>
-        <span>💬 ${fmtVotes(recent.num_comments)}</span>
+        <span class="votes">▲ ${fmtNum(recent.score)}</span>
+        <span>💬 ${fmtNum(recent.num_comments)}</span>
         <span class="rp-arrow">View on Reddit ↗</span>
       </div>
     </a>` : '';
 
-  heroEl.innerHTML = `
-    <div class="live-pill">
-      <span class="live-pill-dot"></span>
-      LIVE MONITOR · R/ROBLOXHACKERS
-    </div>
+  document.getElementById('heroInner').innerHTML = `
+    <div class="live-pill"><span class="live-pill-dot"></span>LIVE MONITOR · R/ROBLOXHACKERS</div>
     <div class="status-kicker">${esc(kicker)}</div>
     <div class="status-headline">${esc(headline)}</div>
     <p class="status-desc">${desc}</p>
@@ -641,20 +369,19 @@ function renderHero(posts, totalScore) {
       <span>THREAT LEVEL</span>
       <div class="meter-track"><div class="meter-fill" style="width:${meterPct}%"></div></div>
       <span>${meterPct}%</span>
-    </div>
-  `;
+    </div>`;
 }
 
-// ── Render feed ────────────────────────────────────────────────────────────
+// ── Feed ────────────────────────────────────────────────────────────────────
 function renderFeed() {
   const container = document.getElementById('postsContainer');
   const countEl   = document.getElementById('feedCount');
-
-  let shown = allPosts;
-  if (curFilter === 'alert')    shown = allPosts.filter(p => p._type === 'alert');
-  if (curFilter === 'question') shown = allPosts.filter(p => p._type === 'question');
-
-  countEl.textContent = shown.length + ' post' + (shown.length !== 1 ? 's' : '');
+  // Feed shows last 30 days
+  const recent    = allPosts.filter(p => (Date.now()/1000 - p.created_utc) < 30*86400);
+  let shown = recent;
+  if (curFilter==='alert')    shown = recent.filter(p=>p._type==='alert');
+  if (curFilter==='question') shown = recent.filter(p=>p._type==='question');
+  countEl.textContent = shown.length + ' post'+(shown.length!==1?'s':'')+' (last 30 days)';
 
   if (!shown.length) {
     container.innerHTML = '<div class="state-box">No posts match this filter.</div>';
@@ -662,39 +389,191 @@ function renderFeed() {
   }
 
   container.innerHTML = shown.map(p => {
-    const tagHtml = p._type === 'alert'
+    const tagHtml = p._type==='alert'
       ? '<span class="tag tag-alert">Alert</span>'
-      : p._type === 'question'
-        ? '<span class="tag tag-question">Question</span>'
-        : '';
-
+      : p._type==='question' ? '<span class="tag tag-question">Question</span>' : '';
     return `
       <a class="post-card" data-type="${esc(p._type)}" href="${esc(p._url)}" target="_blank" rel="noopener">
         <div class="pc-votes">
-          <div class="pc-votes-num">${fmtVotes(p.score)}</div>
+          <div class="pc-votes-num">${fmtNum(p.score)}</div>
           <div class="pc-votes-lbl">pts</div>
         </div>
         <div class="pc-body">
           <div class="pc-title">${esc(p.title)}</div>
-          <div class="pc-meta">
-            ${tagHtml}
-            <span>${timeAgo(p.created_utc)}</span>
-            <span>💬 ${fmtVotes(p.num_comments)}</span>
-          </div>
+          <div class="pc-meta">${tagHtml}<span>${timeAgo(p.created_utc)}</span><span>💬 ${fmtNum(p.num_comments)}</span></div>
         </div>
         <div class="pc-link-icon">↗</div>
       </a>`;
   }).join('');
 }
 
-function setFilter(f, btn) {
-  curFilter = f;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+function setFilter(f,btn) {
+  curFilter=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   renderFeed();
 }
 
-// ── Main load ──────────────────────────────────────────────────────────────
+// ── Graph ────────────────────────────────────────────────────────────────────
+function renderGraph(posts) {
+  if (!posts.length) return;
+
+  // Group all posts by YYYY-MM
+  const counts = {};
+  for (const p of posts) {
+    const d = new Date(p.created_utc * 1000);
+    const k = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    counts[k] = (counts[k]||0) + 1;
+  }
+
+  // Build 18-month window ending this month
+  const now     = new Date();
+  const months  = [];
+  for (let i = 17; i >= 0; i--) {
+    const d   = new Date(now.getFullYear(), now.getMonth()-i, 1);
+    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    months.push({
+      key,
+      label: d.toLocaleDateString('en-US',{month:'short'}),
+      year:  d.getFullYear(),
+      count: counts[key]||0,
+    });
+  }
+
+  const maxCount  = Math.max(1, ...months.map(m=>m.count));
+  const curKey    = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const total     = posts.length;
+  const last30    = posts.filter(p=>(Date.now()/1000-p.created_utc)<30*86400).length;
+  const peakMonth = months.reduce((a,b)=>b.count>a.count?b:a, months[0]);
+
+  const barsHtml = months.map(m=>{
+    const h = m.count>0 ? Math.max(5,(m.count/maxCount)*100) : 2;
+    const tip = `${m.label} ${m.year}: ${m.count} post${m.count!==1?'s':''}`;
+    return `<div class="g-bar${m.count>0?' has-data':''}${m.key===curKey?' cur':''}"
+                 style="height:${h}%"
+                 title="${esc(tip)}"></div>`;
+  }).join('');
+
+  const labelsHtml = months.map((m,i)=>{
+    const show = i===0||m.label==='Jan'||i===months.length-1||i%3===0;
+    return `<div class="g-lbl">${show?m.label:''}</div>`;
+  }).join('');
+
+  document.getElementById('graphCard').innerHTML = `
+    <div class="graph-head">
+      <div>
+        <div class="graph-title">Banwave mentions on r/robloxhackers</div>
+        <div class="graph-sub">Posts per month containing "banwave" or "ban wave" · last 18 months</div>
+      </div>
+      <div class="graph-stats">
+        <div class="gs-item"><strong>${total}</strong><span>total</span></div>
+        <div class="gs-item"><strong>${last30}</strong><span>last 30d</span></div>
+        <div class="gs-item"><strong>${peakMonth.count}</strong><span>peak</span></div>
+      </div>
+    </div>
+    <div class="graph-chart">${barsHtml}</div>
+    <div class="graph-labels">${labelsHtml}</div>`;
+
+  document.getElementById('graphSep').style.display = 'flex';
+  document.getElementById('graphSection').style.display = 'block';
+}
+
+// ── Webhook UI ───────────────────────────────────────────────────────────────
+function refreshWebhookUI() {
+  const hasToken = !!localStorage.getItem(LS_TOKEN);
+  document.getElementById('whForm').style.display   = hasToken ? 'none'  : 'block';
+  document.getElementById('whActive').style.display = hasToken ? 'block' : 'none';
+}
+
+function showWhMsg(id, type, text) {
+  const el = document.getElementById(id);
+  el.className = 'wh-msg '+type;
+  el.textContent = text;
+  setTimeout(()=>{ el.className='wh-msg'; }, 6000);
+}
+
+async function addWebhook() {
+  const input = document.getElementById('whInput');
+  const btn   = document.getElementById('whAddBtn');
+  const url   = input.value.trim();
+
+  if (!url) { showWhMsg('whFormMsg','err','Enter a webhook URL first.'); return; }
+  if (!url.startsWith('https://discord.com/api/webhooks/')) {
+    showWhMsg('whFormMsg','err','Must be a Discord webhook URL (https://discord.com/api/webhooks/…)');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+
+  try {
+    const res = await fetch('/api/webhooks', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ webhookUrl: url }),
+    });
+    const data = await res.json();
+    if (!res.ok) { showWhMsg('whFormMsg','err', data.error||'Server error'); return; }
+
+    localStorage.setItem(LS_TOKEN, data.token);
+    input.value = '';
+    refreshWebhookUI();
+    showWhMsg('whActiveMsg','ok','Webhook saved. You\'ll be notified when a ban wave is detected.');
+  } catch (e) {
+    showWhMsg('whFormMsg','err','Network error: '+e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Add Webhook';
+  }
+}
+
+async function removeWebhook() {
+  const token = localStorage.getItem(LS_TOKEN);
+  if (!token) { refreshWebhookUI(); return; }
+
+  if (!confirm('Remove your Discord webhook? You will stop receiving ban wave notifications.')) return;
+
+  try {
+    const res = await fetch('/api/webhooks?token='+encodeURIComponent(token), { method:'DELETE' });
+    if (res.ok || res.status===404) {
+      localStorage.removeItem(LS_TOKEN);
+      localStorage.removeItem(LS_NOTIFIED);
+      refreshWebhookUI();
+      showWhMsg('whFormMsg','ok','Webhook removed successfully.');
+    } else {
+      const d = await res.json().catch(()=>({}));
+      showWhMsg('whActiveMsg','err', d.error||'Removal failed.');
+    }
+  } catch (e) {
+    showWhMsg('whActiveMsg','err','Network error: '+e.message);
+  }
+}
+
+// ── Notifications ────────────────────────────────────────────────────────────
+async function maybeTriggerNotify(status, topPost) {
+  if (status !== 'active') return;
+
+  // Client-side cooldown: don't spam the notify endpoint
+  const last = Number(localStorage.getItem(LS_NOTIFIED)||0);
+  if (Date.now() - last < 30 * 60 * 1000) return; // 30 min client-side gate
+
+  // Check if status just became active (wasn't active on last check)
+  const prevStatus = localStorage.getItem(LS_STATUS);
+  if (prevStatus === 'active') return; // already known active, don't re-notify
+
+  try {
+    await fetch('/api/notify', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({
+        topPost: topPost ? { title: topPost.title, url: topPost._url } : null,
+      }),
+    });
+    localStorage.setItem(LS_NOTIFIED, String(Date.now()));
+  } catch {}
+}
+
+// ── Main load ─────────────────────────────────────────────────────────────────
 async function load() {
   const btn = document.getElementById('refreshBtn');
   btn.disabled = true;
@@ -702,32 +581,34 @@ async function load() {
   document.getElementById('headerBadge').textContent = 'Checking…';
   document.getElementById('heroInner').innerHTML =
     '<div class="state-box"><div class="spinner"></div><br>Checking r/robloxhackers…</div>';
-  document.getElementById('feedDivider').style.display = 'none';
+  document.getElementById('feedSep').style.display = 'none';
   document.getElementById('feedSection').style.display = 'none';
+  document.getElementById('graphSep').style.display = 'none';
+  document.getElementById('graphSection').style.display = 'none';
 
   try {
     const raw = await fetchPosts();
-
-    // Attach computed fields
-    allPosts = raw.map(p => ({
+    allPosts = raw.map(p=>({
       ...p,
-      _type: classify(p.title || ''),
-      _url:  'https://reddit.com' + (p.permalink || '').replace(/['"<>]/g, ''),
-    })).sort((a, b) => b.created_utc - a.created_utc);
+      _type: classify(p.title||''),
+      _url:  'https://reddit.com' + (p.permalink||'').replace(/['"<>]/g,''),
+    })).sort((a,b)=>b.created_utc-a.created_utc);
 
-    // Score only last-14-day posts
-    const totalScore = allPosts.reduce((sum, p) => sum + scorePost(p), 0);
-
+    const totalScore = allPosts.reduce((s,p)=>s+scorePost(p),0);
     renderHero(allPosts, totalScore);
 
     if (allPosts.length) {
-      document.getElementById('feedDivider').style.display = 'flex';
+      document.getElementById('feedSep').style.display = 'flex';
       document.getElementById('feedSection').style.display = 'block';
       renderFeed();
+      renderGraph(allPosts);
     }
 
-    document.getElementById('lastCheck').textContent =
-      'Checked ' + new Date().toLocaleTimeString();
+    document.getElementById('lastCheck').textContent = 'Checked '+new Date().toLocaleTimeString();
+
+    // Fire Discord notifications if newly active
+    await maybeTriggerNotify(curStatus, allPosts[0]||null);
+    localStorage.setItem(LS_STATUS, curStatus);
 
   } catch (err) {
     document.body.className = '';
@@ -735,7 +616,7 @@ async function load() {
     document.getElementById('heroInner').innerHTML = `
       <div class="state-box">
         <div style="font-size:20px;margin-bottom:8px">⚠</div>
-        Failed to fetch posts<br>
+        Failed to load posts<br>
         <span style="color:#475569">${esc(err.message)}</span><br><br>
         <button class="refresh-btn" onclick="load()" style="margin:auto">Try again</button>
       </div>`;
@@ -745,7 +626,8 @@ async function load() {
 }
 
 // Auto-refresh every 5 minutes
-setInterval(load, 5 * 60 * 1000);
+setInterval(load, 5*60*1000);
+refreshWebhookUI();
 load();
 </script>
 </body>
