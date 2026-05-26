@@ -3,28 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RBX Radar — Roblox Ban Alert Monitor</title>
+<title>RBX Radar — Executor Banwave Monitor</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #080b10;
-    --surface: #0d1117;
+    --bg:       #080b10;
+    --surface:  #0d1117;
     --surface2: #161b22;
-    --border: #21262d;
-    --border2: #30363d;
-    --text: #e6edf3;
-    --muted: #7d8590;
-    --red: #f85149;
-    --red-dim: #3d1a1a;
-    --red-glow: rgba(248,81,73,0.15);
-    --amber: #d29922;
-    --amber-dim: #2d2208;
-    --green: #3fb950;
-    --green-dim: #0d2a14;
-    --blue: #58a6ff;
-    --blue-dim: #0d1f35;
-    --accent: #f85149;
+    --border:   #21262d;
+    --border2:  #30363d;
+    --text:     #e6edf3;
+    --muted:    #7d8590;
+    --red:      #f85149;
+    --red-dim:  #200d0c;
+    --green:    #3fb950;
+    --green-dim:#0a2014;
+    --amber:    #d29922;
+    --blue:     #58a6ff;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -34,28 +30,22 @@
     color: var(--text);
     font-family: 'JetBrains Mono', monospace;
     min-height: 100vh;
-    overflow-x: hidden;
   }
 
-  /* scanline overlay */
+  /* scanline */
   body::before {
     content: '';
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0;
     background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
-    pointer-events: none;
-    z-index: 1000;
+    pointer-events: none; z-index: 1000;
   }
 
   header {
     border-bottom: 1px solid var(--border);
     padding: 0 24px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    height: 56px;
-    position: sticky;
-    top: 0;
+    display: flex; align-items: center; gap: 12px;
+    height: 52px;
+    position: sticky; top: 0;
     background: rgba(8,11,16,0.95);
     backdrop-filter: blur(8px);
     z-index: 100;
@@ -63,353 +53,287 @@
 
   .logo {
     font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 18px;
-    color: var(--text);
-    letter-spacing: -0.5px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    font-weight: 800; font-size: 17px;
+    display: flex; align-items: center; gap: 8px;
   }
-
   .logo-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
+    width: 8px; height: 8px; border-radius: 50%;
     background: var(--red);
     box-shadow: 0 0 8px var(--red);
     animation: pulse 2s ease-in-out infinite;
   }
+  @keyframes pulse { 0%,100%{opacity:1;box-shadow:0 0 8px var(--red)} 50%{opacity:.4;box-shadow:0 0 2px var(--red)} }
 
-  @keyframes pulse {
-    0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--red); }
-    50% { opacity: 0.4; box-shadow: 0 0 2px var(--red); }
+  .header-right {
+    margin-left: auto; display: flex; align-items: center; gap: 12px;
+    font-size: 11px; color: var(--muted);
   }
-
-  .header-meta {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 11px;
-    color: var(--muted);
-  }
-
   .refresh-btn {
-    background: var(--surface2);
-    border: 1px solid var(--border2);
-    color: var(--muted);
-    padding: 5px 12px;
-    border-radius: 6px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    cursor: pointer;
-    transition: all 0.15s;
+    background: var(--surface2); border: 1px solid var(--border2);
+    color: var(--muted); padding: 5px 12px; border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    cursor: pointer; transition: all .15s;
   }
   .refresh-btn:hover { color: var(--text); border-color: var(--blue); }
-  .refresh-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .refresh-btn:disabled { opacity: .4; cursor: not-allowed; }
 
-  .status-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--green);
-    box-shadow: 0 0 6px var(--green);
+  .main { max-width: 860px; margin: 0 auto; padding: 28px 20px 60px; }
+
+  /* ── STATUS BANNER ─────────────────────────────────────────────── */
+  .status-banner {
+    border-radius: 12px;
+    padding: 36px 32px;
+    margin-bottom: 32px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
   }
-  .status-dot.loading { background: var(--amber); box-shadow: 0 0 6px var(--amber); animation: pulse 0.8s ease-in-out infinite; }
-  .status-dot.error { background: var(--red); box-shadow: 0 0 6px var(--red); }
 
-  .main { max-width: 1100px; margin: 0 auto; padding: 24px 24px 48px; }
+  /* ACTIVE */
+  .status-banner.active {
+    background: var(--red-dim);
+    border: 2px solid var(--red);
+    box-shadow: 0 0 60px rgba(248,81,73,0.25), 0 0 120px rgba(248,81,73,0.08);
+    animation: banner-glow 2.5s ease-in-out infinite;
+  }
+  @keyframes banner-glow {
+    0%,100% { box-shadow: 0 0 60px rgba(248,81,73,0.25), 0 0 120px rgba(248,81,73,0.08); }
+    50%      { box-shadow: 0 0 80px rgba(248,81,73,0.45), 0 0 160px rgba(248,81,73,0.15); }
+  }
+  .status-banner.active::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      transparent, transparent 18px,
+      rgba(248,81,73,0.03) 18px, rgba(248,81,73,0.03) 36px
+    );
+    pointer-events: none;
+  }
 
-  .stats-bar {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 10px;
+  /* CLEAR */
+  .status-banner.clear {
+    background: var(--green-dim);
+    border: 2px solid var(--green);
+    box-shadow: 0 0 40px rgba(63,185,80,0.15);
+  }
+
+  /* LOADING */
+  .status-banner.loading {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+  }
+
+  .banner-icon {
+    font-size: 48px;
+    line-height: 1;
+    margin-bottom: 12px;
+    display: block;
+  }
+  .banner-headline {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(28px, 6vw, 52px);
+    letter-spacing: -1px;
+    line-height: 1.1;
+    margin-bottom: 10px;
+  }
+  .active .banner-headline { color: var(--red); }
+  .clear  .banner-headline { color: var(--green); }
+
+  .banner-sub {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .active .banner-sub { color: rgba(248,81,73,0.7); }
+  .clear  .banner-sub { color: rgba(63,185,80,0.7); }
+
+  .banner-date {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    margin: 16px 0 8px;
+  }
+  .active .banner-date { color: var(--text); }
+
+  .banner-warning {
+    font-size: 13px;
+    color: var(--muted);
+    max-width: 480px;
+    margin: 0 auto 24px;
+    line-height: 1.7;
+  }
+  .active .banner-warning { color: rgba(230,237,243,0.75); }
+
+  .banner-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--red);
+    color: #fff;
+    text-decoration: none;
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    transition: all .15s;
+  }
+  .banner-link:hover { background: #ff6b65; transform: translateY(-1px); }
+
+  .banner-age {
+    margin-top: 16px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .spinner {
+    display: inline-block;
+    width: 18px; height: 18px;
+    border: 2px solid var(--border2);
+    border-top-color: var(--blue);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── HISTORY SECTION ───────────────────────────────────────────── */
+  .section-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    color: var(--muted);
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-label::after { content:''; flex:1; height:1px; background: var(--border); }
+
+  /* Graph */
+  .graph {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
     margin-bottom: 24px;
   }
+  .graph-title {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 16px;
+  }
+  .graph-rows { display: flex; flex-direction: column; gap: 6px; }
+  .graph-row {
+    display: grid;
+    grid-template-columns: 52px 1fr;
+    gap: 10px;
+    align-items: center;
+    font-size: 11px;
+  }
+  .graph-year { color: var(--muted); text-align: right; }
+  .graph-track {
+    position: relative;
+    height: 18px;
+    background: var(--surface2);
+    border-radius: 4px;
+    overflow: visible;
+  }
+  .graph-dot {
+    position: absolute;
+    top: 50%; transform: translateY(-50%);
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--red);
+    box-shadow: 0 0 6px var(--red);
+    cursor: pointer;
+    transition: transform .1s;
+  }
+  .graph-dot:hover { transform: translateY(-50%) scale(1.5); }
+  .graph-dot[data-age="recent"] { background: var(--red); box-shadow: 0 0 8px var(--red); }
+  .graph-dot[data-age="old"]    { background: var(--amber); box-shadow: 0 0 4px var(--amber); }
 
-  .stat {
+  .graph-stats {
+    display: flex; gap: 20px; flex-wrap: wrap;
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+  .gs { font-size: 11px; color: var(--muted); }
+  .gs strong { color: var(--text); font-size: 15px; font-family: 'Syne', sans-serif; font-weight: 700; display: block; }
+
+  /* Timeline list */
+  .timeline { display: flex; flex-direction: column; gap: 6px; }
+  .tl-item {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 12px 16px;
-  }
-  .stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
-  .stat-value { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; }
-  .stat-value.red { color: var(--red); }
-  .stat-value.amber { color: var(--amber); }
-  .stat-value.blue { color: var(--blue); }
-  .stat-value.green { color: var(--green); }
-
-  .alert-banner {
-    background: var(--red-dim);
-    border: 1px solid var(--red);
-    border-radius: 8px;
-    padding: 10px 16px;
-    font-size: 12px;
-    color: var(--red);
-    margin-bottom: 20px;
-    display: none;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
     align-items: center;
-    gap: 8px;
+    gap: 14px;
+    transition: border-color .15s;
   }
-  .alert-banner.visible { display: flex; }
-  .alert-banner strong { font-weight: 700; }
-
-  .blink { animation: blink 1s step-end infinite; }
-  @keyframes blink { 50% { opacity: 0; } }
-
-  .controls {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-  }
-
-  .filter-btn {
-    background: var(--surface2);
-    border: 1px solid var(--border2);
-    color: var(--muted);
-    padding: 6px 14px;
-    border-radius: 6px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .filter-btn:hover { color: var(--text); }
-  .filter-btn.active { background: var(--surface2); border-color: var(--blue); color: var(--blue); }
-  .filter-btn.active.danger { border-color: var(--red); color: var(--red); background: var(--red-dim); }
-
-  .sort-select {
-    background: var(--surface2);
-    border: 1px solid var(--border2);
-    color: var(--muted);
-    padding: 6px 10px;
-    border-radius: 6px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    cursor: pointer;
-    margin-left: auto;
-    outline: none;
-  }
-  .sort-select:focus { border-color: var(--blue); color: var(--text); }
-
-  .search-input {
-    background: var(--surface2);
-    border: 1px solid var(--border2);
-    color: var(--text);
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    outline: none;
-    width: 200px;
-    transition: border-color 0.15s;
-  }
-  .search-input::placeholder { color: var(--muted); }
-  .search-input:focus { border-color: var(--blue); }
-
-  .feed-label {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--muted);
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .feed-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
-  .cards { display: flex; flex-direction: column; gap: 8px; }
-
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 14px 16px;
-    transition: border-color 0.15s, background 0.15s;
-    position: relative;
-    overflow: hidden;
-  }
-  .card:hover { border-color: var(--border2); }
-
-  .card.alert {
+  .tl-item:hover { border-color: var(--border2); }
+  .tl-item.latest {
     background: var(--red-dim);
     border-color: rgba(248,81,73,0.4);
   }
-  .card.alert:hover { border-color: var(--red); }
-
-  .card.alert::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 3px;
-    background: var(--red);
-  }
-
-  .card-head {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    margin-bottom: 6px;
-  }
-
-  .card-source {
-    font-size: 10px;
-    padding: 2px 7px;
-    border-radius: 4px;
-    white-space: nowrap;
+  .tl-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--muted);
     flex-shrink: 0;
-    margin-top: 1px;
-    font-weight: 700;
   }
-  .source-hackers    { background: rgba(94,55,200,0.2); color: #a78bfa; border: 1px solid rgba(94,55,200,0.4); }
-  .source-roblox     { background: rgba(88,166,255,0.1); color: var(--blue); border: 1px solid rgba(88,166,255,0.3); }
-  .source-exploiting { background: rgba(210,153,34,0.15); color: var(--amber); border: 1px solid rgba(210,153,34,0.35); }
-  .source-github     { background: rgba(63,185,80,0.12); color: var(--green); border: 1px solid rgba(63,185,80,0.3); }
-
-  .card-title {
-    font-size: 13px;
-    font-weight: 500;
-    line-height: 1.5;
-    color: var(--text);
-    text-decoration: none;
+  .tl-item.latest .tl-dot { background: var(--red); box-shadow: 0 0 6px var(--red); }
+  .tl-date {
     font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
   }
-  .card-title:hover { color: var(--blue); }
+  .tl-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .tl-link {
+    font-size: 11px;
+    color: var(--blue);
+    text-decoration: none;
+    white-space: nowrap;
+    border: 1px solid rgba(88,166,255,0.3);
+    padding: 4px 10px;
+    border-radius: 5px;
+    transition: all .15s;
+  }
+  .tl-link:hover { background: rgba(88,166,255,0.1); }
 
-  .card-badges {
-    display: flex;
-    gap: 5px;
-    flex-wrap: wrap;
-    margin-top: 8px;
-  }
-
-  .badge {
-    font-size: 10px;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
-  .badge-alert {
+  .badge-active {
+    display: inline-block;
     background: var(--red);
     color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-left: 8px;
+    vertical-align: middle;
     animation: badge-pulse 2s ease-in-out infinite;
   }
   @keyframes badge-pulse {
     0%,100% { box-shadow: 0 0 0 0 rgba(248,81,73,0); }
-    50% { box-shadow: 0 0 0 3px rgba(248,81,73,0.3); }
+    50%      { box-shadow: 0 0 0 3px rgba(248,81,73,0.3); }
   }
-  .badge-keyword {
-    background: rgba(248,81,73,0.15);
-    color: var(--red);
-    border: 1px solid rgba(248,81,73,0.3);
-  }
-  .badge-flair {
-    background: var(--surface2);
-    color: var(--muted);
-    border: 1px solid var(--border);
-  }
-  .badge-comment-source {
-    background: rgba(210,153,34,0.15);
-    color: var(--amber);
-    border: 1px solid rgba(210,153,34,0.35);
-  }
-  .badge-comment-kw {
-    background: rgba(210,153,34,0.1);
-    color: var(--amber);
-    border: 1px solid rgba(210,153,34,0.25);
-  }
-
-  .card-meta {
-    font-size: 10px;
-    color: var(--muted);
-    margin-top: 8px;
-    display: flex;
-    gap: 12px;
-    align-items: center;
-  }
-  .upvote-pos { color: var(--green); }
-  .upvote-neg { color: var(--red); }
 
   .empty {
-    text-align: center;
-    padding: 48px 24px;
-    color: var(--muted);
-    font-size: 12px;
-  }
-  .empty-icon { font-size: 32px; margin-bottom: 8px; }
-
-  .loading-overlay {
-    text-align: center;
-    padding: 48px;
-    color: var(--muted);
-    font-size: 12px;
-  }
-  .spinner {
-    display: inline-block;
-    width: 20px; height: 20px;
-    border: 2px solid var(--border2);
-    border-top-color: var(--blue);
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    margin-bottom: 10px;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .last-updated { font-size: 10px; color: var(--muted); }
-
-  .keyword-highlights em {
-    background: rgba(248,81,73,0.2);
-    color: var(--red);
-    font-style: normal;
-    padding: 0 2px;
-    border-radius: 2px;
+    text-align: center; padding: 48px 24px;
+    color: var(--muted); font-size: 12px;
   }
 
-  .evidence {
-    margin-top: 10px;
-    border-top: 1px solid rgba(248,81,73,0.15);
-    padding-top: 8px;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
-  .ev-item {
-    font-size: 11px;
-    color: #9ba8b5;
-    background: rgba(0,0,0,0.25);
-    border-radius: 4px;
-    padding: 5px 8px;
-    line-height: 1.55;
-    border-left: 2px solid rgba(248,81,73,0.35);
-    display: flex;
-    gap: 7px;
-    align-items: flex-start;
-  }
-  .ev-src {
-    flex-shrink: 0;
-    font-size: 10px;
-    color: var(--muted);
-    padding-top: 1px;
-    white-space: nowrap;
-  }
-  .ev-item em {
-    background: rgba(248,81,73,0.2);
-    color: var(--red);
-    font-style: normal;
-    padding: 0 2px;
-    border-radius: 2px;
-  }
-
-  @media (max-width: 600px) {
-    .stats-bar { grid-template-columns: repeat(2, 1fr); }
-    .search-input { width: 100%; }
-    .controls { flex-direction: column; align-items: flex-start; }
-    .sort-select { margin-left: 0; }
+  @media (max-width: 560px) {
+    .status-banner { padding: 24px 16px; }
+    .tl-item { grid-template-columns: auto 1fr; }
+    .tl-link { grid-column: 2; margin-top: -4px; }
   }
 </style>
 </head>
@@ -420,522 +344,239 @@
     <span class="logo-dot"></span>
     RBX Radar
   </div>
-  <span style="color:var(--muted);font-size:11px">ban alert monitor</span>
-  <div class="header-meta">
-    <span class="status-dot" id="statusDot"></span>
-    <span id="statusText" class="last-updated">—</span>
-    <button class="refresh-btn" id="refreshBtn" onclick="loadAll()">↻ Refresh</button>
+  <span style="color:var(--muted);font-size:11px">executor banwave monitor</span>
+  <div class="header-right">
+    <span id="lastUpdated" style="font-size:10px;color:var(--muted)">—</span>
+    <button class="refresh-btn" id="refreshBtn" onclick="load()">↻ Refresh</button>
   </div>
 </header>
 
 <div class="main">
-
-  <div class="stats-bar">
-    <div class="stat">
-      <div class="stat-label">Total Posts</div>
-      <div class="stat-value blue" id="statTotal">—</div>
-    </div>
-    <div class="stat">
-      <div class="stat-label">🚨 Ban Alerts</div>
-      <div class="stat-value red" id="statAlerts">—</div>
-    </div>
-    <div class="stat">
-      <div class="stat-label">r/robloxhackers</div>
-      <div class="stat-value" style="color:#a78bfa" id="statHackers">—</div>
-    </div>
-    <div class="stat">
-      <div class="stat-label">r/roblox feed</div>
-      <div class="stat-value" style="color:var(--blue)" id="statRoblox">—</div>
-    </div>
-    <div class="stat">
-      <div class="stat-label">r/robloxexploiting</div>
-      <div class="stat-value" style="color:var(--amber)" id="statExploiting">—</div>
-    </div>
-    <div class="stat">
-      <div class="stat-label">GitHub Issues</div>
-      <div class="stat-value" style="color:var(--green)" id="statGithub">—</div>
-    </div>
-    <div class="stat">
-      <div class="stat-label">Last Refresh</div>
-      <div class="stat-value" style="font-size:13px;color:var(--muted)" id="statTime">—</div>
-    </div>
+  <div id="statusBanner" class="status-banner loading">
+    <div class="spinner"></div>
+    <div style="margin-top:12px;color:var(--muted);font-size:12px">Checking r/robloxhackers…</div>
   </div>
 
-  <div class="alert-banner" id="alertBanner">
-    <span class="blink">▌</span>
-    <strong>ACTIVE ALERTS DETECTED</strong> — 
-    <span id="alertBannerText"></span>
-    posts mentioning ban waves, detections, or patches in the last 24h.
-  </div>
+  <div id="historySection" style="display:none">
+    <div class="section-label">ban wave frequency</div>
+    <div class="graph" id="graph"></div>
 
-  <div class="controls">
-    <button class="filter-btn active" data-filter="all" onclick="setFilter('all',this)">All Posts</button>
-    <button class="filter-btn danger" data-filter="alert" onclick="setFilter('alert',this)">🚨 Ban Alerts Only</button>
-    <button class="filter-btn" data-filter="hackers" onclick="setFilter('hackers',this)">r/robloxhackers</button>
-    <button class="filter-btn" data-filter="roblox" onclick="setFilter('roblox',this)">r/roblox</button>
-    <button class="filter-btn" data-filter="exploiting" onclick="setFilter('exploiting',this)">r/robloxexploiting</button>
-    <button class="filter-btn" data-filter="github" onclick="setFilter('github',this)">GitHub Issues</button>
-    <input class="search-input" id="searchInput" placeholder="Search posts..." oninput="renderCards()">
-    <select class="sort-select" id="sortSelect" onchange="renderCards()">
-      <option value="new">Sort: Newest</option>
-      <option value="top">Sort: Most Upvoted</option>
-      <option value="alerts">Sort: Alerts First</option>
-    </select>
+    <div class="section-label">history</div>
+    <div class="timeline" id="timeline"></div>
   </div>
-
-  <div class="feed-label">live feed</div>
-  <div id="cardContainer" class="cards">
-    <div class="loading-overlay"><div class="spinner"></div><br>Fetching posts from Reddit…</div>
-  </div>
-
 </div>
 
 <script>
-// ── Keywords ──────────────────────────────────────────────────────────────
-// Tier 1: Always flag — these terms are inherently exploit/anti-cheat related.
-// A post containing ANY of these is a ban-wave alert with no other condition.
-const BANWAVE_KEYWORDS = [
-  'banwave','ban wave','ban_wave','banning wave','wave ban','mass ban',
-  'byfron','hyperion','anti-cheat','anticheat',
-  'hwid ban','ip ban','hardware ban','fingerprint ban','device ban',
-  'exploit detected','executor detected','script detected','executor banned',
-  'bypass detected','dll detected','memory detected','process detected',
-  'dll injection','process injection','memory scan','cheat detected',
-  'anti cheat kicked','byfron kicked','hyperion kicked',
-  'kicked by anti-cheat','kicked by byfron','kicked by hyperion',
-  'got detected','undetected','detection',
-];
+const SUBREDDIT = 'robloxhackers';
+// Posts must match: "Executor Banwave - Month DD YYYY"
+const TITLE_RE  = /^Executor Banwave\s*[-–]\s*(.+)$/i;
+// Consider a ban wave "active" if posted within this many days
+const ACTIVE_DAYS = 7;
 
-// Tier 2: Executor / cheat tool names.
-// Only flag when ALSO matched by a BAN_INDICATOR — prevents false positives
-// from posts that merely mention an executor without any ban context.
-const EXECUTOR_KEYWORDS = [
-  'synapse x','synapse','krnl','fluxus','evon','celery','delta executor',
-  'hydrogen','arceus x','wave executor','xeno','awaken','solara',
-  'script-ware','scriptware','seliware','codex','trigon',
-  'jjsploit','jj sploit','coco z','calamari','electron executor','nihon',
-  'swift executor','vega x','maui','proxo','skisploit','sentinel',
-  'temple executor','dansploit','cryptic','eruption','furk ultra',
-  'valyse','blaze executor','elysian','infiltrate','protosmasher',
-  'level 7','comet executor','sirius','axon','seraph','ronin',
-  'velocity executor','visenya','blast executor','crypt executor',
-];
+let banwaves = [];
 
-// Tier 3: Generic ban words that are meaningless without an executor name.
-// "got banned for harassment" → no alert. "krnl got banned" → alert.
-const BAN_INDICATORS = [
-  'banned','ban','perm ban','permban','got banned','permanently banned',
-  'account banned','ban appeal','game ban','patched','patch','got patched',
-  'detected','terminated','account terminated','suspended','account suspended',
-  'account locked','moderation action',
-];
-
-// Combined for display / highlighting purposes
-const ALL_KEYWORDS = [...BANWAVE_KEYWORDS, ...EXECUTOR_KEYWORDS];
-
-const SEARCH_QUERY = 'banwave ban wave byfron hyperion executor patched detected synapse krnl fluxus jjsploit delta evon vega terminated suspended hwid ban';
-const COMMENT_BATCH = 5;   // concurrent comment fetches
-const COMMENT_DEPTH = 3;   // reply depth to scan
-const COMMENT_LIMIT = 100; // top-level comments per post
-
-let allPosts = [];
-let currentFilter = 'all';
-let commentScanDone = false;
-
-// ── Keyword helpers ────────────────────────────────────────────────────────
-function buildText(...parts) {
-  return parts.filter(Boolean).join(' ').toLowerCase();
+// ── Helpers ───────────────────────────────────────────────────────────────
+function daysAgo(date) {
+  return Math.floor((Date.now() - date.getTime()) / 86400000);
 }
 
-function matchesAlert(text) {
-  if (BANWAVE_KEYWORDS.some(k => text.includes(k))) return true;
-  if (EXECUTOR_KEYWORDS.some(k => text.includes(k))) {
-    return BAN_INDICATORS.some(k => text.includes(k));
+function fmtDate(date) {
+  return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+
+function timeAgoStr(days) {
+  if (days === 0) return 'Today';
+  if (days === 1) return '1 day ago';
+  if (days < 30)  return `${days} days ago`;
+  if (days < 365) return `~${Math.round(days / 30)} months ago`;
+  return `~${Math.round(days / 365)} years ago`;
+}
+
+// ── Fetch ─────────────────────────────────────────────────────────────────
+async function fetchBanwaves() {
+  const p = new URLSearchParams({ subreddit: SUBREDDIT, search: 'Executor Banwave', t: 'all' });
+  const res = await fetch('/api/reddit?' + p);
+  if (!res.ok) throw new Error('API returned ' + res.status);
+  const data = await res.json();
+  const posts = (data.data?.children || []).map(c => c.data);
+
+  return posts
+    .map(post => {
+      const m = TITLE_RE.exec(post.title || '');
+      if (!m) return null;
+      const dateStr = m[1].trim();
+      const date    = new Date(dateStr);
+      if (isNaN(date.getTime())) return null;
+      return {
+        title:  post.title,
+        dateStr,
+        date,
+        days:   daysAgo(date),
+        url:    'https://reddit.com' + (post.permalink || '').replace(/['"<>]/g, ''),
+      };
+    })
+    .filter(Boolean)
+    .sort((a, b) => b.date - a.date);
+}
+
+// ── Render status banner ──────────────────────────────────────────────────
+function renderBanner(waves) {
+  const el     = document.getElementById('statusBanner');
+  const latest = waves[0] || null;
+  const active = latest && latest.days <= ACTIVE_DAYS;
+
+  if (active) {
+    el.className = 'status-banner active';
+    el.innerHTML = `
+      <span class="banner-icon">⚠</span>
+      <div class="banner-headline">ACTIVE BAN WAVE</div>
+      <div class="banner-sub">DO NOT USE ROBLOX EXPLOITS</div>
+      <div class="banner-date">${latest.title}</div>
+      <div class="banner-warning">
+        A ban wave is currently active on Roblox.<br>
+        All executors are at risk of detection — accounts using any exploit may be permanently banned.<br>
+        Wait until the wave is confirmed over before using any executor.
+      </div>
+      <a class="banner-link" href="${latest.url}" target="_blank" rel="noopener">
+        View Reddit Post ↗
+      </a>
+      <div class="banner-age">Detected ${latest.days === 0 ? 'today' : latest.days + ' day' + (latest.days !== 1 ? 's' : '') + ' ago'} · r/robloxhackers</div>
+    `;
+  } else if (latest) {
+    el.className = 'status-banner clear';
+    el.innerHTML = `
+      <span class="banner-icon">✓</span>
+      <div class="banner-headline">NO ACTIVE BAN WAVE</div>
+      <div class="banner-sub">Executors appear to be safe at this time</div>
+      <div class="banner-warning" style="margin-top:12px">
+        Last known ban wave: <strong style="color:var(--text)">${fmtDate(latest.date)}</strong> (${timeAgoStr(latest.days)})<br>
+        This can change at any time — always check before exploiting.
+      </div>
+    `;
+  } else {
+    el.className = 'status-banner clear';
+    el.innerHTML = `
+      <span class="banner-icon">✓</span>
+      <div class="banner-headline">NO BAN WAVES FOUND</div>
+      <div class="banner-sub">No recent executor banwave posts on r/robloxhackers</div>
+    `;
   }
-  return false;
 }
 
-function getMatchedKeywords(text) {
-  const found = [];
-  const seen = new Set();
-  for (const k of ALL_KEYWORDS) {
-    if (!text.includes(k)) continue;
-    if (!seen.has(k)) { found.push(k); seen.add(k); }
-    if (found.length >= 4) break;
+// ── Render history graph ──────────────────────────────────────────────────
+function renderGraph(waves) {
+  if (!waves.length) return;
+
+  // group by year
+  const byYear = {};
+  for (const w of waves) {
+    const y = w.date.getFullYear();
+    if (!byYear[y]) byYear[y] = [];
+    byYear[y].push(w);
   }
-  return found;
-}
 
-// Extract a readable snippet around the first keyword hit (lowercase text)
-function getSnippet(text, keywords, maxLen = 160) {
-  for (const kw of keywords) {
-    const idx = text.indexOf(kw);
-    if (idx === -1) continue;
-    const start = Math.max(0, idx - 60);
-    const end   = Math.min(text.length, idx + kw.length + 100);
-    let s = text.slice(start, end).replace(/\s+/g, ' ').trim();
-    if (start > 0) s = '…' + s;
-    if (end < text.length) s += '…';
-    return s.slice(0, maxLen);
+  const years    = Object.keys(byYear).map(Number).sort((a, b) => b - a);
+  const minDate  = waves[waves.length - 1].date;
+  const maxDate  = waves[0].date;
+  const spanDays = Math.max(1, daysAgo(minDate));
+
+  const rows = years.map(year => {
+    const yw  = byYear[year];
+    const dots = yw.map(w => {
+      // position as % across the year (Jan=0, Dec=100)
+      const dayOfYear = Math.floor((w.date - new Date(year, 0, 1)) / 86400000);
+      const pct       = Math.min(95, Math.max(2, (dayOfYear / 365) * 100));
+      const age       = w.days <= ACTIVE_DAYS * 3 ? 'recent' : 'old';
+      return `<span class="graph-dot" data-age="${age}" style="left:${pct}%" title="${w.dateStr}"></span>`;
+    }).join('');
+    return `
+      <div class="graph-row">
+        <span class="graph-year">${year}</span>
+        <div class="graph-track">${dots}</div>
+      </div>`;
+  }).join('');
+
+  // stats
+  let avgGap = '—', longestGap = '—';
+  if (waves.length >= 2) {
+    const gaps = [];
+    for (let i = 0; i < waves.length - 1; i++) {
+      gaps.push(Math.floor((waves[i].date - waves[i + 1].date) / 86400000));
+    }
+    avgGap     = Math.round(gaps.reduce((a, b) => a + b, 0) / gaps.length) + 'd';
+    longestGap = Math.max(...gaps) + 'd';
   }
-  return null;
+
+  document.getElementById('graph').innerHTML = `
+    <div class="graph-title">Ban wave occurrences by year — each dot is one wave</div>
+    <div class="graph-rows">${rows}</div>
+    <div class="graph-stats">
+      <div class="gs"><strong>${waves.length}</strong>waves tracked</div>
+      <div class="gs"><strong>${avgGap}</strong>avg gap between waves</div>
+      <div class="gs"><strong>${longestGap}</strong>longest gap</div>
+      <div class="gs"><strong>${fmtDate(waves[0].date)}</strong>most recent</div>
+    </div>
+  `;
 }
 
-function postBaseText(p) {
-  return buildText(p.title, p.selftext, p.link_flair_text);
-}
-
-// ── Flatten Reddit comment tree ────────────────────────────────────────────
-function flattenComments(listing, depth = 0) {
-  if (!listing || depth > COMMENT_DEPTH) return [];
-  const results = [];
-  const children = listing?.data?.children || (Array.isArray(listing) ? listing : []);
-  for (const c of children) {
-    if (!c?.data) continue;
-    const { body, replies } = c.data;
-    if (body && body !== '[deleted]' && body !== '[removed]') results.push(body.toLowerCase());
-    if (replies) results.push(...flattenComments(replies, depth + 1));
+// ── Render timeline list ──────────────────────────────────────────────────
+function renderTimeline(waves) {
+  const el = document.getElementById('timeline');
+  if (!waves.length) {
+    el.innerHTML = '<div class="empty">No executor banwave posts found on r/robloxhackers.</div>';
+    return;
   }
-  return results;
+
+  el.innerHTML = waves.map((w, i) => {
+    const isLatest  = i === 0;
+    const isActive  = isLatest && w.days <= ACTIVE_DAYS;
+    const activeBadge = isActive ? '<span class="badge-active">active</span>' : '';
+    return `
+      <div class="tl-item${isLatest ? ' latest' : ''}">
+        <span class="tl-dot"></span>
+        <div>
+          <div class="tl-date">${fmtDate(w.date)}${activeBadge}</div>
+          <div class="tl-meta">${timeAgoStr(w.days)} · r/robloxhackers</div>
+        </div>
+        <a class="tl-link" href="${w.url}" target="_blank" rel="noopener">View post ↗</a>
+      </div>`;
+  }).join('');
 }
 
-// ── Fetch helpers ──────────────────────────────────────────────────────────
-async function apiFetch(path) {
-  const r = await fetch(path);
-  if (!r.ok) throw new Error('HTTP ' + r.status);
-  return r.json();
-}
-
-async function fetchSubreddit(sub, opts = {}) {
-  const { sort = 'new', limit = 50, search } = opts;
-  const p = new URLSearchParams({ subreddit: sub, limit });
-  if (search) { p.set('search', search); p.set('t', 'week'); }
-  else         { p.set('sort', sort); }
-  const data = await apiFetch('/api/reddit?' + p);
-  return (data.data?.children || []).map(c => ({ ...c.data, _source: sub }));
-}
-
-async function fetchGithub() {
-  try {
-    const posts = await apiFetch('/api/github');
-    return (posts || []).map(p => ({ ...p, _source: 'github' }));
-  } catch { return []; }
-}
-
-async function fetchPostComments(post) {
-  try {
-    const p = new URLSearchParams({
-      subreddit: post._source,
-      id:        post.id,
-      limit:     COMMENT_LIMIT,
-      depth:     COMMENT_DEPTH,
-    });
-    const data = await apiFetch('/api/comments?' + p);
-    // data[0] = post listing, data[1] = comments listing
-    return flattenComments(data[1]);
-  } catch { return []; }
-}
-
-// run `tasks` in groups of `size` concurrently
-async function batchRun(tasks, size) {
-  const results = [];
-  for (let i = 0; i < tasks.length; i += size) {
-    const chunk = await Promise.all(tasks.slice(i, i + size).map(t => t()));
-    results.push(...chunk);
-  }
-  return results;
-}
-
-// ── Status ─────────────────────────────────────────────────────────────────
-function setStatus(state, text) {
-  const dot = document.getElementById('statusDot');
-  dot.className = 'status-dot' + (state === 'loading' ? ' loading' : state === 'error' ? ' error' : '');
-  document.getElementById('statusText').textContent = text;
-}
-
-// ── Comment scan progress bar ──────────────────────────────────────────────
-function showProgress(done, total) {
-  const pct = Math.round((done / total) * 100);
-  let bar = document.getElementById('commentProgress');
-  if (!bar) {
-    bar = document.createElement('div');
-    bar.id = 'commentProgress';
-    bar.style.cssText = 'font-size:11px;color:var(--muted);padding:6px 0 10px;display:flex;align-items:center;gap:10px;';
-    document.getElementById('cardContainer').insertAdjacentElement('beforebegin', bar);
-  }
-  bar.innerHTML = done < total
-    ? `<span style="color:var(--amber)">◎</span> Scanning comments… ${done}/${total} posts <span style="flex:1;height:2px;background:var(--border);border-radius:2px;display:inline-block;overflow:hidden"><span style="display:block;height:100%;width:${pct}%;background:var(--amber);transition:width .3s"></span></span>`
-    : `<span style="color:var(--green)">✓</span> Comments scanned — ${total} posts`;
-}
-
-function removeProgress() {
-  document.getElementById('commentProgress')?.remove();
-}
-
-// ── Main load ──────────────────────────────────────────────────────────────
-async function loadAll() {
+// ── Main load ─────────────────────────────────────────────────────────────
+async function load() {
   const btn = document.getElementById('refreshBtn');
   btn.disabled = true;
-  commentScanDone = false;
-  removeProgress();
-  setStatus('loading', 'Fetching posts…');
-  document.getElementById('cardContainer').innerHTML =
-    '<div class="loading-overlay"><div class="spinner"></div><br>Fetching posts from Reddit…</div>';
+
+  document.getElementById('statusBanner').className = 'status-banner loading';
+  document.getElementById('statusBanner').innerHTML =
+    '<div class="spinner"></div><div style="margin-top:12px;color:var(--muted);font-size:12px">Checking r/robloxhackers…</div>';
+  document.getElementById('historySection').style.display = 'none';
 
   try {
-    const [hackersNew, robloxSearch, exploitingNew, githubIssues] = await Promise.all([
-      fetchSubreddit('robloxhackers', { sort: 'new', limit: 50 }),
-      fetchSubreddit('roblox', { search: SEARCH_QUERY, limit: 50 }),
-      fetchSubreddit('robloxexploiting', { sort: 'new', limit: 50 }).catch(() => []),
-      fetchGithub(),
-    ]);
-
-    // Deduplicate
-    const seen = new Set();
-    allPosts = [];
-    for (const p of [...hackersNew, ...robloxSearch, ...exploitingNew, ...githubIssues]) {
-      if (seen.has(p.id)) continue;
-      seen.add(p.id);
-      const baseText = postBaseText(p);
-      p._isAlert           = matchesAlert(baseText);
-      p._keywords          = getMatchedKeywords(baseText);
-      p._alertFromComments = false;
-      p._commentKeywords   = [];
-      p._evidencePost      = null;
-      p._evidenceComments  = [];
-      // Capture a snippet from the post body if it triggered the alert
-      if (p._isAlert && p.selftext && p.selftext.trim()) {
-        p._evidencePost = getSnippet(p.selftext.toLowerCase(), p._keywords);
-      }
-      allPosts.push(p);
+    banwaves = await fetchBanwaves();
+    renderBanner(banwaves);
+    if (banwaves.length) {
+      renderGraph(banwaves);
+      renderTimeline(banwaves);
+      document.getElementById('historySection').style.display = 'block';
     }
-
-    updateStats();
-    renderCards();
-    setStatus('loading', 'Scanning comments…');
-
-    // ── Phase 2: scan comments ────────────────────────────────────────────
-    let scanned = 0;
-    const scanTotal = allPosts.filter(p => p._source !== 'github').length;
-    showProgress(0, scanTotal);
-
-    const tasks = allPosts.filter(p => p._source !== 'github').map(post => async () => {
-      const commentBodies = await fetchPostComments(post);
-      const evidenceFound = [];
-
-      for (const body of commentBodies) {
-        if (!matchesAlert(body)) continue;
-        const kws     = getMatchedKeywords(body);
-        const snippet = getSnippet(body, kws);
-        if (snippet && evidenceFound.length < 3) {
-          evidenceFound.push({ text: snippet, kws });
-        }
-      }
-
-      if (evidenceFound.length > 0) {
-        const allCommentKws = [...new Set(evidenceFound.flatMap(e => e.kws))];
-        const existing = new Set(post._keywords);
-        const fresh    = allCommentKws.filter(k => !existing.has(k));
-        if (!post._isAlert) {
-          post._isAlert           = true;
-          post._alertFromComments = true;
-        }
-        post._commentKeywords  = fresh.slice(0, 3);
-        post._keywords         = [...post._keywords, ...fresh].slice(0, 5);
-        post._evidenceComments = evidenceFound;
-      }
-
-      scanned++;
-      showProgress(scanned, scanTotal);
-      if (scanned % 10 === 0) { updateStats(); renderCards(); }
-    });
-
-    await batchRun(tasks, COMMENT_BATCH);
-
-    commentScanDone = true;
-    updateStats();
-    renderCards();
-    showProgress(scanTotal, scanTotal);
-    setTimeout(removeProgress, 2000);
-
-    const now = new Date();
-    setStatus('ok', 'Updated ' + now.toLocaleTimeString());
-    document.getElementById('statTime').textContent = now.toLocaleTimeString();
-
+    document.getElementById('lastUpdated').textContent =
+      'Updated ' + new Date().toLocaleTimeString();
   } catch (e) {
-    setStatus('error', 'Error: ' + e.message);
-    document.getElementById('cardContainer').innerHTML = `
-      <div class="empty">
-        <div class="empty-icon">⚠</div>
-        Failed to fetch posts: ${e.message}<br><br>
-        Reddit may be rate-limiting. Try again in a moment.
-      </div>`;
+    document.getElementById('statusBanner').className = 'status-banner loading';
+    document.getElementById('statusBanner').innerHTML = `
+      <div style="color:var(--red);font-size:14px">⚠ Failed to load</div>
+      <div style="color:var(--muted);font-size:12px;margin-top:8px">${e.message}</div>
+    `;
   }
 
   btn.disabled = false;
 }
 
-// ── Stats ──────────────────────────────────────────────────────────────────
-function updateStats() {
-  const alerts     = allPosts.filter(p => p._isAlert);
-  const hackers    = allPosts.filter(p => p._source === 'robloxhackers');
-  const roblox     = allPosts.filter(p => p._source === 'roblox');
-  const exploiting = allPosts.filter(p => p._source === 'robloxexploiting');
-  const github     = allPosts.filter(p => p._source === 'github');
-
-  document.getElementById('statTotal').textContent      = allPosts.length;
-  document.getElementById('statAlerts').textContent     = alerts.length;
-  document.getElementById('statHackers').textContent    = hackers.length;
-  document.getElementById('statRoblox').textContent     = roblox.length;
-  document.getElementById('statExploiting').textContent = exploiting.length;
-  document.getElementById('statGithub').textContent     = github.length;
-
-  const banner = document.getElementById('alertBanner');
-  if (alerts.length > 0) {
-    banner.classList.add('visible');
-    document.getElementById('alertBannerText').textContent = alerts.length;
-  } else {
-    banner.classList.remove('visible');
-  }
-}
-
-// ── Filters ────────────────────────────────────────────────────────────────
-function setFilter(f, btn) {
-  currentFilter = f;
-  document.querySelectorAll('.filter-btn').forEach(b => {
-    b.classList.remove('active', 'danger');
-  });
-  btn.classList.add('active');
-  if (f === 'alert') btn.classList.add('danger');
-  renderCards();
-}
-
-// ── Rendering ──────────────────────────────────────────────────────────────
-function highlightKeywords(text) {
-  let out = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  for (const k of ALL_KEYWORDS) {
-    const re = new RegExp('(' + k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
-    out = out.replace(re, '<em>$1</em>');
-  }
-  return out;
-}
-
-function fmtNum(n) {
-  if (n == null) return '—';
-  return n >= 1000 ? (n / 1000).toFixed(1) + 'k' : String(n);
-}
-
-function timeAgo(utc) {
-  const d = Date.now() / 1000 - utc;
-  if (d < 60) return 'just now';
-  if (d < 3600) return Math.floor(d / 60) + 'm ago';
-  if (d < 86400) return Math.floor(d / 3600) + 'h ago';
-  return Math.floor(d / 86400) + 'd ago';
-}
-
-function renderCards() {
-  const sort   = document.getElementById('sortSelect').value;
-  const search = document.getElementById('searchInput').value.toLowerCase().trim();
-
-  let posts = allPosts.filter(p => {
-    if (currentFilter === 'alert')      return p._isAlert;
-    if (currentFilter === 'hackers')    return p._source === 'robloxhackers';
-    if (currentFilter === 'roblox')     return p._source === 'roblox';
-    if (currentFilter === 'exploiting') return p._source === 'robloxexploiting';
-    if (currentFilter === 'github')     return p._source === 'github';
-    return true;
-  });
-
-  if (search) {
-    posts = posts.filter(p =>
-      (p.title    || '').toLowerCase().includes(search) ||
-      (p.selftext || '').toLowerCase().includes(search)
-    );
-  }
-
-  if (sort === 'new')    posts.sort((a, b) => b.created_utc - a.created_utc);
-  else if (sort === 'top') posts.sort((a, b) => b.score - a.score);
-  else if (sort === 'alerts') posts.sort((a, b) => {
-    if (a._isAlert !== b._isAlert) return a._isAlert ? -1 : 1;
-    return b.created_utc - a.created_utc;
-  });
-
-  const container = document.getElementById('cardContainer');
-  if (!posts.length) {
-    container.innerHTML = `<div class="empty"><div class="empty-icon">◎</div>No posts match the current filter.</div>`;
-    return;
-  }
-
-  container.innerHTML = posts.map(p => {
-    const SOURCE_META = {
-      robloxhackers:  { cls: 'source-hackers',    label: 'r/robloxhackers' },
-      roblox:         { cls: 'source-roblox',      label: 'r/roblox' },
-      robloxexploiting:{ cls: 'source-exploiting', label: 'r/robloxexploiting' },
-      github:         { cls: 'source-github',      label: 'GitHub' },
-    };
-    const { cls: sourceClass, label: sourceLabel } = SOURCE_META[p._source] || { cls: 'source-roblox', label: p._source };
-    const rawPermalink = (p.permalink || '').replace(/['"<>]/g, '');
-    const url = rawPermalink.startsWith('http') ? rawPermalink : 'https://reddit.com' + rawPermalink;
-    const upvoteClass = p.score >= 0 ? 'upvote-pos' : 'upvote-neg';
-
-    let badgeHtml = '';
-    if (p._isAlert) {
-      const origin = p._alertFromComments
-        ? `<span class="badge badge-comment-source">via comments</span>`
-        : '';
-      const kwBadges = p._keywords.map(k => `<span class="badge badge-keyword">${k}</span>`).join('');
-      const commentKwBadges = p._commentKeywords?.length
-        ? p._commentKeywords.map(k => `<span class="badge badge-comment-kw">💬 ${k}</span>`).join('')
-        : '';
-      badgeHtml = `<span class="badge badge-alert">🚨 BAN ALERT</span>${origin}${kwBadges}${commentKwBadges}`;
-    }
-
-    const flairHtml = p.link_flair_text
-      ? `<span class="badge badge-flair">${p.link_flair_text.replace(/</g,'&lt;')}</span>`
-      : '';
-
-    const scanningBadge = (!commentScanDone && !p._isAlert && p.num_comments > 0)
-      ? `<span class="badge badge-flair" style="opacity:.5">◎ scanning…</span>`
-      : '';
-
-    // Evidence snippets — show what text actually triggered the alert
-    let evidenceHtml = '';
-    if (p._isAlert) {
-      const evItems = [];
-      if (p._evidencePost) {
-        evItems.push(`<div class="ev-item"><span class="ev-src">📄 post</span><span>${highlightKeywords(p._evidencePost)}</span></div>`);
-      }
-      for (const c of (p._evidenceComments || []).slice(0, 2)) {
-        evItems.push(`<div class="ev-item"><span class="ev-src">💬 comment</span><span>${highlightKeywords(c.text)}</span></div>`);
-      }
-      if (evItems.length) {
-        evidenceHtml = `<div class="evidence">${evItems.join('')}</div>`;
-      }
-    }
-
-    return `
-      <div class="card${p._isAlert ? ' alert' : ''}">
-        <div class="card-head">
-          <span class="card-source ${sourceClass}">${sourceLabel}</span>
-          <a class="card-title keyword-highlights" href="${url}" target="_blank" rel="noopener">
-            ${highlightKeywords(p.title || 'Untitled')}
-          </a>
-        </div>
-        <div class="card-badges">${badgeHtml}${flairHtml}${scanningBadge}</div>
-        ${evidenceHtml}
-        <div class="card-meta">
-          <span class="${upvoteClass}">▲ ${fmtNum(p.score)}</span>
-          <span>💬 ${fmtNum(p.num_comments)}</span>
-          <span>u/${(p.author || '[deleted]').substring(0, 22)}</span>
-          <span style="margin-left:auto">${timeAgo(p.created_utc)}</span>
-        </div>
-      </div>`;
-  }).join('');
-}
-
 // Auto-refresh every 5 minutes
-setInterval(loadAll, 5 * 60 * 1000);
-loadAll();
+setInterval(load, 5 * 60 * 1000);
+load();
 </script>
 </body>
 </html>

@@ -61,7 +61,9 @@ export default async function handler(req, res) {
   const sub = encodeURIComponent(subreddit);
   let url;
   if (search) {
-    url = `https://www.reddit.com/r/${sub}/search.rss?q=${encodeURIComponent(search)}&sort=new&t=${encodeURIComponent(t || 'week')}&restrict_sr=1`;
+    // title: operator restricts Reddit search to post titles only
+    const q = search.startsWith('title:') ? search : `title:"${search}"`;
+    url = `https://www.reddit.com/r/${sub}/search.rss?q=${encodeURIComponent(q)}&sort=new&t=${encodeURIComponent(t || 'week')}&restrict_sr=1`;
   } else {
     url = `https://www.reddit.com/r/${sub}/${encodeURIComponent(sort || 'new')}.rss?limit=${encodeURIComponent(limit || '25')}`;
   }
