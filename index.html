@@ -3,572 +3,742 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RBX Radar — Executor Banwave Monitor</title>
+<title>Roblox Ban Wave — Live Exploit Status</title>
+<meta name="description" content="Real-time Roblox executor ban wave status tracker. Know before you exploit.">
+<meta property="og:title" content="Roblox Ban Wave — Live Status">
+<meta property="og:description" content="Is there an active Roblox executor ban wave right now? Find out instantly.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg:       #080b10;
-    --surface:  #0d1117;
-    --surface2: #161b22;
-    --border:   #21262d;
-    --border2:  #30363d;
-    --text:     #e6edf3;
-    --muted:    #7d8590;
-    --red:      #f85149;
-    --red-dim:  #200d0c;
-    --green:    #3fb950;
-    --green-dim:#0a2014;
-    --amber:    #d29922;
-    --blue:     #58a6ff;
-  }
+/* ── Reset & Base ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:           #060a14;
+  --bg-2:         #090e1a;
+  --surface:      rgba(255,255,255,0.03);
+  --surface-h:    rgba(255,255,255,0.055);
+  --border:       rgba(255,255,255,0.07);
+  --border-h:     rgba(255,255,255,0.13);
+  --text:         #f1f5f9;
+  --text-2:       #94a3b8;
+  --text-3:       #475569;
+  --accent:       #94a3b8;
+  --accent-dim:   rgba(148,163,184,0.08);
+  --accent-glow:  rgba(148,163,184,0.12);
+  --accent-border:rgba(148,163,184,0.25);
+  --font-sans:    'Inter', system-ui, sans-serif;
+  --font-display: 'Syne', sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+  --radius:       14px;
+  --transition:   0.2s cubic-bezier(.4,0,.2,1);
+}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'JetBrains Mono', monospace;
-    min-height: 100vh;
-  }
+/* Status themes — applied to <body> */
+body.active  {
+  --accent:        #ef4444;
+  --accent-dim:    rgba(239,68,68,0.08);
+  --accent-glow:   rgba(239,68,68,0.22);
+  --accent-border: rgba(239,68,68,0.35);
+}
+body.warning {
+  --accent:        #f59e0b;
+  --accent-dim:    rgba(245,158,11,0.08);
+  --accent-glow:   rgba(245,158,11,0.18);
+  --accent-border: rgba(245,158,11,0.35);
+}
+body.clear {
+  --accent:        #22c55e;
+  --accent-dim:    rgba(34,197,94,0.08);
+  --accent-glow:   rgba(34,197,94,0.15);
+  --accent-border: rgba(34,197,94,0.3);
+}
 
-  /* scanline */
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
-    pointer-events: none; z-index: 1000;
-  }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.4s ease;
+}
 
-  header {
-    border-bottom: 1px solid var(--border);
-    padding: 0 24px;
-    display: flex; align-items: center; gap: 12px;
-    height: 52px;
-    position: sticky; top: 0;
-    background: rgba(8,11,16,0.95);
-    backdrop-filter: blur(8px);
-    z-index: 100;
-  }
+/* Scanline texture */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.025) 2px,rgba(0,0,0,0.025) 4px);
+  pointer-events: none; z-index: 9999;
+}
 
-  .logo {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800; font-size: 17px;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .logo-dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: var(--red);
-    box-shadow: 0 0 8px var(--red);
-    animation: pulse 2s ease-in-out infinite;
-  }
-  @keyframes pulse { 0%,100%{opacity:1;box-shadow:0 0 8px var(--red)} 50%{opacity:.4;box-shadow:0 0 2px var(--red)} }
+/* ── Header ───────────────────────────────────────────────────── */
+header {
+  position: sticky; top: 0; z-index: 100;
+  height: 56px;
+  display: flex; align-items: center; gap: 10px;
+  padding: 0 28px;
+  background: rgba(6,10,20,0.8);
+  backdrop-filter: blur(20px) saturate(1.5);
+  border-bottom: 1px solid var(--border);
+}
 
-  .header-right {
-    margin-left: auto; display: flex; align-items: center; gap: 12px;
-    font-size: 11px; color: var(--muted);
-  }
-  .refresh-btn {
-    background: var(--surface2); border: 1px solid var(--border2);
-    color: var(--muted); padding: 5px 12px; border-radius: 6px;
-    font-family: 'JetBrains Mono', monospace; font-size: 11px;
-    cursor: pointer; transition: all .15s;
-  }
-  .refresh-btn:hover { color: var(--text); border-color: var(--blue); }
-  .refresh-btn:disabled { opacity: .4; cursor: not-allowed; }
+.logo {
+  display: flex; align-items: center; gap: 9px;
+  font-family: var(--font-display);
+  font-size: 15px; font-weight: 800;
+  letter-spacing: -0.3px;
+  color: var(--text);
+  text-decoration: none;
+}
+.logo-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent-glow);
+  flex-shrink: 0;
+  transition: background var(--transition), box-shadow var(--transition);
+}
+body.active  .logo-dot { animation: dot-pulse .9s ease-in-out infinite; }
+body.warning .logo-dot { animation: dot-pulse 1.6s ease-in-out infinite; }
+@keyframes dot-pulse {
+  0%,100% { opacity: 1; box-shadow: 0 0 10px var(--accent-glow); }
+  50%      { opacity: .5; box-shadow: 0 0 3px var(--accent-glow); }
+}
 
-  .main { max-width: 860px; margin: 0 auto; padding: 28px 20px 60px; }
+.header-badge {
+  font-family: var(--font-mono);
+  font-size: 10px; font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 100px;
+  background: var(--accent-dim);
+  border: 1px solid var(--accent-border);
+  color: var(--accent);
+  transition: all var(--transition);
+}
 
-  /* ── STATUS BANNER ─────────────────────────────────────────────── */
-  .status-banner {
-    border-radius: 12px;
-    padding: 36px 32px;
-    margin-bottom: 32px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
+.header-right {
+  margin-left: auto;
+  display: flex; align-items: center; gap: 14px;
+}
+.last-check {
+  font-family: var(--font-mono);
+  font-size: 10px; color: var(--text-3);
+}
+.refresh-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-2);
+  padding: 5px 13px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  cursor: pointer;
+  transition: all var(--transition);
+  display: flex; align-items: center; gap: 6px;
+}
+.refresh-btn:hover { background: var(--surface-h); border-color: var(--border-h); color: var(--text); }
+.refresh-btn:disabled { opacity: .4; cursor: not-allowed; }
+.refresh-btn svg { width:13px; height:13px; }
 
-  /* ACTIVE */
-  .status-banner.active {
-    background: var(--red-dim);
-    border: 2px solid var(--red);
-    box-shadow: 0 0 60px rgba(248,81,73,0.25), 0 0 120px rgba(248,81,73,0.08);
-    animation: banner-glow 2.5s ease-in-out infinite;
-  }
-  @keyframes banner-glow {
-    0%,100% { box-shadow: 0 0 60px rgba(248,81,73,0.25), 0 0 120px rgba(248,81,73,0.08); }
-    50%      { box-shadow: 0 0 80px rgba(248,81,73,0.45), 0 0 160px rgba(248,81,73,0.15); }
-  }
-  .status-banner.active::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: repeating-linear-gradient(
-      -45deg,
-      transparent, transparent 18px,
-      rgba(248,81,73,0.03) 18px, rgba(248,81,73,0.03) 36px
-    );
-    pointer-events: none;
-  }
+/* ── Hero ─────────────────────────────────────────────────────── */
+.hero {
+  position: relative;
+  min-height: 72vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding: 80px 24px 60px;
+  overflow: hidden;
+}
 
-  /* CLEAR */
-  .status-banner.clear {
-    background: var(--green-dim);
-    border: 2px solid var(--green);
-    box-shadow: 0 0 40px rgba(63,185,80,0.15);
-  }
+/* Ambient glow behind hero */
+.hero::before {
+  content: '';
+  position: absolute; top: -10%; left: 50%;
+  transform: translateX(-50%);
+  width: 700px; height: 500px;
+  background: radial-gradient(ellipse at center, var(--accent-glow) 0%, transparent 70%);
+  pointer-events: none;
+  transition: background 0.6s ease;
+  z-index: 0;
+}
 
-  /* LOADING */
-  .status-banner.loading {
-    background: var(--surface);
-    border: 1px solid var(--border2);
-  }
+/* Stripe pattern when active */
+body.active .hero::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    -55deg,
+    transparent, transparent 40px,
+    rgba(239,68,68,0.018) 40px, rgba(239,68,68,0.018) 80px
+  );
+  pointer-events: none; z-index: 0;
+}
 
-  .banner-icon {
-    font-size: 48px;
-    line-height: 1;
-    margin-bottom: 12px;
-    display: block;
-  }
-  .banner-headline {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: clamp(28px, 6vw, 52px);
-    letter-spacing: -1px;
-    line-height: 1.1;
-    margin-bottom: 10px;
-  }
-  .active .banner-headline { color: var(--red); }
-  .clear  .banner-headline { color: var(--green); }
+.hero-inner {
+  position: relative; z-index: 1;
+  max-width: 680px; width: 100%;
+  animation: fadeUp .45s cubic-bezier(.4,0,.2,1) both;
+}
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(24px); }
+  to   { opacity:1; transform:translateY(0); }
+}
 
-  .banner-sub {
-    font-size: 14px;
-    color: var(--muted);
-    margin-bottom: 8px;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
-  .active .banner-sub { color: rgba(248,81,73,0.7); }
-  .clear  .banner-sub { color: rgba(63,185,80,0.7); }
+/* Live pill */
+.live-pill {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: var(--font-mono);
+  font-size: 10px; font-weight: 700;
+  letter-spacing: .14em; text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 100px;
+  border: 1px solid var(--accent-border);
+  background: var(--accent-dim);
+  color: var(--accent);
+  margin-bottom: 32px;
+  transition: all var(--transition);
+}
+.live-pill-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+body.active  .live-pill-dot { animation: dot-pulse .9s ease-in-out infinite; }
+body.warning .live-pill-dot { animation: dot-pulse 1.6s ease-in-out infinite; }
 
-  .banner-date {
-    font-family: 'Syne', sans-serif;
-    font-size: 20px;
-    font-weight: 600;
-    margin: 16px 0 8px;
-  }
-  .active .banner-date { color: var(--text); }
+/* Status headline */
+.status-kicker {
+  font-family: var(--font-mono);
+  font-size: 11px; font-weight: 700;
+  letter-spacing: .18em; text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+  transition: color var(--transition);
+}
 
-  .banner-warning {
-    font-size: 13px;
-    color: var(--muted);
-    max-width: 480px;
-    margin: 0 auto 24px;
-    line-height: 1.7;
-  }
-  .active .banner-warning { color: rgba(230,237,243,0.75); }
+.status-headline {
+  font-family: var(--font-display);
+  font-size: clamp(44px, 9vw, 88px);
+  font-weight: 800;
+  letter-spacing: -3px;
+  line-height: .96;
+  color: var(--text);
+  margin-bottom: 18px;
+}
+body.active  .status-headline { color: #ef4444; }
+body.warning .status-headline { color: #f59e0b; }
+body.clear   .status-headline { color: #22c55e; }
 
-  .banner-link {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: var(--red);
-    color: #fff;
-    text-decoration: none;
-    padding: 12px 28px;
-    border-radius: 8px;
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 0.04em;
-    transition: all .15s;
-  }
-  .banner-link:hover { background: #ff6b65; transform: translateY(-1px); }
+.status-desc {
+  font-size: 15px;
+  color: var(--text-2);
+  max-width: 440px;
+  margin: 0 auto 36px;
+  line-height: 1.7;
+}
 
-  .banner-age {
-    margin-top: 16px;
-    font-size: 11px;
-    color: var(--muted);
-  }
+/* Most-recent post card in hero */
+.recent-post {
+  background: var(--surface);
+  border: 1px solid var(--accent-border);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  max-width: 520px;
+  margin: 0 auto 28px;
+  text-align: left;
+  text-decoration: none;
+  display: block;
+  transition: background var(--transition), border-color var(--transition), transform var(--transition);
+}
+.recent-post:hover { background: var(--surface-h); transform: translateY(-2px); }
 
-  .spinner {
-    display: inline-block;
-    width: 18px; height: 18px;
-    border: 2px solid var(--border2);
-    border-top-color: var(--blue);
-    border-radius: 50%;
-    animation: spin .7s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
+.rp-source {
+  font-family: var(--font-mono);
+  font-size: 10px; color: var(--text-3);
+  margin-bottom: 6px;
+}
+.rp-title {
+  font-size: 15px; font-weight: 600;
+  color: var(--text);
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+.rp-meta {
+  display: flex; gap: 14px;
+  font-family: var(--font-mono);
+  font-size: 11px; color: var(--text-3);
+}
+.rp-meta .votes { color: var(--accent); font-weight: 700; }
+.rp-arrow {
+  margin-left: auto;
+  font-size: 13px;
+  color: var(--text-3);
+}
 
-  /* ── HISTORY SECTION ───────────────────────────────────────────── */
-  .section-label {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: .12em;
-    color: var(--muted);
-    margin-bottom: 16px;
-    display: flex; align-items: center; gap: 10px;
-  }
-  .section-label::after { content:''; flex:1; height:1px; background: var(--border); }
+/* Score meter */
+.score-meter {
+  display: flex; align-items: center; gap: 10px;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 10px; color: var(--text-3);
+}
+.meter-track {
+  width: 120px; height: 3px;
+  background: var(--border);
+  border-radius: 100px;
+  overflow: hidden;
+}
+.meter-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 100px;
+  transition: width 0.8s cubic-bezier(.4,0,.2,1), background var(--transition);
+}
 
-  /* Graph */
-  .graph {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px 24px;
-    margin-bottom: 24px;
-  }
-  .graph-title {
-    font-size: 11px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: .08em;
-    margin-bottom: 16px;
-  }
-  .graph-rows { display: flex; flex-direction: column; gap: 6px; }
-  .graph-row {
-    display: grid;
-    grid-template-columns: 52px 1fr;
-    gap: 10px;
-    align-items: center;
-    font-size: 11px;
-  }
-  .graph-year { color: var(--muted); text-align: right; }
-  .graph-track {
-    position: relative;
-    height: 18px;
-    background: var(--surface2);
-    border-radius: 4px;
-    overflow: visible;
-  }
-  .graph-dot {
-    position: absolute;
-    top: 50%; transform: translateY(-50%);
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    background: var(--red);
-    box-shadow: 0 0 6px var(--red);
-    cursor: pointer;
-    transition: transform .1s;
-  }
-  .graph-dot:hover { transform: translateY(-50%) scale(1.5); }
-  .graph-dot[data-age="recent"] { background: var(--red); box-shadow: 0 0 8px var(--red); }
-  .graph-dot[data-age="old"]    { background: var(--amber); box-shadow: 0 0 4px var(--amber); }
+/* ── Divider ──────────────────────────────────────────────────── */
+.section-divider {
+  display: flex; align-items: center; gap: 14px;
+  padding: 0 28px;
+  margin-bottom: 20px;
+}
+.section-divider span {
+  font-family: var(--font-mono);
+  font-size: 10px; font-weight: 700;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--text-3);
+  white-space: nowrap;
+}
+.section-divider::before,
+.section-divider::after {
+  content: ''; flex: 1; height: 1px;
+  background: var(--border);
+}
 
-  .graph-stats {
-    display: flex; gap: 20px; flex-wrap: wrap;
-    margin-top: 16px;
-    padding-top: 14px;
-    border-top: 1px solid var(--border);
-  }
-  .gs { font-size: 11px; color: var(--muted); }
-  .gs strong { color: var(--text); font-size: 15px; font-family: 'Syne', sans-serif; font-weight: 700; display: block; }
+/* ── Feed ─────────────────────────────────────────────────────── */
+.feed {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 20px 80px;
+}
 
-  /* Timeline list */
-  .timeline { display: flex; flex-direction: column; gap: 6px; }
-  .tl-item {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 12px 16px;
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-    gap: 14px;
-    transition: border-color .15s;
-  }
-  .tl-item:hover { border-color: var(--border2); }
-  .tl-item.latest {
-    background: var(--red-dim);
-    border-color: rgba(248,81,73,0.4);
-  }
-  .tl-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--muted);
-    flex-shrink: 0;
-  }
-  .tl-item.latest .tl-dot { background: var(--red); box-shadow: 0 0 6px var(--red); }
-  .tl-date {
-    font-family: 'Syne', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-  }
-  .tl-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
-  .tl-link {
-    font-size: 11px;
-    color: var(--blue);
-    text-decoration: none;
-    white-space: nowrap;
-    border: 1px solid rgba(88,166,255,0.3);
-    padding: 4px 10px;
-    border-radius: 5px;
-    transition: all .15s;
-  }
-  .tl-link:hover { background: rgba(88,166,255,0.1); }
+.feed-controls {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 16px; flex-wrap: wrap;
+}
+.filter-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-3);
+  padding: 5px 14px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 10px; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.filter-btn:hover { color: var(--text-2); border-color: var(--border-h); }
+.filter-btn.active {
+  background: var(--accent-dim);
+  border-color: var(--accent-border);
+  color: var(--accent);
+}
+.feed-count {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 10px; color: var(--text-3);
+}
 
-  .badge-active {
-    display: inline-block;
-    background: var(--red);
-    color: #fff;
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: .06em;
-    text-transform: uppercase;
-    padding: 2px 6px;
-    border-radius: 3px;
-    margin-left: 8px;
-    vertical-align: middle;
-    animation: badge-pulse 2s ease-in-out infinite;
-  }
-  @keyframes badge-pulse {
-    0%,100% { box-shadow: 0 0 0 0 rgba(248,81,73,0); }
-    50%      { box-shadow: 0 0 0 3px rgba(248,81,73,0.3); }
-  }
+.posts { display: flex; flex-direction: column; gap: 6px; }
 
-  .empty {
-    text-align: center; padding: 48px 24px;
-    color: var(--muted); font-size: 12px;
-  }
+.post-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 18px;
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  gap: 14px;
+  align-items: center;
+  text-decoration: none;
+  transition: background var(--transition), border-color var(--transition), transform var(--transition);
+}
+.post-card:hover {
+  background: var(--surface-h);
+  border-color: var(--border-h);
+  transform: translateX(3px);
+}
+.post-card[data-type="alert"] {
+  border-left: 2px solid var(--accent);
+}
 
-  @media (max-width: 560px) {
-    .status-banner { padding: 24px 16px; }
-    .tl-item { grid-template-columns: auto 1fr; }
-    .tl-link { grid-column: 2; margin-top: -4px; }
-  }
+.pc-votes {
+  text-align: center;
+}
+.pc-votes-num {
+  font-family: var(--font-display);
+  font-size: 17px; font-weight: 800;
+  color: var(--text);
+  line-height: 1;
+}
+.pc-votes-lbl {
+  font-family: var(--font-mono);
+  font-size: 9px; color: var(--text-3);
+  margin-top: 2px;
+}
+
+.pc-body { min-width: 0; }
+.pc-title {
+  font-size: 13px; font-weight: 500;
+  color: var(--text);
+  line-height: 1.45;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  margin-bottom: 4px;
+}
+.pc-meta {
+  display: flex; gap: 10px; align-items: center;
+  font-family: var(--font-mono);
+  font-size: 10px; color: var(--text-3);
+}
+.tag {
+  padding: 1px 7px;
+  border-radius: 4px;
+  font-size: 9px; font-weight: 700;
+  letter-spacing: .04em; text-transform: uppercase;
+}
+.tag-alert   { background: var(--accent-dim); color: var(--accent); border: 1px solid var(--accent-border); }
+.tag-question { background: rgba(148,163,184,.07); color: #64748b; border: 1px solid rgba(148,163,184,.15); }
+
+.pc-link-icon {
+  color: var(--text-3);
+  font-size: 16px;
+  transition: color var(--transition);
+}
+.post-card:hover .pc-link-icon { color: var(--text-2); }
+
+/* Empty / loading / error */
+.state-box {
+  text-align: center;
+  padding: 60px 24px;
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+.spinner {
+  display: inline-block;
+  width: 20px; height: 20px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  margin-bottom: 10px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Footer ───────────────────────────────────────────────────── */
+footer {
+  text-align: center;
+  padding: 24px;
+  font-family: var(--font-mono);
+  font-size: 10px; color: var(--text-3);
+  border-top: 1px solid var(--border);
+}
+footer a { color: var(--text-3); text-decoration: none; }
+footer a:hover { color: var(--text-2); }
+
+/* ── Responsive ───────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  header { padding: 0 16px; }
+  .hero { padding: 60px 16px 40px; min-height: 60vh; }
+  .status-headline { letter-spacing: -2px; }
+  .post-card { grid-template-columns: 36px 1fr auto; gap: 10px; }
+  .pc-title { font-size: 12px; }
+}
 </style>
 </head>
-<body>
+<body class="loading">
 
+<!-- ── Header ──────────────────────────────────────────────────── -->
 <header>
-  <div class="logo">
+  <a class="logo" href="/">
     <span class="logo-dot"></span>
-    RBX Radar
-  </div>
-  <span style="color:var(--muted);font-size:11px">executor banwave monitor</span>
+    Roblox Ban Wave
+  </a>
+  <span class="header-badge" id="headerBadge">Checking…</span>
   <div class="header-right">
-    <span id="lastUpdated" style="font-size:10px;color:var(--muted)">—</span>
-    <button class="refresh-btn" id="refreshBtn" onclick="load()">↻ Refresh</button>
+    <span class="last-check" id="lastCheck">—</span>
+    <button class="refresh-btn" id="refreshBtn" onclick="load()">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M13.5 8A5.5 5.5 0 1 1 8 2.5c1.8 0 3.4.87 4.4 2.2" stroke-linecap="round"/>
+        <path d="M13.5 2.5v2.2h-2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Refresh
+    </button>
   </div>
 </header>
 
-<div class="main">
-  <div id="statusBanner" class="status-banner loading">
-    <div class="spinner"></div>
-    <div style="margin-top:12px;color:var(--muted);font-size:12px">Checking r/robloxhackers…</div>
+<!-- ── Hero ────────────────────────────────────────────────────── -->
+<section class="hero" id="hero">
+  <div class="hero-inner" id="heroInner">
+    <div class="state-box"><div class="spinner"></div><br>Checking r/robloxhackers…</div>
   </div>
+</section>
 
-  <div id="historySection" style="display:none">
-    <div class="section-label">ban wave frequency</div>
-    <div class="graph" id="graph"></div>
+<!-- ── Feed ────────────────────────────────────────────────────── -->
+<div class="section-divider" id="feedDivider" style="display:none">
+  <span>Recent reports · r/robloxhackers</span>
+</div>
 
-    <div class="section-label">history</div>
-    <div class="timeline" id="timeline"></div>
+<div class="feed" id="feedSection" style="display:none">
+  <div class="feed-controls">
+    <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+    <button class="filter-btn" onclick="setFilter('alert',this)">Alerts</button>
+    <button class="filter-btn" onclick="setFilter('question',this)">Questions</button>
+    <span class="feed-count" id="feedCount"></span>
+  </div>
+  <div class="posts" id="postsContainer">
+    <div class="state-box"><div class="spinner"></div></div>
   </div>
 </div>
 
-<script>
-const SUBREDDIT = 'robloxhackers';
-// Posts must match: "Executor Banwave - Month DD YYYY"
-const TITLE_RE  = /^Executor Banwave\s*[-–]\s*(.+)$/i;
-// Consider a ban wave "active" if posted within this many days
-const ACTIVE_DAYS = 7;
+<footer>
+  Data sourced from <a href="https://reddit.com/r/robloxhackers" target="_blank" rel="noopener">r/robloxhackers</a> · <a href="https://robloxbanwave.vercel.app">robloxbanwave.vercel.app</a>
+</footer>
 
-let banwaves = [];
+<script>
+// ── Config ────────────────────────────────────────────────────────────────
+const SUBREDDIT   = 'robloxhackers';
+const SEARCH_TERM = 'banwave';
+// Title filter: any post containing "banwave" or "ban wave" (case-insensitive)
+const TITLE_RE = /ban\s*wave/i;
+
+// Thresholds for status score
+const SCORE_ACTIVE  = 3.5;
+const SCORE_WARNING = 1.0;
+
+let allPosts  = [];
+let curFilter = 'all';
 
 // ── Helpers ───────────────────────────────────────────────────────────────
-function daysAgo(date) {
-  return Math.floor((Date.now() - date.getTime()) / 86400000);
+function esc(s) {
+  return String(s || '')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-function fmtDate(date) {
-  return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+function timeAgo(utc) {
+  const s = Date.now() / 1000 - utc;
+  if (s < 3600)  return Math.floor(s / 60) + 'm ago';
+  if (s < 86400) return Math.floor(s / 3600) + 'h ago';
+  if (s < 86400 * 30) return Math.floor(s / 86400) + 'd ago';
+  return Math.floor(s / (86400 * 30)) + 'mo ago';
 }
 
-function timeAgoStr(days) {
-  if (days === 0) return 'Today';
-  if (days === 1) return '1 day ago';
-  if (days < 30)  return `${days} days ago`;
-  if (days < 365) return `~${Math.round(days / 30)} months ago`;
-  return `~${Math.round(days / 365)} years ago`;
+function fmtVotes(n) {
+  if (n == null || n === 0) return '—';
+  if (n >= 1000) return (n / 1000).toFixed(1) + 'k';
+  return String(n);
+}
+
+// Classify post by title intent
+function classify(title) {
+  const t = title.toLowerCase();
+  // Alert: declares or warns about active ban wave
+  if (/\balert\b|don.?t exploit|not safe|activated|going on|is detected|going through|hours of ban|⚠|banwave -|banwave!|rn[,!.]|right now|currently|is live|ongoing/.test(t)) return 'alert';
+  // Question: asks about state
+  if (/^(is |did |was |when |how |can |does |are |what |where |why |any )/.test(t) ||
+      / over\??| still | end\??|explain|tracker|chances|possible\??/.test(t)) return 'question';
+  return 'general';
+}
+
+// Score: higher = more likely an active ban wave right now
+function scorePost(p) {
+  const ageSeconds = Date.now() / 1000 - p.created_utc;
+  const ageDays    = ageSeconds / 86400;
+  if (ageDays > 14) return 0; // ignore posts older than 2 weeks
+  const recency    = Math.pow(0.85, ageDays);           // exponential decay
+  const votes      = Math.log2(Math.max(1, p.score || 0) + 1);
+  const typeW      = p._type === 'alert' ? 2.5
+                   : p._type === 'question' ? 0.2
+                   : 0.5;
+  return recency * (votes + 0.5) * typeW;
 }
 
 // ── Fetch ─────────────────────────────────────────────────────────────────
-async function fetchBanwaves() {
-  const p = new URLSearchParams({ subreddit: SUBREDDIT, search: 'Executor Banwave', t: 'all' });
-  const res = await fetch('/api/reddit?' + p);
-  if (!res.ok) throw new Error('API returned ' + res.status);
+async function fetchPosts() {
+  const params = new URLSearchParams({ subreddit: SUBREDDIT, search: SEARCH_TERM, t: 'month' });
+  const res = await fetch('/api/reddit?' + params);
+  if (!res.ok) throw new Error('Server returned ' + res.status);
   const data = await res.json();
-  const posts = (data.data?.children || []).map(c => c.data);
-
-  return posts
-    .map(post => {
-      const m = TITLE_RE.exec(post.title || '');
-      if (!m) return null;
-      const dateStr = m[1].trim();
-      const date    = new Date(dateStr);
-      if (isNaN(date.getTime())) return null;
-      return {
-        title:  post.title,
-        dateStr,
-        date,
-        days:   daysAgo(date),
-        url:    'https://reddit.com' + (post.permalink || '').replace(/['"<>]/g, ''),
-      };
-    })
-    .filter(Boolean)
-    .sort((a, b) => b.date - a.date);
+  return (data.data?.children || [])
+    .map(c => c.data)
+    .filter(p => TITLE_RE.test(p.title || ''));
 }
 
-// ── Render status banner ──────────────────────────────────────────────────
-function renderBanner(waves) {
-  const el     = document.getElementById('statusBanner');
-  const latest = waves[0] || null;
-  const active = latest && latest.days <= ACTIVE_DAYS;
+// ── Render hero ────────────────────────────────────────────────────────────
+function renderHero(posts, totalScore) {
+  const body   = document.body;
+  const heroEl = document.getElementById('heroInner');
+  const badge  = document.getElementById('headerBadge');
+  const recent = posts[0] || null;
 
-  if (active) {
-    el.className = 'status-banner active';
-    el.innerHTML = `
-      <span class="banner-icon">⚠</span>
-      <div class="banner-headline">ACTIVE BAN WAVE</div>
-      <div class="banner-sub">DO NOT USE ROBLOX EXPLOITS</div>
-      <div class="banner-date">${latest.title}</div>
-      <div class="banner-warning">
-        A ban wave is currently active on Roblox.<br>
-        All executors are at risk of detection — accounts using any exploit may be permanently banned.<br>
-        Wait until the wave is confirmed over before using any executor.
-      </div>
-      <a class="banner-link" href="${latest.url}" target="_blank" rel="noopener">
-        View Reddit Post ↗
-      </a>
-      <div class="banner-age">Detected ${latest.days === 0 ? 'today' : latest.days + ' day' + (latest.days !== 1 ? 's' : '') + ' ago'} · r/robloxhackers</div>
-    `;
-  } else if (latest) {
-    el.className = 'status-banner clear';
-    el.innerHTML = `
-      <span class="banner-icon">✓</span>
-      <div class="banner-headline">NO ACTIVE BAN WAVE</div>
-      <div class="banner-sub">Executors appear to be safe at this time</div>
-      <div class="banner-warning" style="margin-top:12px">
-        Last known ban wave: <strong style="color:var(--text)">${fmtDate(latest.date)}</strong> (${timeAgoStr(latest.days)})<br>
-        This can change at any time — always check before exploiting.
-      </div>
-    `;
+  // Determine status
+  let status, kicker, headline, desc;
+  if (totalScore >= SCORE_ACTIVE) {
+    status   = 'active';
+    kicker   = '⚠ BAN WAVE DETECTED';
+    headline = 'NOT SAFE';
+    desc     = 'An active ban wave is being reported on r/robloxhackers right now.<br>'
+             + 'Do <strong>not</strong> use any Roblox executors until this clears — '
+             + 'accounts are at risk of permanent bans.';
+    badge.textContent = '⚠ ACTIVE';
+  } else if (totalScore >= SCORE_WARNING) {
+    status   = 'warning';
+    kicker   = '⚠ RECENT ACTIVITY';
+    headline = 'USE CAUTION';
+    desc     = 'Banwave activity has been reported recently on r/robloxhackers.<br>'
+             + 'A wave may still be ongoing — check reports below before exploiting.';
+    badge.textContent = 'WARNING';
   } else {
-    el.className = 'status-banner clear';
-    el.innerHTML = `
-      <span class="banner-icon">✓</span>
-      <div class="banner-headline">NO BAN WAVES FOUND</div>
-      <div class="banner-sub">No recent executor banwave posts on r/robloxhackers</div>
-    `;
-  }
-}
-
-// ── Render history graph ──────────────────────────────────────────────────
-function renderGraph(waves) {
-  if (!waves.length) return;
-
-  // group by year
-  const byYear = {};
-  for (const w of waves) {
-    const y = w.date.getFullYear();
-    if (!byYear[y]) byYear[y] = [];
-    byYear[y].push(w);
+    status   = 'clear';
+    kicker   = '✓ STATUS CLEAR';
+    headline = 'LOOKS CLEAR';
+    desc     = 'No significant banwave activity detected in the last two weeks.<br>'
+             + 'This can change at any time — always verify before using any executor.';
+    badge.textContent = 'CLEAR';
   }
 
-  const years    = Object.keys(byYear).map(Number).sort((a, b) => b - a);
-  const minDate  = waves[waves.length - 1].date;
-  const maxDate  = waves[0].date;
-  const spanDays = Math.max(1, daysAgo(minDate));
+  body.className = status;
 
-  const rows = years.map(year => {
-    const yw  = byYear[year];
-    const dots = yw.map(w => {
-      // position as % across the year (Jan=0, Dec=100)
-      const dayOfYear = Math.floor((w.date - new Date(year, 0, 1)) / 86400000);
-      const pct       = Math.min(95, Math.max(2, (dayOfYear / 365) * 100));
-      const age       = w.days <= ACTIVE_DAYS * 3 ? 'recent' : 'old';
-      return `<span class="graph-dot" data-age="${age}" style="left:${pct}%" title="${w.dateStr}"></span>`;
-    }).join('');
-    return `
-      <div class="graph-row">
-        <span class="graph-year">${year}</span>
-        <div class="graph-track">${dots}</div>
-      </div>`;
-  }).join('');
+  // Score meter capped at 100%
+  const meterPct = Math.min(100, (totalScore / (SCORE_ACTIVE * 1.5)) * 100).toFixed(0);
 
-  // stats
-  let avgGap = '—', longestGap = '—';
-  if (waves.length >= 2) {
-    const gaps = [];
-    for (let i = 0; i < waves.length - 1; i++) {
-      gaps.push(Math.floor((waves[i].date - waves[i + 1].date) / 86400000));
-    }
-    avgGap     = Math.round(gaps.reduce((a, b) => a + b, 0) / gaps.length) + 'd';
-    longestGap = Math.max(...gaps) + 'd';
-  }
+  // Most recent post card
+  const rpHtml = recent ? `
+    <a class="recent-post" href="${esc(recent._url)}" target="_blank" rel="noopener">
+      <div class="rp-source">r/robloxhackers · ${timeAgo(recent.created_utc)}</div>
+      <div class="rp-title">${esc(recent.title)}</div>
+      <div class="rp-meta">
+        <span class="votes">▲ ${fmtVotes(recent.score)}</span>
+        <span>💬 ${fmtVotes(recent.num_comments)}</span>
+        <span class="rp-arrow">View on Reddit ↗</span>
+      </div>
+    </a>` : '';
 
-  document.getElementById('graph').innerHTML = `
-    <div class="graph-title">Ban wave occurrences by year — each dot is one wave</div>
-    <div class="graph-rows">${rows}</div>
-    <div class="graph-stats">
-      <div class="gs"><strong>${waves.length}</strong>waves tracked</div>
-      <div class="gs"><strong>${avgGap}</strong>avg gap between waves</div>
-      <div class="gs"><strong>${longestGap}</strong>longest gap</div>
-      <div class="gs"><strong>${fmtDate(waves[0].date)}</strong>most recent</div>
+  heroEl.innerHTML = `
+    <div class="live-pill">
+      <span class="live-pill-dot"></span>
+      LIVE MONITOR · R/ROBLOXHACKERS
+    </div>
+    <div class="status-kicker">${esc(kicker)}</div>
+    <div class="status-headline">${esc(headline)}</div>
+    <p class="status-desc">${desc}</p>
+    ${rpHtml}
+    <div class="score-meter">
+      <span>THREAT LEVEL</span>
+      <div class="meter-track"><div class="meter-fill" style="width:${meterPct}%"></div></div>
+      <span>${meterPct}%</span>
     </div>
   `;
 }
 
-// ── Render timeline list ──────────────────────────────────────────────────
-function renderTimeline(waves) {
-  const el = document.getElementById('timeline');
-  if (!waves.length) {
-    el.innerHTML = '<div class="empty">No executor banwave posts found on r/robloxhackers.</div>';
+// ── Render feed ────────────────────────────────────────────────────────────
+function renderFeed() {
+  const container = document.getElementById('postsContainer');
+  const countEl   = document.getElementById('feedCount');
+
+  let shown = allPosts;
+  if (curFilter === 'alert')    shown = allPosts.filter(p => p._type === 'alert');
+  if (curFilter === 'question') shown = allPosts.filter(p => p._type === 'question');
+
+  countEl.textContent = shown.length + ' post' + (shown.length !== 1 ? 's' : '');
+
+  if (!shown.length) {
+    container.innerHTML = '<div class="state-box">No posts match this filter.</div>';
     return;
   }
 
-  el.innerHTML = waves.map((w, i) => {
-    const isLatest  = i === 0;
-    const isActive  = isLatest && w.days <= ACTIVE_DAYS;
-    const activeBadge = isActive ? '<span class="badge-active">active</span>' : '';
+  container.innerHTML = shown.map(p => {
+    const tagHtml = p._type === 'alert'
+      ? '<span class="tag tag-alert">Alert</span>'
+      : p._type === 'question'
+        ? '<span class="tag tag-question">Question</span>'
+        : '';
+
     return `
-      <div class="tl-item${isLatest ? ' latest' : ''}">
-        <span class="tl-dot"></span>
-        <div>
-          <div class="tl-date">${fmtDate(w.date)}${activeBadge}</div>
-          <div class="tl-meta">${timeAgoStr(w.days)} · r/robloxhackers</div>
+      <a class="post-card" data-type="${esc(p._type)}" href="${esc(p._url)}" target="_blank" rel="noopener">
+        <div class="pc-votes">
+          <div class="pc-votes-num">${fmtVotes(p.score)}</div>
+          <div class="pc-votes-lbl">pts</div>
         </div>
-        <a class="tl-link" href="${w.url}" target="_blank" rel="noopener">View post ↗</a>
-      </div>`;
+        <div class="pc-body">
+          <div class="pc-title">${esc(p.title)}</div>
+          <div class="pc-meta">
+            ${tagHtml}
+            <span>${timeAgo(p.created_utc)}</span>
+            <span>💬 ${fmtVotes(p.num_comments)}</span>
+          </div>
+        </div>
+        <div class="pc-link-icon">↗</div>
+      </a>`;
   }).join('');
 }
 
-// ── Main load ─────────────────────────────────────────────────────────────
+function setFilter(f, btn) {
+  curFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderFeed();
+}
+
+// ── Main load ──────────────────────────────────────────────────────────────
 async function load() {
   const btn = document.getElementById('refreshBtn');
   btn.disabled = true;
-
-  document.getElementById('statusBanner').className = 'status-banner loading';
-  document.getElementById('statusBanner').innerHTML =
-    '<div class="spinner"></div><div style="margin-top:12px;color:var(--muted);font-size:12px">Checking r/robloxhackers…</div>';
-  document.getElementById('historySection').style.display = 'none';
+  document.body.className = 'loading';
+  document.getElementById('headerBadge').textContent = 'Checking…';
+  document.getElementById('heroInner').innerHTML =
+    '<div class="state-box"><div class="spinner"></div><br>Checking r/robloxhackers…</div>';
+  document.getElementById('feedDivider').style.display = 'none';
+  document.getElementById('feedSection').style.display = 'none';
 
   try {
-    banwaves = await fetchBanwaves();
-    renderBanner(banwaves);
-    if (banwaves.length) {
-      renderGraph(banwaves);
-      renderTimeline(banwaves);
-      document.getElementById('historySection').style.display = 'block';
+    const raw = await fetchPosts();
+
+    // Attach computed fields
+    allPosts = raw.map(p => ({
+      ...p,
+      _type: classify(p.title || ''),
+      _url:  'https://reddit.com' + (p.permalink || '').replace(/['"<>]/g, ''),
+    })).sort((a, b) => b.created_utc - a.created_utc);
+
+    // Score only last-14-day posts
+    const totalScore = allPosts.reduce((sum, p) => sum + scorePost(p), 0);
+
+    renderHero(allPosts, totalScore);
+
+    if (allPosts.length) {
+      document.getElementById('feedDivider').style.display = 'flex';
+      document.getElementById('feedSection').style.display = 'block';
+      renderFeed();
     }
-    document.getElementById('lastUpdated').textContent =
-      'Updated ' + new Date().toLocaleTimeString();
-  } catch (e) {
-    document.getElementById('statusBanner').className = 'status-banner loading';
-    document.getElementById('statusBanner').innerHTML = `
-      <div style="color:var(--red);font-size:14px">⚠ Failed to load</div>
-      <div style="color:var(--muted);font-size:12px;margin-top:8px">${e.message}</div>
-    `;
+
+    document.getElementById('lastCheck').textContent =
+      'Checked ' + new Date().toLocaleTimeString();
+
+  } catch (err) {
+    document.body.className = '';
+    document.getElementById('headerBadge').textContent = 'Error';
+    document.getElementById('heroInner').innerHTML = `
+      <div class="state-box">
+        <div style="font-size:20px;margin-bottom:8px">⚠</div>
+        Failed to fetch posts<br>
+        <span style="color:#475569">${esc(err.message)}</span><br><br>
+        <button class="refresh-btn" onclick="load()" style="margin:auto">Try again</button>
+      </div>`;
   }
 
   btn.disabled = false;
