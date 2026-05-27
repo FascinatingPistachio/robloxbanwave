@@ -101,6 +101,8 @@ body.clear   .live-pill{border-color:rgba(74,171,138,.42);background:rgba(74,171
 /* Button glow on hover */
 .wh-btn:hover,.report-btn:hover,.modal-submit:hover,.bn-btn:hover{box-shadow:0 4px 20px rgba(78,140,200,.25)}
 body.active .wh-btn:hover,body.active .report-btn:hover,body.active .modal-submit:hover{box-shadow:0 4px 20px rgba(240,236,230,.2)}
+/* Active state: cream button bg needs dark text */
+body.active .wh-btn,body.active .report-btn,body.active .modal-submit{color:#0b1c36}
 /* Alert post left border glow */
 .post-card[data-type="alert"]{border-left-width:3px}
 body.active .recent-post{border-color:rgba(240,236,230,.4);box-shadow:0 0 30px rgba(240,236,230,.08)}
@@ -383,11 +385,26 @@ footer{padding:18px 24px 14px;border-top:1px solid var(--border);font-family:var
 .footer-disclaimer{font-family:var(--mono);font-size:10px;color:var(--text3);text-align:center;opacity:.65}
 img.emoji{height:1em;width:1em;margin:0 .05em 0 .1em;vertical-align:-.1em}
 
+/* Tablet */
+@media(max-width:900px){
+  .hero{padding:64px 20px 150px}
+  .status-headline{font-size:clamp(44px,10vw,96px)}
+  .section-wrap,.feed,.graph-wrap,.wh-wrap{padding-left:16px;padding-right:16px}
+  .sep{padding:0 16px}
+}
+
+/* Mobile */
 @media(max-width:600px){
-  header{padding:0 16px;gap:6px}
+  header{padding:0 14px;gap:6px}
   .last-check,.countdown{display:none}
-  .hero{padding:60px 16px 40px;min-height:60vh}
-  .status-headline{letter-spacing:-2px}
+  .hero{padding:52px 16px 128px;min-height:auto}
+  .jwave-wrap{height:128px}
+  .status-headline{font-size:clamp(40px,13vw,72px);letter-spacing:-1.5px}
+  .status-subdeck{font-size:10px;letter-spacing:.1em}
+  .status-desc{font-size:14px;margin-bottom:20px}
+  .score-meter{gap:8px}
+  .meter-track{width:130px}
+  .recent-post{padding:14px 16px}
   .post-card{grid-template-columns:36px 1fr auto;gap:10px}
   .graph-head{flex-direction:column}
   .graph-stats{justify-content:flex-start}
@@ -395,8 +412,32 @@ img.emoji{height:1em;width:1em;margin:0 .05em 0 .1em;vertical-align:-.1em}
   .form-grid{grid-template-columns:1fr}
   .info-grid,.resource-grid{grid-template-columns:1fr}
   .report-card{flex-direction:column}
+  .modal{padding:20px 18px;border-radius:14px}
   .ban-nudge{left:12px;right:12px;max-width:none;bottom:16px}
   .hdr-report-txt{display:none}
+  .section-wrap,.feed,.graph-wrap,.wh-wrap{padding-left:12px;padding-right:12px}
+  .sep{padding:0 12px}
+  .toast-container{bottom:16px;right:12px;left:12px;align-items:stretch}
+  .toast{max-width:none}
+}
+
+/* Small phones */
+@media(max-width:390px){
+  .status-headline{font-size:clamp(34px,13.5vw,58px);letter-spacing:-1px}
+  .live-pill{font-size:9px;padding:4px 11px;letter-spacing:.1em}
+  .status-desc{font-size:13px}
+  .wh-card,.report-card{padding:16px 14px}
+}
+
+/* Short/landscape viewports */
+@media(max-height:500px){
+  .hero{min-height:auto;padding:32px 20px 118px}
+  .jwave-wrap{height:118px}
+  .status-headline{font-size:clamp(32px,9vh,72px)}
+  .live-pill{margin-bottom:12px}
+  .status-subdeck{margin-bottom:14px}
+  .status-desc{margin-bottom:16px;font-size:14px}
+  .score-meter{margin-bottom:16px}
 }
 </style>
 </head>
