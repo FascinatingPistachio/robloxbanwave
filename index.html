@@ -110,31 +110,36 @@ body.clear   .ow-1{color:rgba(52,211,153,.11);animation-duration:11s}
 body.clear   .ow-2{color:rgba(16,185,129,.07);animation-duration:17s}
 body.clear   .ow-3{color:rgba(5,150,105,.04);animation-duration:25s}
 
-/* Tsunami glitch on headline */
-body.active .status-headline{text-shadow:3px 0 rgba(248,113,113,.6),-3px 0 rgba(56,189,248,.6);animation:tsunami-glitch 4.5s infinite;position:relative}
-@keyframes tsunami-glitch{
-  0%,76%,81%,85%,89%,100%{text-shadow:3px 0 rgba(248,113,113,.6),-3px 0 rgba(56,189,248,.6);transform:none;filter:none}
-  77%{text-shadow:6px 2px rgba(248,113,113,1),-6px -2px rgba(0,245,255,1);transform:skewX(-3.5deg) translateX(-3px);filter:brightness(1.4)}
-  78%{text-shadow:-3px 0 rgba(248,113,113,1),3px 0 rgba(0,245,255,1);transform:skewX(2.5deg) translateX(3px)}
-  82%{text-shadow:5px 3px rgba(248,113,113,1),-5px -3px rgba(0,245,255,1);transform:skewX(-2deg);filter:brightness(1.2)}
-  86%{text-shadow:-4px -1px rgba(248,113,113,.9),4px 1px rgba(0,245,255,.9);transform:skewX(3deg) translateX(-2px)}
-  88%{text-shadow:2px 0 rgba(248,113,113,.7),-2px 0 rgba(56,189,248,.7);transform:skewX(-.5deg);filter:none}
-}
-body.active .hero{animation:tsunami-shudder 7s ease-in-out infinite}
-@keyframes tsunami-shudder{0%,88%,100%{filter:none}89%{filter:hue-rotate(10deg) brightness(1.06)}90%{filter:hue-rotate(-6deg)}91%{filter:none}95%{filter:brightness(1.09) saturate(1.4)}96%{filter:brightness(.94)}}
-
-/* Tsunami alert bar */
-.tsunami-banner{background:linear-gradient(90deg,rgba(239,68,68,.1),rgba(248,113,113,.2),rgba(239,68,68,.1));border:1px solid rgba(248,113,113,.5);border-radius:8px;padding:10px 22px;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.12em;color:#f87171;text-transform:uppercase;margin-bottom:24px;animation:banner-pulse 2.5s ease-in-out infinite;display:inline-block}
-@keyframes banner-pulse{0%,100%{box-shadow:0 0 8px rgba(248,113,113,.12)}50%{box-shadow:0 0 28px rgba(248,113,113,.38),0 0 60px rgba(248,113,113,.12)}}
+/* Per-state headline glow */
+body.active  .status-headline{color:#f87171;text-shadow:0 0 60px rgba(248,113,113,.45),0 0 120px rgba(248,113,113,.18)}
+body.warning .status-headline{color:#fbbf24;text-shadow:0 0 60px rgba(251,191,36,.38),0 0 120px rgba(251,191,36,.14)}
+body.clear   .status-headline{color:#34d399;text-shadow:0 0 60px rgba(52,211,153,.35),0 0 120px rgba(52,211,153,.12)}
+/* Status-aware live pill */
+body.active  .live-pill{border-color:rgba(248,113,113,.5);background:rgba(248,113,113,.08);color:#f87171}
+body.warning .live-pill{border-color:rgba(251,191,36,.4);background:rgba(251,191,36,.07);color:#fbbf24}
+body.clear   .live-pill{border-color:rgba(52,211,153,.4);background:rgba(52,211,153,.08);color:#34d399}
+/* Card elevation */
+.info-card,.graph-card,.wh-card,.report-card{box-shadow:0 1px 4px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.03);transition:transform var(--t),box-shadow var(--t),border-color var(--t)}
+.post-card{box-shadow:0 1px 3px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.025)}
+.info-card:hover,.resource-card:hover{box-shadow:0 6px 24px rgba(0,0,0,.5),0 0 0 1px var(--border-h);transform:translateY(-2px)}
+.post-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.5),0 0 0 1px var(--border-h)}
+/* Gradient separators */
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent)}
+/* Graph bars use accent */
+.g-bar.has-data{background:rgba(56,189,248,.2)}
+.g-bar.has-data:hover{background:rgba(56,189,248,.55)}
+/* Button glow on hover */
+.wh-btn:hover,.report-btn:hover,.modal-submit:hover,.bn-btn:hover{box-shadow:0 4px 20px rgba(56,189,248,.22)}
+body.active .wh-btn:hover,body.active .report-btn:hover,body.active .modal-submit:hover{box-shadow:0 4px 20px rgba(248,113,113,.28)}
+/* Alert post left border glow */
+.post-card[data-type="alert"]{border-left-width:3px}
+body.active .recent-post{border-color:rgba(248,113,113,.5);box-shadow:0 0 30px rgba(248,113,113,.12)}
 
 .live-pill{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:5px 14px;border-radius:100px;border:1px solid var(--accent-border);background:var(--accent-dim);color:var(--accent);margin-bottom:28px;transition:all var(--t)}
 .live-pill-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0}
 body.active .live-pill-dot,body.warning .live-pill-dot{animation:dot-pulse 1s ease-in-out infinite}
 .status-kicker{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;transition:color var(--t)}
 .status-headline{font-family:var(--display);font-size:clamp(52px,11vw,108px);font-weight:800;letter-spacing:-3px;line-height:.92;color:var(--text);margin-bottom:12px;transition:color .4s,text-shadow .4s}
-body.active  .status-headline{color:#f87171}
-body.warning .status-headline{color:#fbbf24}
-body.clear   .status-headline{color:#34d399}
 .status-subdeck{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.14em;color:var(--accent);text-transform:uppercase;margin-bottom:14px;opacity:.75}
 .status-desc{font-size:15px;color:var(--text2);max-width:480px;margin:0 auto 10px;line-height:1.78}
 .wave-meta{font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:28px}
@@ -648,8 +653,8 @@ img.emoji{height:1em;width:1em;margin:0 .05em 0 .1em;vertical-align:-.1em}
     </div>
 
     <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">What do TSUNAMI / RISING TIDE / ALL CLEAR mean?<svg class="faq-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-      <div class="faq-a"><div class="faq-a-inner"><strong>TSUNAMI</strong> - threat score &ge; 3.5. Active ban wave with significant recent reports. Stop all executors immediately.<br><br><strong>RISING TIDE</strong> - threat score &ge; 1.0. Elevated activity — a wave may be starting or winding down. Use extreme caution.<br><br><strong>ALL CLEAR</strong> - threat score &lt; 1.0. No significant ban wave activity in the past 14 days. Lower risk, but conditions can change quickly.</div></div>
+      <button class="faq-q" onclick="toggleFaq(this)">What do NOT SAFE / USE CAUTION / ALL CLEAR mean?<svg class="faq-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="faq-a"><div class="faq-a-inner"><strong>NOT SAFE</strong> - threat score &ge; 3.5. Active ban wave with significant recent reports. Stop all executors immediately.<br><br><strong>USE CAUTION</strong> - threat score &ge; 1.0. Elevated activity — a wave may be starting or winding down. Check the reports before running anything.<br><br><strong>ALL CLEAR</strong> - threat score &lt; 1.0. No significant ban wave activity in the past 14 days. Lower risk, but conditions can change quickly.</div></div>
     </div>
 
     <div class="faq-item">
@@ -1070,23 +1075,22 @@ async function fetchPosts() {
 // -- Hero ----------------------------------------------------------------------
 function renderHero(posts, totalScore, source, fetchedAt) {
   const recent = posts.find(p=>p._type==='alert') || posts.find(p=>p._type!=='meta') || posts[0] || null;
-  let status, kicker, headline, subdeck, desc, bannerHtml = '';
+  let status, kicker, headline, subdeck, desc;
 
   if (totalScore >= SCORE_ACTIVE) {
-    status='active'; kicker='⚠ TSUNAMI DETECTED'; headline='TSUNAMI';
-    subdeck='ACTIVE ROBLOX BAN WAVE — DO NOT EXPLOIT';
-    desc='A ban wave is sweeping through Roblox right now. <strong>Stop all executors immediately.</strong><br>Hyperion is actively terminating accounts. Every minute you wait reduces your risk.';
-    document.getElementById('headerBadge').textContent='⚠ TSUNAMI';
-    bannerHtml = '<div class="tsunami-banner">⚠ &nbsp; BAN WAVE ACTIVE — EXECUTOR INFRASTRUCTURE TAKING A HIT &nbsp; ⚠</div>';
+    status='active'; kicker='⚠ BAN WAVE DETECTED'; headline='NOT SAFE';
+    subdeck='DO NOT USE EXECUTORS RIGHT NOW';
+    desc='An active ban wave is being reported on r/robloxhackers. <strong>Stop all executors immediately.</strong><br>Accounts are being terminated — every minute of exposure increases your risk.';
+    document.getElementById('headerBadge').textContent='⚠ ACTIVE';
   } else if (totalScore >= SCORE_WARN) {
-    status='warning'; kicker='⚠ CHOPPY WATERS'; headline='RISING TIDE';
-    subdeck='ELEVATED BAN RISK — USE EXTREME CAUTION';
-    desc='Banwave activity is rising on r/robloxhackers. A wave may be starting or winding down.<br><strong>Use extreme caution</strong> — check the reports below before running any executor.';
+    status='warning'; kicker='⚠ ELEVATED RISK'; headline='USE CAUTION';
+    subdeck='RECENT BAN WAVE ACTIVITY DETECTED';
+    desc='Ban wave activity has been reported on r/robloxhackers. A wave may be starting or winding down.<br><strong>Check the reports below</strong> before running any executor.';
     document.getElementById('headerBadge').textContent='WARNING';
   } else {
-    status='clear'; kicker='✓ WATERS CALM'; headline='ALL CLEAR';
+    status='clear'; kicker='✓ STATUS CLEAR'; headline='ALL CLEAR';
     subdeck='NO ACTIVE BAN WAVE DETECTED';
-    desc='No significant ban wave activity in the last two weeks. Waters are calm.<br>Conditions can change quickly — always verify before exploiting.';
+    desc='No significant ban wave activity in the last two weeks. Conditions are calm — but always verify before exploiting.';
     document.getElementById('headerBadge').textContent='CLEAR';
   }
 
@@ -1126,7 +1130,6 @@ function renderHero(posts, totalScore, source, fetchedAt) {
 
   document.getElementById('heroInner').innerHTML = `
     <div class="live-pill"><span class="live-pill-dot"></span>LIVE MONITOR · R/ROBLOXHACKERS</div>
-    ${bannerHtml}
     <div class="status-kicker">${esc(kicker)}</div>
     <div class="status-headline">${esc(headline)}</div>
     <div class="status-subdeck">${esc(subdeck)}</div>
