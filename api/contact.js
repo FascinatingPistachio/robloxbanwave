@@ -11,11 +11,12 @@ export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
   if (req.method !== 'POST') return res.status(405).json({ error: 'POST only' });
 
-  const { message, category } = req.body ?? {};
+  const { message, category, email } = req.body ?? {};
   const msg = String(message || '').trim();
   if (msg.length < 10) return res.status(400).json({ error: 'Message too short (min 10 characters).' });
   if (msg.length > 1800) return res.status(400).json({ error: 'Message too long (max 1800 characters).' });
   const cat = VALID_CATEGORIES.includes(String(category || '').toLowerCase()) ? String(category).toLowerCase() : 'general';
+  const replyEmail = email ? String(email).trim().slice(0, 200) : null;
 
   let webhookUrl = process.env.CONTACT_WEBHOOK_URL;
   if (!webhookUrl) {
@@ -37,11 +38,15 @@ export default async function handler(req, res) {
   }
 
   const colors = { bug: 0xef4444, 'false-positive': 0xf59e0b, dmca: 0x8b5cf6, general: 0x94a3b8 };
+  const fields = replyEmail
+    ? [{ name: 'Reply-to', value: replyEmail, inline: false }]
+    : [];
   const embed = {
     title:       `Contact: ${cat}`,
     description: msg,
     color:       colors[cat] ?? 0x94a3b8,
-    footer:      { text: 'robloxbanwave.vercel.app - anonymous contact form' },
+    fields,
+    footer:      { text: replyEmail ? 'robloxbanwave.vercel.app - reply requested' : 'robloxbanwave.vercel.app - anonymous contact form' },
     timestamp:   new Date().toISOString(),
   };
 

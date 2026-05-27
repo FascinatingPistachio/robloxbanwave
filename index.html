@@ -16,27 +16,31 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
 :root{
-  --bg:#060a14;--bg2:#090e1a;
-  --surface:rgba(255,255,255,.03);--surface-h:rgba(255,255,255,.055);
-  --border:rgba(255,255,255,.07);--border-h:rgba(255,255,255,.13);
-  --text:#f1f5f9;--text2:#94a3b8;--text3:#475569;
-  --accent:#94a3b8;--accent-dim:rgba(148,163,184,.08);
-  --accent-glow:rgba(148,163,184,.12);--accent-border:rgba(148,163,184,.25);
-  --green:#22c55e;--red:#ef4444;--amber:#f59e0b;
+  --bg:#040f1d;--bg2:#060d1a;
+  --surface:rgba(14,76,160,.06);--surface-h:rgba(14,76,160,.12);
+  --border:rgba(56,140,220,.09);--border-h:rgba(56,140,220,.18);
+  --text:#ddf0fb;--text2:#6eb0d0;--text3:#3a6482;
+  --accent:#38bdf8;--accent-dim:rgba(56,189,248,.08);
+  --accent-glow:rgba(56,189,248,.18);--accent-border:rgba(56,189,248,.28);
+  --green:#34d399;--red:#f87171;--amber:#fbbf24;
   --sans:'Inter',system-ui,sans-serif;
   --display:'Syne',sans-serif;
   --mono:'JetBrains Mono',monospace;
   --r:14px;--t:.2s cubic-bezier(.4,0,.2,1);
 }
-body.active  {--accent:#ef4444;--accent-dim:rgba(239,68,68,.08);--accent-glow:rgba(239,68,68,.22);--accent-border:rgba(239,68,68,.35);}
-body.warning {--accent:#f59e0b;--accent-dim:rgba(245,158,11,.08);--accent-glow:rgba(245,158,11,.18);--accent-border:rgba(245,158,11,.35);}
-body.clear   {--accent:#22c55e;--accent-dim:rgba(34,197,94,.08); --accent-glow:rgba(34,197,94,.15); --accent-border:rgba(34,197,94,.3);}
+body.active  {--accent:#f87171;--accent-dim:rgba(248,113,113,.09);--accent-glow:rgba(248,113,113,.28);--accent-border:rgba(248,113,113,.44);}
+body.warning {--accent:#fbbf24;--accent-dim:rgba(251,191,36,.08);--accent-glow:rgba(251,191,36,.2);--accent-border:rgba(251,191,36,.36);}
+body.clear   {--accent:#34d399;--accent-dim:rgba(52,211,153,.07);--accent-glow:rgba(52,211,153,.16);--accent-border:rgba(52,211,153,.3);}
 
-body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;line-height:1.6;-webkit-font-smoothing:antialiased;transition:background .4s}
-body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.025) 2px,rgba(0,0,0,.025) 4px);pointer-events:none;z-index:9999}
+body{background:linear-gradient(180deg,#040f1d 0%,#050c18 55%,#040f1d 100%);color:var(--text);font-family:var(--sans);min-height:100vh;line-height:1.6;-webkit-font-smoothing:antialiased;transition:background .5s}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 130% 40% at 50% -8%,rgba(14,76,160,.15) 0%,transparent 65%);pointer-events:none;z-index:9997;transition:background 1.2s}
+body.active::before{background:radial-gradient(ellipse 130% 40% at 50% -8%,rgba(180,20,20,.13) 0%,transparent 65%)}
+body.warning::before{background:radial-gradient(ellipse 130% 40% at 50% -8%,rgba(140,90,0,.12) 0%,transparent 65%)}
+body.active::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(248,113,113,.012) 3px,rgba(248,113,113,.012) 4px);pointer-events:none;z-index:9998;animation:scanlines 7s linear infinite}
+@keyframes scanlines{0%{background-position:0 0}100%{background-position:0 80px}}
 
 /* Header */
-header{position:sticky;top:0;z-index:100;height:56px;display:flex;align-items:center;gap:10px;padding:0 28px;background:rgba(6,10,20,.88);backdrop-filter:blur(20px) saturate(1.5);border-bottom:1px solid var(--border)}
+header{position:sticky;top:0;z-index:100;height:56px;display:flex;align-items:center;gap:10px;padding:0 28px;background:rgba(4,15,29,.92);backdrop-filter:blur(24px) saturate(1.8);border-bottom:1px solid var(--border)}
 .logo{display:flex;align-items:center;gap:9px;font-family:var(--display);font-size:15px;font-weight:800;letter-spacing:-.3px;color:var(--text);text-decoration:none}
 .logo-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent-glow);flex-shrink:0;transition:background var(--t),box-shadow var(--t)}
 body.active .logo-dot,body.warning .logo-dot{animation:dot-pulse 1s ease-in-out infinite}
@@ -57,26 +61,63 @@ body.active .logo-dot,body.warning .logo-dot{animation:dot-pulse 1s ease-in-out 
 .refresh-btn svg{width:13px;height:13px}
 /* lang dropdown */
 .lang-wrap{position:relative}
-.lang-menu{position:absolute;top:calc(100% + 6px);right:0;background:#0c1220;border:1px solid var(--border-h);border-radius:10px;padding:6px;min-width:170px;z-index:200;display:none;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.lang-menu{position:absolute;top:calc(100% + 6px);right:0;background:#050d1a;border:1px solid var(--border-h);border-radius:10px;padding:6px;min-width:170px;z-index:200;display:none;box-shadow:0 8px 32px rgba(0,0,0,.5)}
 .lang-menu.open{display:block}
 .lang-btn{display:block;width:100%;background:none;border:none;color:var(--text2);font-family:var(--mono);font-size:11px;padding:6px 10px;text-align:left;cursor:pointer;border-radius:6px;transition:background var(--t),color var(--t)}
 .lang-btn:hover{background:var(--surface-h);color:var(--text)}
 
 /* Hero */
-.hero{position:relative;min-height:72vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 24px 60px;overflow:hidden}
-.hero::before{content:'';position:absolute;top:-10%;left:50%;transform:translateX(-50%);width:700px;height:500px;background:radial-gradient(ellipse at center,var(--accent-glow) 0%,transparent 70%);pointer-events:none;transition:background .6s;z-index:0}
-body.active .hero::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(-55deg,transparent,transparent 40px,rgba(239,68,68,.018) 40px,rgba(239,68,68,.018) 80px);pointer-events:none;z-index:0}
-.hero-inner{position:relative;z-index:1;max-width:680px;width:100%;animation:fadeUp .45s cubic-bezier(.4,0,.2,1) both}
-@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
-.live-pill{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:5px 14px;border-radius:100px;border:1px solid var(--accent-border);background:var(--accent-dim);color:var(--accent);margin-bottom:32px;transition:all var(--t)}
+.hero{position:relative;min-height:82vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 24px 140px;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-15%;left:50%;transform:translateX(-50%);width:900px;height:640px;background:radial-gradient(ellipse at center,var(--accent-glow) 0%,transparent 65%);pointer-events:none;transition:background .8s;z-index:0;animation:hero-glow 9s ease-in-out infinite alternate}
+@keyframes hero-glow{0%{transform:translateX(-50%) scale(1);opacity:.8}100%{transform:translateX(-50%) scale(1.12);opacity:1}}
+.hero-inner{position:relative;z-index:2;max-width:700px;width:100%;animation:fadeUp .5s cubic-bezier(.4,0,.2,1) both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+
+/* Ocean wave layers */
+.ocean-waves{position:absolute;bottom:0;left:0;width:100%;height:200px;z-index:1;overflow:hidden;pointer-events:none}
+.wave-layer{position:absolute;bottom:0;left:-50%;width:200%;height:100%;border-radius:44% 56% 0 0/20% 22% 0 0}
+.wave-a{background:rgba(56,189,248,.07);animation:wave-sway 12s ease-in-out infinite}
+.wave-b{background:rgba(14,165,233,.05);bottom:16px;animation:wave-sway 15s ease-in-out infinite reverse;border-radius:56% 44% 0 0/18% 24% 0 0}
+.wave-c{background:rgba(2,132,199,.03);bottom:28px;animation:wave-sway 19s ease-in-out infinite;border-radius:50% 50% 0 0/15% 26% 0 0}
+@keyframes wave-sway{0%,100%{transform:translateX(0) scaleY(1)}33%{transform:translateX(2%) scaleY(1.07)}66%{transform:translateX(-2%) scaleY(.95)}}
+body.clear .wave-a{background:rgba(52,211,153,.07);animation-duration:14s}
+body.clear .wave-b{background:rgba(16,185,129,.05);animation-duration:17s}
+body.clear .wave-c{background:rgba(5,150,105,.03);animation-duration:22s}
+body.warning .wave-a{background:rgba(251,191,36,.09);animation-duration:6s}
+body.warning .wave-b{background:rgba(245,158,11,.06);animation-duration:4.5s}
+body.warning .wave-c{background:rgba(217,119,6,.04);animation-duration:8s}
+body.active .wave-a{background:rgba(248,113,113,.13);animation:wave-tsunami 2.6s ease-in-out infinite}
+body.active .wave-b{background:rgba(239,68,68,.09);animation:wave-tsunami 1.9s ease-in-out infinite reverse}
+body.active .wave-c{background:rgba(220,38,38,.06);animation:wave-tsunami 3.4s ease-in-out infinite}
+@keyframes wave-tsunami{0%,100%{transform:translateX(0) scaleY(1)}18%{transform:translateX(-5%) scaleY(2.5)}36%{transform:translateX(5%) scaleY(.45)}55%{transform:translateX(-3%) scaleY(2.1)}72%{transform:translateX(4%) scaleY(.6)}}
+
+/* Tsunami glitch on headline */
+body.active .status-headline{text-shadow:3px 0 rgba(248,113,113,.6),-3px 0 rgba(56,189,248,.6);animation:tsunami-glitch 4.5s infinite;position:relative}
+@keyframes tsunami-glitch{
+  0%,76%,81%,85%,89%,100%{text-shadow:3px 0 rgba(248,113,113,.6),-3px 0 rgba(56,189,248,.6);transform:none;filter:none}
+  77%{text-shadow:6px 2px rgba(248,113,113,1),-6px -2px rgba(0,245,255,1);transform:skewX(-3.5deg) translateX(-3px);filter:brightness(1.4)}
+  78%{text-shadow:-3px 0 rgba(248,113,113,1),3px 0 rgba(0,245,255,1);transform:skewX(2.5deg) translateX(3px)}
+  82%{text-shadow:5px 3px rgba(248,113,113,1),-5px -3px rgba(0,245,255,1);transform:skewX(-2deg);filter:brightness(1.2)}
+  86%{text-shadow:-4px -1px rgba(248,113,113,.9),4px 1px rgba(0,245,255,.9);transform:skewX(3deg) translateX(-2px)}
+  88%{text-shadow:2px 0 rgba(248,113,113,.7),-2px 0 rgba(56,189,248,.7);transform:skewX(-.5deg);filter:none}
+}
+body.active .hero{animation:tsunami-shudder 7s ease-in-out infinite}
+@keyframes tsunami-shudder{0%,88%,100%{filter:none}89%{filter:hue-rotate(10deg) brightness(1.06)}90%{filter:hue-rotate(-6deg)}91%{filter:none}95%{filter:brightness(1.09) saturate(1.4)}96%{filter:brightness(.94)}}
+
+/* Tsunami alert bar */
+.tsunami-banner{background:linear-gradient(90deg,rgba(239,68,68,.1),rgba(248,113,113,.2),rgba(239,68,68,.1));border:1px solid rgba(248,113,113,.5);border-radius:8px;padding:10px 22px;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.12em;color:#f87171;text-transform:uppercase;margin-bottom:24px;animation:banner-pulse 2.5s ease-in-out infinite;display:inline-block}
+@keyframes banner-pulse{0%,100%{box-shadow:0 0 8px rgba(248,113,113,.12)}50%{box-shadow:0 0 28px rgba(248,113,113,.38),0 0 60px rgba(248,113,113,.12)}}
+
+.live-pill{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:5px 14px;border-radius:100px;border:1px solid var(--accent-border);background:var(--accent-dim);color:var(--accent);margin-bottom:28px;transition:all var(--t)}
 .live-pill-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0}
 body.active .live-pill-dot,body.warning .live-pill-dot{animation:dot-pulse 1s ease-in-out infinite}
 .status-kicker{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;transition:color var(--t)}
-.status-headline{font-family:var(--display);font-size:clamp(44px,9vw,88px);font-weight:800;letter-spacing:-3px;line-height:.96;color:var(--text);margin-bottom:18px}
-body.active  .status-headline{color:#ef4444}
-body.warning .status-headline{color:#f59e0b}
-body.clear   .status-headline{color:#22c55e}
-.status-desc{font-size:15px;color:var(--text2);max-width:440px;margin:0 auto 10px;line-height:1.7}
+.status-headline{font-family:var(--display);font-size:clamp(52px,11vw,108px);font-weight:800;letter-spacing:-3px;line-height:.92;color:var(--text);margin-bottom:12px;transition:color .4s,text-shadow .4s}
+body.active  .status-headline{color:#f87171}
+body.warning .status-headline{color:#fbbf24}
+body.clear   .status-headline{color:#34d399}
+.status-subdeck{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.14em;color:var(--accent);text-transform:uppercase;margin-bottom:14px;opacity:.75}
+.status-desc{font-size:15px;color:var(--text2);max-width:480px;margin:0 auto 10px;line-height:1.78}
 .wave-meta{font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:28px}
 .recent-post{background:var(--surface);border:1px solid var(--accent-border);border-radius:var(--r);padding:18px 22px;max-width:520px;margin:0 auto 20px;text-align:left;text-decoration:none;display:block;transition:background var(--t),border-color var(--t),transform var(--t)}
 .recent-post:hover{background:var(--surface-h);transform:translateY(-2px)}
@@ -86,8 +127,8 @@ body.clear   .status-headline{color:#22c55e}
 .rp-meta .votes{color:var(--accent);font-weight:700}
 .rp-arrow{margin-left:auto;font-size:13px;color:var(--text3)}
 .score-meter{display:flex;align-items:center;gap:10px;justify-content:center;font-family:var(--mono);font-size:10px;color:var(--text3)}
-.meter-track{width:120px;height:3px;background:var(--border);border-radius:100px;overflow:hidden}
-.meter-fill{height:100%;background:var(--accent);border-radius:100px;transition:width .8s cubic-bezier(.4,0,.2,1),background var(--t)}
+.meter-track{width:140px;height:4px;background:var(--border);border-radius:100px;overflow:hidden}
+.meter-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent));border-radius:100px;transition:width .9s cubic-bezier(.4,0,.2,1),background var(--t)}
 .data-notice{margin-top:10px;font-family:var(--mono);font-size:9px;color:var(--text3);text-align:center}
 
 /* Sep */
@@ -115,7 +156,7 @@ body.clear   .status-headline{color:#22c55e}
 .tag{padding:1px 7px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
 .tag-alert{background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent-border)}
 .tag-question{background:rgba(148,163,184,.07);color:#64748b;border:1px solid rgba(148,163,184,.15)}
-.tag-verified{background:rgba(34,197,94,.1);color:#22c55e;border:1px solid rgba(34,197,94,.25)}
+.tag-verified{background:rgba(52,211,153,.1);color:#34d399;border:1px solid rgba(52,211,153,.25)}
 .pc-link-icon{color:var(--text3);font-size:16px;transition:color var(--t)}
 .post-card:hover .pc-link-icon{color:var(--text2)}
 
@@ -182,11 +223,11 @@ body.clear   .status-headline{color:#22c55e}
 .wh-btn-danger:hover{border-color:#ef4444;color:#ef4444}
 .wh-active-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
 .wh-active-indicator{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--text2)}
-.wh-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e;animation:dot-pulse 2s ease-in-out infinite}
+.wh-dot{width:7px;height:7px;border-radius:50%;background:#34d399;box-shadow:0 0 6px rgba(52,211,153,.7);animation:dot-pulse 2s ease-in-out infinite}
 .wh-id{font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:12px;display:flex;align-items:center;gap:8px}
 .wh-id code{background:var(--bg2);border:1px solid var(--border);padding:2px 8px;border-radius:4px;font-size:10px;color:var(--text2)}
 .wh-msg{margin-top:10px;font-family:var(--mono);font-size:11px;padding:7px 11px;border-radius:7px;display:none}
-.wh-msg.ok {background:rgba(34,197,94,.1); color:#22c55e;border:1px solid rgba(34,197,94,.25);display:block}
+.wh-msg.ok {background:rgba(52,211,153,.1); color:#34d399;border:1px solid rgba(52,211,153,.25);display:block}
 .wh-msg.err{background:rgba(239,68,68,.1); color:#ef4444;border:1px solid rgba(239,68,68,.25);display:block}
 .wh-update-form{margin-top:12px;display:none}
 .wh-update-form.open{display:block}
@@ -225,7 +266,7 @@ body.clear   .status-headline{color:#22c55e}
 /* Modal */
 .modal-overlay{position:fixed;inset:0;background:rgba(6,10,20,.85);backdrop-filter:blur(8px);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity var(--t)}
 .modal-overlay.open{opacity:1;pointer-events:all}
-.modal{background:#0c1220;border:1px solid var(--border-h);border-radius:18px;padding:28px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;transform:scale(.96);transition:transform var(--t)}
+.modal{background:#050d1a;border:1px solid var(--border-h);border-radius:18px;padding:28px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;transform:scale(.96);transition:transform var(--t)}
 .modal-overlay.open .modal{transform:scale(1)}
 .modal-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;gap:12px}
 .modal-title{font-size:16px;font-weight:700;color:var(--text)}
@@ -241,7 +282,7 @@ body.clear   .status-headline{color:#22c55e}
 .drop-preview{display:none;max-width:100%;border-radius:8px;margin-top:12px;max-height:140px;object-fit:contain}
 .ocr-status{font-family:var(--mono);font-size:11px;padding:8px 12px;border-radius:8px;margin-bottom:14px;display:none}
 .ocr-status.scanning{background:rgba(245,158,11,.08);color:#f59e0b;border:1px solid rgba(245,158,11,.2);display:block}
-.ocr-status.pass{background:rgba(34,197,94,.08);color:#22c55e;border:1px solid rgba(34,197,94,.2);display:block}
+.ocr-status.pass{background:rgba(52,211,153,.08);color:#34d399;border:1px solid rgba(52,211,153,.2);display:block}
 .ocr-status.fail{background:rgba(239,68,68,.08);color:#ef4444;border:1px solid rgba(239,68,68,.2);display:block}
 .ocr-bar{height:3px;background:var(--border);border-radius:100px;margin-top:6px;overflow:hidden;display:none}
 .ocr-bar.show{display:block}
@@ -250,7 +291,7 @@ body.clear   .status-headline{color:#22c55e}
 .form-label{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;display:block}
 .form-select{width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:8px;font-family:var(--mono);font-size:12px;outline:none;transition:border-color var(--t);cursor:pointer;appearance:none;-webkit-appearance:none}
 .form-select:focus{border-color:var(--accent-border)}
-.form-select option{background:#0c1220}
+.form-select option{background:#050d1a}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .modal-footer{margin-top:18px;display:flex;flex-direction:column;gap:10px}
 .modal-submit{background:var(--accent);color:#fff;border:none;padding:11px;border-radius:9px;font-family:var(--mono);font-size:13px;font-weight:700;cursor:pointer;transition:opacity var(--t);width:100%}
@@ -260,7 +301,7 @@ body.clear   .status-headline{color:#22c55e}
 
 /* Toasts */
 .toast-container{position:fixed;bottom:24px;right:24px;z-index:600;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
-.toast{background:#0c1220;border:1px solid var(--border-h);border-radius:10px;padding:10px 16px;font-family:var(--mono);font-size:12px;color:var(--text);max-width:320px;box-shadow:0 8px 32px rgba(0,0,0,.5);animation:toastIn .25s cubic-bezier(.4,0,.2,1) both;display:flex;align-items:center;gap:10px}
+.toast{background:#050d1a;border:1px solid var(--border-h);border-radius:10px;padding:10px 16px;font-family:var(--mono);font-size:12px;color:var(--text);max-width:320px;box-shadow:0 8px 32px rgba(0,0,0,.5);animation:toastIn .25s cubic-bezier(.4,0,.2,1) both;display:flex;align-items:center;gap:10px}
 .toast.leaving{animation:toastOut .25s cubic-bezier(.4,0,.2,1) forwards}
 .toast-icon{font-size:14px;flex-shrink:0}
 @keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
@@ -296,7 +337,7 @@ footer a:hover{color:var(--text2)}
 .tag-info{background:rgba(148,163,184,.06);color:#475569;border:1px solid rgba(148,163,184,.12)}
 
 /* Ban report nudge */
-.ban-nudge{position:fixed;bottom:28px;left:28px;z-index:400;background:#0c1220;border:1px solid rgba(239,68,68,.35);border-radius:16px;padding:18px 20px 16px;max-width:260px;box-shadow:0 8px 40px rgba(0,0,0,.55),0 0 0 1px rgba(239,68,68,.08);animation:nudgeIn .45s cubic-bezier(.34,1.56,.64,1) both}
+.ban-nudge{position:fixed;bottom:28px;left:28px;z-index:400;background:#050d1a;border:1px solid rgba(248,113,113,.35);border-radius:16px;padding:18px 20px 16px;max-width:260px;box-shadow:0 8px 40px rgba(0,0,0,.55),0 0 0 1px rgba(239,68,68,.08);animation:nudgeIn .45s cubic-bezier(.34,1.56,.64,1) both}
 .ban-nudge.hidden{display:none}
 @keyframes nudgeIn{from{opacity:0;transform:translateY(18px) scale(.93)}to{opacity:1;transform:translateY(0) scale(1)}}
 body.active .ban-nudge{border-color:rgba(239,68,68,.6);box-shadow:0 8px 40px rgba(239,68,68,.2),0 0 0 1px rgba(239,68,68,.14)}
@@ -315,7 +356,7 @@ body.active .ban-nudge{border-color:rgba(239,68,68,.6);box-shadow:0 8px 40px rgb
 .pc-vote-row{display:flex;gap:5px;align-items:center;margin-top:7px;flex-wrap:wrap}
 .pc-vote-btn{background:var(--bg2);border:1px solid var(--border);color:var(--text3);padding:2px 8px;border-radius:5px;font-family:var(--mono);font-size:9px;font-weight:700;cursor:pointer;transition:all var(--t);display:inline-flex;align-items:center;gap:3px;line-height:1.6}
 .pc-vote-btn:hover:not(:disabled){background:var(--surface-h);border-color:var(--border-h);color:var(--text2)}
-.pc-vote-btn.voted-up{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.35);color:#22c55e}
+.pc-vote-btn.voted-up{background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.35);color:#34d399}
 .pc-vote-btn.voted-down{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.3);color:#ef4444}
 .pc-vote-btn:disabled{opacity:.55;cursor:not-allowed}
 .pc-vote-lbl{font-family:var(--mono);font-size:9px;color:var(--text3)}
@@ -326,7 +367,7 @@ body.active .ban-nudge{border-color:rgba(239,68,68,.6);box-shadow:0 8px 40px rgb
 .contact-textarea:focus{border-color:var(--accent-border)}
 .contact-char-count{font-family:var(--mono);font-size:10px;color:var(--text3);text-align:right;margin-top:4px}
 .contact-msg{margin-top:10px;font-family:var(--mono);font-size:11px;padding:7px 11px;border-radius:7px;display:none}
-.contact-msg.ok{background:rgba(34,197,94,.1);color:#22c55e;border:1px solid rgba(34,197,94,.25);display:block}
+.contact-msg.ok{background:rgba(52,211,153,.1);color:#34d399;border:1px solid rgba(52,211,153,.25);display:block}
 .contact-msg.err{background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.25);display:block}
 
 /* Footer */
@@ -420,6 +461,11 @@ img.emoji{height:1em;width:1em;margin:0 .05em 0 .1em;vertical-align:-.1em}
 <section class="hero">
   <div class="hero-inner" id="heroInner">
     <div class="state-box"><div class="spinner"></div><br>Checking r/robloxhackers…</div>
+  </div>
+  <div class="ocean-waves" aria-hidden="true">
+    <div class="wave-layer wave-a"></div>
+    <div class="wave-layer wave-b"></div>
+    <div class="wave-layer wave-c"></div>
   </div>
 </section>
 
@@ -574,13 +620,13 @@ img.emoji{height:1em;width:1em;margin:0 .05em 0 .1em;vertical-align:-.1em}
     </div>
 
     <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">What do ACTIVE / WARNING / CLEAR mean?<svg class="faq-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-      <div class="faq-a"><div class="faq-a-inner"><strong>ACTIVE</strong> - threat score &ge; 3.5. Significant recent reports. Do not use executors.<br><br><strong>WARNING</strong> - threat score &ge; 1.0. Some activity, a wave may be starting or ending. Use extreme caution.<br><br><strong>CLEAR</strong> - no significant activity in the past 14 days. Lower risk, but this can change quickly.</div></div>
+      <button class="faq-q" onclick="toggleFaq(this)">What do TSUNAMI / RISING TIDE / ALL CLEAR mean?<svg class="faq-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="faq-a"><div class="faq-a-inner"><strong>TSUNAMI</strong> - threat score &ge; 3.5. Active ban wave with significant recent reports. Stop all executors immediately.<br><br><strong>RISING TIDE</strong> - threat score &ge; 1.0. Elevated activity — a wave may be starting or winding down. Use extreme caution.<br><br><strong>ALL CLEAR</strong> - threat score &lt; 1.0. No significant ban wave activity in the past 14 days. Lower risk, but conditions can change quickly.</div></div>
     </div>
 
     <div class="faq-item">
       <button class="faq-q" onclick="toggleFaq(this)">How is the threat score calculated?<svg class="faq-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-      <div class="faq-a"><div class="faq-a-inner">Each post is scored: <code>recency × (log₂(votes + 1) + 0.5) × typeWeight</code><br><br>Recency decays at 15% per day - a 14-day-old post scores near zero. Posts classified as "alerts" get a 2.5× multiplier; questions get 0.2×. Scores are summed across all posts from the past 14 days.</div></div>
+      <div class="faq-a"><div class="faq-a-inner">Each post is scored: <code>recency × (log₂(votes + 1) + 0.5) × typeWeight</code><br><br>Recency uses a multi-phase decay modelling the Roblox ban wave lifecycle: 7%/day for the first 24 h (peak threat), 19%/day for days 1–3 (tapering sweep), 28%/day for days 3–7 (cooldown), and 40%/day for days 7–14 (residual). Posts older than 14 days score zero. Alert posts get a 2.5× multiplier; questions get 0.2×. Scores are summed across all posts in the window.</div></div>
     </div>
 
     <div class="faq-item">
@@ -755,10 +801,14 @@ img.emoji{height:1em;width:1em;margin:0 .05em 0 .1em;vertical-align:-.1em}
       <textarea class="contact-textarea" id="contactMessage" placeholder="Describe your issue or feedback…" oninput="updateContactCount()" maxlength="1800"></textarea>
       <div class="contact-char-count"><span id="contactCharCount">0</span> / 1800</div>
     </div>
+    <div class="form-row">
+      <label class="form-label" for="contactEmail">Your email <span style="text-transform:none;letter-spacing:0">(optional — only if you want a reply)</span></label>
+      <input type="email" class="wh-input" id="contactEmail" placeholder="your@email.com" autocomplete="email" style="width:100%">
+    </div>
     <div class="contact-msg" id="contactMsg"></div>
     <div class="modal-footer">
       <button class="modal-submit" id="contactSubmit" onclick="submitContact()">Send Message</button>
-      <div class="modal-note">Messages are forwarded to the site owner via Discord. Nothing is stored on our servers. You can also <a href="https://github.com/FascinatingPistachio/robloxbanwave/issues" target="_blank" rel="noopener" style="color:var(--accent)">open a GitHub issue</a>.</div>
+      <div class="modal-note">Messages are forwarded to the site owner via Discord. Nothing is stored on our servers. If you leave an email, the owner can reply directly. You can also <a href="https://github.com/FascinatingPistachio/robloxbanwave/issues" target="_blank" rel="noopener" style="color:var(--accent)">open a GitHub issue</a>.</div>
     </div>
   </div>
 </div>
@@ -891,9 +941,19 @@ function classify(title) {
 function scorePost(p) {
   const ageDays = (Date.now()/1000 - p.created_utc) / 86400;
   if (ageDays > 14) return 0;
-  const recency = Math.pow(0.85, ageDays);
-  const votes   = Math.log2(Math.max(1, p.score||0) + 1);
-  const tw      = p._type==='alert' ? 2.5 : p._type==='question' ? 0.2 : p._type==='meta' ? 0.05 : 0.5;
+  // Multi-phase decay modelling Roblox ban wave lifecycle:
+  // 0-1d: peak threat (slow decay 7%/day) — wave is actively rolling
+  // 1-3d: tapering (19%/day) — Hyperion sweeps wind down
+  // 3-7d: cooldown (28%/day) — stragglers still being caught
+  // 7-14d: residual (40%/day) — wave long over, low signal
+  let recency;
+  const r1 = 0.93, r2 = 0.81, r3 = 0.72, r4 = 0.60;
+  if      (ageDays <= 1) recency = Math.pow(r1, ageDays);
+  else if (ageDays <= 3) recency = r1 * Math.pow(r2, ageDays - 1);
+  else if (ageDays <= 7) recency = r1 * r2 * r2 * Math.pow(r3, ageDays - 3);
+  else                   recency = r1 * r2 * r2 * Math.pow(r3, 4) * Math.pow(r4, ageDays - 7);
+  const votes = Math.log2(Math.max(1, p.score||0) + 1);
+  const tw    = p._type==='alert' ? 2.5 : p._type==='question' ? 0.2 : p._type==='meta' ? 0.05 : 0.5;
   return recency * (votes + 0.5) * tw;
 }
 
@@ -982,33 +1042,40 @@ async function fetchPosts() {
 // -- Hero ----------------------------------------------------------------------
 function renderHero(posts, totalScore, source, fetchedAt) {
   const recent = posts.find(p=>p._type==='alert') || posts.find(p=>p._type!=='meta') || posts[0] || null;
-  let status, kicker, headline, desc;
+  let status, kicker, headline, subdeck, desc, bannerHtml = '';
 
   if (totalScore >= SCORE_ACTIVE) {
-    status='active'; kicker='⚠ BAN WAVE DETECTED'; headline='NOT SAFE';
-    desc='An active ban wave is being reported on r/robloxhackers.<br><strong>Do not use any Roblox executors</strong> until the wave is confirmed over.';
-    document.getElementById('headerBadge').textContent='⚠ ACTIVE';
+    status='active'; kicker='⚠ TSUNAMI DETECTED'; headline='TSUNAMI';
+    subdeck='ACTIVE ROBLOX BAN WAVE — DO NOT EXPLOIT';
+    desc='A ban wave is sweeping through Roblox right now. <strong>Stop all executors immediately.</strong><br>Hyperion is actively terminating accounts. Every minute you wait reduces your risk.';
+    document.getElementById('headerBadge').textContent='⚠ TSUNAMI';
+    bannerHtml = '<div class="tsunami-banner">⚠ &nbsp; BAN WAVE ACTIVE — EXECUTOR INFRASTRUCTURE TAKING A HIT &nbsp; ⚠</div>';
   } else if (totalScore >= SCORE_WARN) {
-    status='warning'; kicker='⚠ RECENT ACTIVITY'; headline='USE CAUTION';
-    desc='Recent banwave activity on r/robloxhackers. A wave may be ongoing - check reports below before using any executor.';
+    status='warning'; kicker='⚠ CHOPPY WATERS'; headline='RISING TIDE';
+    subdeck='ELEVATED BAN RISK — USE EXTREME CAUTION';
+    desc='Banwave activity is rising on r/robloxhackers. A wave may be starting or winding down.<br><strong>Use extreme caution</strong> — check the reports below before running any executor.';
     document.getElementById('headerBadge').textContent='WARNING';
   } else {
-    status='clear'; kicker='✓ STATUS CLEAR'; headline='LOOKS CLEAR';
-    desc='No significant banwave activity in the last two weeks.<br>This can change quickly - always verify before exploiting.';
+    status='clear'; kicker='✓ WATERS CALM'; headline='ALL CLEAR';
+    subdeck='NO ACTIVE BAN WAVE DETECTED';
+    desc='No significant ban wave activity in the last two weeks. Waters are calm.<br>Conditions can change quickly — always verify before exploiting.';
     document.getElementById('headerBadge').textContent='CLEAR';
   }
 
   document.body.className = status;
   curStatus = status;
 
-  // Wave duration (first qualifying post)
+  // Wave duration metadata
   let waveMeta = '';
   if (status==='active' && posts.length) {
     const qualifying = posts.filter(p=>scorePost(p)>0);
     if (qualifying.length) {
       const oldest = qualifying[qualifying.length-1];
-      waveMeta = `First report ${timeAgo(oldest.created_utc)} - wave ongoing`;
+      waveMeta = `First report ${timeAgo(oldest.created_utc)} · wave ongoing`;
     }
+  } else if (status==='warning' && posts.length) {
+    const alertPosts = posts.filter(p=>p._type==='alert');
+    if (alertPosts.length) waveMeta = `Most recent report ${timeAgo(alertPosts[0].created_utc)}`;
   } else if (status==='clear' && posts.length) {
     waveMeta = `Last banwave activity ${timeAgo(posts[0].created_utc)}`;
   }
@@ -1031,8 +1098,10 @@ function renderHero(posts, totalScore, source, fetchedAt) {
 
   document.getElementById('heroInner').innerHTML = `
     <div class="live-pill"><span class="live-pill-dot"></span>LIVE MONITOR · R/ROBLOXHACKERS</div>
+    ${bannerHtml}
     <div class="status-kicker">${esc(kicker)}</div>
     <div class="status-headline">${esc(headline)}</div>
+    <div class="status-subdeck">${esc(subdeck)}</div>
     <p class="status-desc">${desc}</p>
     ${waveMeta ? `<div class="wave-meta">${esc(waveMeta)}</div>` : '<div class="wave-meta"></div>'}
     ${rpHtml}
@@ -1352,16 +1421,21 @@ function showContactMsg(type, text) {
 async function submitContact() {
   const msg      = document.getElementById('contactMessage').value.trim();
   const category = document.getElementById('contactCategory').value;
+  const email    = document.getElementById('contactEmail').value.trim();
   const btn      = document.getElementById('contactSubmit');
   if (msg.length < 10) { showContactMsg('err', 'Message too short (min 10 characters).'); return; }
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showContactMsg('err', 'Invalid email address.'); return; }
   btn.disabled = true; btn.textContent = 'Sending…';
   try {
-    const res  = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: msg, category }) });
+    const body = { message: msg, category };
+    if (email) body.email = email;
+    const res  = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
     const data = await res.json();
     if (res.ok && data.ok) {
       document.getElementById('contactMessage').value = '';
+      document.getElementById('contactEmail').value = '';
       updateContactCount();
-      showContactMsg('ok', 'Message sent! The site owner will review it.');
+      showContactMsg('ok', email ? 'Message sent! The site owner will reply to your email.' : 'Message sent! The site owner will review it.');
     } else {
       showContactMsg('err', data.error || 'Failed to send message.');
     }
