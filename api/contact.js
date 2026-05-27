@@ -54,7 +54,7 @@ export default async function handler(req, res) {
     const r = await fetch(webhookUrl, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ username: 'RBX Radar Contact', embeds: [embed] }),
+      body:    JSON.stringify({ username: 'Roblox Ban Wave', avatar_url: 'https://robloxbanwave.vercel.app/favicon.svg', embeds: [embed] }),
     });
     if (r.ok || r.status === 204) return res.json({ ok: true });
     const text = await r.text().catch(() => '');
