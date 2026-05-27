@@ -71,17 +71,18 @@ body.active .logo-dot,body.warning .logo-dot{animation:dot-pulse 1s ease-in-out 
 .lang-btn:hover{background:var(--surface-h);color:var(--text)}
 
 /* Hero */
-.hero{position:relative;min-height:68vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:72px 24px 120px;overflow:hidden}
+.hero{position:relative;min-height:68vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:72px 24px 150px;overflow:hidden}
 .hero-inner{position:relative;z-index:2;max-width:700px;width:100%;text-align:center;animation:fadeUp .5s cubic-bezier(.4,0,.2,1) both}
 @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 
-/* Japanese Hokusai-style wave — hero bottom */
-.jwave-wrap{position:absolute;bottom:0;left:0;right:0;height:110px;pointer-events:none;z-index:1;overflow:hidden}
+/* 2D pastel wave — hero bottom */
+.jwave-wrap{position:absolute;bottom:0;left:0;right:0;height:150px;pointer-events:none;z-index:1;overflow:hidden}
 .jwave-wrap svg{position:absolute;bottom:0;left:0;width:100%;height:100%}
-.jw-back{fill:rgba(7,28,80,.7)}
-.jw-front{fill:rgba(4,18,55,.85)}
-.jw-line{fill:none;stroke:rgba(240,237,230,.4);stroke-width:1.2;stroke-linecap:round}
-.jw-foam{fill:rgba(242,238,232,.93)}
+.jw-g-back{animation:jw-b 16s ease-in-out infinite alternate}
+.jw-g-front{animation:jw-f 10s ease-in-out infinite alternate}
+.jw-line{fill:none;stroke:rgba(200,224,252,.55);stroke-width:1.5;stroke-linecap:round}
+@keyframes jw-b{from{transform:translateX(0)}to{transform:translateX(-36px)}}
+@keyframes jw-f{from{transform:translateX(0)}to{transform:translateX(28px)}}
 
 
 /* Per-state headline color — no glow */
@@ -459,21 +460,31 @@ img.emoji{height:1em;width:1em;margin:0 .05em 0 .1em;vertical-align:-.1em}
     <div class="state-box"><div class="spinner"></div><br>Checking r/robloxhackers…</div>
   </div>
   <div class="jwave-wrap" aria-hidden="true">
-    <svg viewBox="0 0 1440 110" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-      <!-- Back wave -->
-      <path class="jw-back" d="M-10,88 C80,52 180,26 300,34 C368,38 400,58 462,54 C524,50 556,32 634,22 C702,13 742,19 782,30 C822,41 842,58 902,60 C962,62 1002,43 1082,31 C1152,21 1202,17 1272,24 C1332,30 1402,54 1450,68 L1450,110 L-10,110 Z"/>
-      <!-- Front wave -->
-      <path class="jw-front" d="M-10,96 C100,78 222,66 362,75 C432,79 476,91 542,89 C610,87 650,74 724,67 C806,59 856,76 926,86 C978,93 1032,96 1104,90 C1174,83 1244,63 1324,57 C1378,53 1422,68 1450,78 L1450,110 L-10,110 Z"/>
-      <!-- Outline stroke on back wave crest -->
-      <path class="jw-line" d="M-10,88 C80,52 180,26 300,34 C368,38 400,58 462,54 C524,50 556,32 634,22 C702,13 742,19 782,30 C822,41 842,58 902,60 C962,62 1002,43 1082,31 C1152,21 1202,17 1272,24 C1332,30 1402,54 1450,68"/>
-      <!-- Hokusai foam — cluster at first crest x≈634,y=22 -->
-      <path class="jw-foam" d="M626,19 C628,10 636,4 643,8 C647,11 646,19 639,23 C633,26 625,23 626,19 Z"/>
-      <path class="jw-foam" d="M640,13 C642,5 649,0 655,4 C658,7 657,14 652,17 C647,20 640,17 640,13 Z"/>
-      <path class="jw-foam" d="M612,24 C614,17 620,13 625,16 C628,18 627,24 623,27 C619,29 612,27 612,24 Z"/>
-      <!-- Hokusai foam — cluster at second crest x≈1272,y=24 -->
-      <path class="jw-foam" d="M1264,21 C1266,12 1274,6 1281,10 C1285,13 1284,21 1277,25 C1271,28 1263,25 1264,21 Z"/>
-      <path class="jw-foam" d="M1278,15 C1280,7 1287,2 1293,6 C1296,9 1295,16 1290,19 C1285,22 1278,19 1278,15 Z"/>
-      <path class="jw-foam" d="M1250,26 C1252,19 1258,15 1263,18 C1266,20 1265,26 1261,29 C1257,31 1250,29 1250,26 Z"/>
+    <svg viewBox="0 0 1440 150" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="g-back" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#8cb8e8" stop-opacity=".58"/>
+          <stop offset="100%" stop-color="#4e7ec0" stop-opacity=".46"/>
+        </linearGradient>
+        <linearGradient id="g-front" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#5c94d8" stop-opacity=".72"/>
+          <stop offset="100%" stop-color="#3464b6" stop-opacity=".62"/>
+        </linearGradient>
+        <linearGradient id="g-refl" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#c8dff6" stop-opacity=".28"/>
+          <stop offset="100%" stop-color="#c8dff6" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <!-- Back wave — slow gentle drift -->
+      <g class="jw-g-back">
+        <path fill="url(#g-back)" d="M-10,100 C80,64 180,38 300,46 C368,50 400,70 462,66 C524,62 556,44 634,34 C702,25 742,31 782,42 C822,53 842,70 902,72 C962,74 1002,55 1082,43 C1152,33 1202,29 1272,36 C1332,42 1402,66 1450,80 L1450,150 L-10,150 Z"/>
+        <path fill="url(#g-refl)" d="M-10,100 C80,64 180,38 300,46 C368,50 400,70 462,66 C524,62 556,44 634,34 C702,25 742,31 782,42 C822,53 842,70 902,72 C962,74 1002,55 1082,43 C1152,33 1202,29 1272,36 C1332,42 1402,66 1450,80 L1450,100 C1402,86 1332,62 1272,56 C1202,49 1152,53 1082,63 C1002,75 962,94 902,92 C842,90 822,73 782,62 C742,51 702,45 634,54 C556,64 524,82 462,86 C400,90 368,70 300,66 C180,58 80,84 -10,120 Z"/>
+        <path class="jw-line" d="M-10,100 C80,64 180,38 300,46 C368,50 400,70 462,66 C524,62 556,44 634,34 C702,25 742,31 782,42 C822,53 842,70 902,72 C962,74 1002,55 1082,43 C1152,33 1202,29 1272,36 C1332,42 1402,66 1450,80"/>
+      </g>
+      <!-- Front wave — faster, opposite phase -->
+      <g class="jw-g-front">
+        <path fill="url(#g-front)" d="M-10,114 C100,96 222,84 362,93 C432,97 476,109 542,107 C610,105 650,92 724,85 C806,77 856,94 926,104 C978,111 1032,114 1104,108 C1174,101 1244,81 1324,75 C1378,71 1422,86 1450,96 L1450,150 L-10,150 Z"/>
+      </g>
     </svg>
   </div>
 </section>
