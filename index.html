@@ -277,6 +277,39 @@ footer a:hover{color:var(--text2)}
 .footer-pledges{display:flex;justify-content:center;flex-wrap:wrap;gap:16px;margin:10px 0;font-size:10px;color:var(--text3)}
 .pledge{display:flex;align-items:center;gap:5px}
 
+/* Legal modal */
+.legal-tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:12px}
+.legal-tab-btn{background:none;border:1px solid transparent;color:var(--text3);font-family:var(--mono);font-size:11px;font-weight:700;cursor:pointer;padding:5px 14px;border-radius:7px;transition:all var(--t)}
+.legal-tab-btn:hover{color:var(--text2);background:var(--surface-h)}
+.legal-tab-btn.active{color:var(--text);background:var(--surface-h);border-color:var(--border-h)}
+.legal-body{font-size:12px;color:var(--text2);line-height:1.75;max-height:58vh;overflow-y:auto;padding-right:6px}
+.legal-body h3{font-size:11px;font-weight:700;color:var(--text);margin:18px 0 5px;letter-spacing:.06em;text-transform:uppercase}
+.legal-body h3:first-child{margin-top:0}
+.legal-body p{margin-bottom:10px}
+.legal-body ul{padding-left:18px;margin-bottom:10px}
+.legal-body li{margin-bottom:5px}
+.legal-body a{color:var(--accent);text-decoration:none}
+.legal-body a:hover{text-decoration:underline}
+.legal-body strong{color:var(--text)}
+.legal-body em{color:var(--text3);font-style:normal;font-size:11px}
+.tag-info{background:rgba(148,163,184,.06);color:#475569;border:1px solid rgba(148,163,184,.12)}
+
+/* Ban report nudge */
+.ban-nudge{position:fixed;bottom:28px;left:28px;z-index:400;background:#0c1220;border:1px solid rgba(239,68,68,.35);border-radius:16px;padding:18px 20px 16px;max-width:260px;box-shadow:0 8px 40px rgba(0,0,0,.55),0 0 0 1px rgba(239,68,68,.08);animation:nudgeIn .45s cubic-bezier(.34,1.56,.64,1) both}
+.ban-nudge.hidden{display:none}
+@keyframes nudgeIn{from{opacity:0;transform:translateY(18px) scale(.93)}to{opacity:1;transform:translateY(0) scale(1)}}
+body.active .ban-nudge{border-color:rgba(239,68,68,.6);box-shadow:0 8px 40px rgba(239,68,68,.2),0 0 0 1px rgba(239,68,68,.14)}
+.bn-close{position:absolute;top:10px;right:10px;background:none;border:none;color:var(--text3);cursor:pointer;padding:4px;border-radius:4px;font-size:13px;line-height:1;transition:color var(--t)}
+.bn-close:hover{color:var(--text)}
+.bn-icon{font-size:22px;margin-bottom:8px;display:block}
+.bn-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:5px;padding-right:18px;line-height:1.3}
+.bn-sub{font-size:11px;color:var(--text2);line-height:1.6;margin-bottom:13px}
+.bn-btn{display:block;width:100%;background:#ef4444;color:#fff;border:none;padding:10px 14px;border-radius:9px;font-family:var(--mono);font-size:11px;font-weight:700;cursor:pointer;transition:opacity var(--t);letter-spacing:.03em;text-align:center}
+.bn-btn:hover{opacity:.85}
+.hdr-report-btn{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.22);color:#ef4444;padding:4px 12px;border-radius:100px;font-family:var(--mono);font-size:10px;font-weight:700;cursor:pointer;transition:all var(--t);white-space:nowrap;display:flex;align-items:center;gap:5px}
+.hdr-report-btn:hover{background:rgba(239,68,68,.16);border-color:rgba(239,68,68,.42)}
+.hdr-report-btn svg{width:12px;height:12px;flex-shrink:0}
+
 @media(max-width:600px){
   header{padding:0 16px;gap:6px}
   .last-check,.countdown{display:none}
@@ -289,6 +322,8 @@ footer a:hover{color:var(--text2)}
   .form-grid{grid-template-columns:1fr}
   .info-grid,.resource-grid{grid-template-columns:1fr}
   .report-card{flex-direction:column}
+  .ban-nudge{left:12px;right:12px;max-width:none;bottom:16px}
+  .hdr-report-txt{display:none}
 }
 </style>
 </head>
@@ -314,6 +349,10 @@ footer a:hover{color:var(--text2)}
     </a>
     <button class="hdr-icon-btn" onclick="shareStatus()" title="Share">
       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="3" r="1.5"/><circle cx="4" cy="8" r="1.5"/><circle cx="12" cy="13" r="1.5"/><line x1="5.5" y1="7" x2="10.5" y2="4"/><line x1="5.5" y1="9" x2="10.5" y2="12"/></svg>
+    </button>
+    <button class="hdr-report-btn" onclick="openReportModal()" title="Got banned? Report it to help track the wave">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"><path d="M8 2L14 4.5V8c0 3.5-2.8 5.8-6 7C2.8 13.8 0 11.5 0 8V4.5L8 2z" transform="translate(1,0)"/></svg>
+      <span class="hdr-report-txt">Got banned?</span>
     </button>
     <div class="lang-wrap">
       <button class="hdr-icon-btn" onclick="toggleLangMenu(event)" title="Translate this page">
@@ -549,7 +588,110 @@ footer a:hover{color:var(--text2)}
     <span class="pledge">🇬🇧 Made with love in the UK</span>
   </div>
   <span style="color:var(--text3)">Community tracker - not affiliated with Roblox Corporation. Data may be delayed or inaccurate.</span>
+  <br><br>
+  <a href="#" onclick="openLegal('privacy');return false;">Privacy Notice</a>
+  &nbsp;·&nbsp;<a href="#" onclick="openLegal('terms');return false;">Terms of Use</a>
+  &nbsp;·&nbsp;<span style="color:var(--text3)">Contact: open an issue on the GitHub repository</span>
 </footer>
+
+<!-- Legal Modal -->
+<div class="modal-overlay" id="legalModal" onclick="if(event.target===this)closeLegal()">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="legalModalTitle" style="max-width:600px">
+    <div class="modal-header">
+      <div><div class="modal-title" id="legalModalTitle">Legal</div><div class="modal-sub">Privacy Notice and Terms of Use for robloxbanwave.vercel.app</div></div>
+      <button class="modal-close" onclick="closeLegal()" aria-label="Close">&#x2715;</button>
+    </div>
+    <div class="legal-tabs">
+      <button class="legal-tab-btn active" data-tab="privacy" onclick="showLegalTab('privacy')">Privacy Notice</button>
+      <button class="legal-tab-btn" data-tab="terms" onclick="showLegalTab('terms')">Terms of Use</button>
+    </div>
+    <div class="legal-body">
+
+      <div class="legal-section" data-tab="privacy">
+        <p><em>Last updated: 27 May 2026. This site is an independent community project operated from the United Kingdom.</em></p>
+
+        <h3>Data we collect and why</h3>
+        <p><strong>IP addresses.</strong> When you register a Discord webhook, submit a ban report, or trigger a notification, your IP address is received by our server. It is immediately hashed with SHA-256 (combined with a secret key) and the resulting hash is used only for rate limiting. The raw IP address is never stored anywhere. Rate-limit hashes expire automatically within 1-24 hours. <em>Legal basis: legitimate interests (preventing service abuse).</em></p>
+        <p><strong>Discord webhook URLs.</strong> If you register a webhook, the URL is encrypted with AES-256-GCM before being stored. A one-time deletion token is placed only in your browser's localStorage. The encrypted URL is kept until you delete it. It is never returned in any API response after registration. <em>Legal basis: performance of a contract (providing the notification service you requested).</em></p>
+        <p><strong>Ban report submissions.</strong> If you submit a ban report, we store the executor name, platform, and a timestamp. Screenshots are processed entirely in your browser (Tesseract.js OCR) and are never uploaded to our servers.</p>
+        <p><strong>Browser localStorage.</strong> We store your webhook deletion token, status timestamps, and UI preference flags in your browser's localStorage only. This data stays on your device and is never transmitted to our servers except the deletion token when you explicitly request removal or an update of your webhook.</p>
+
+        <h3>Third-party services</h3>
+        <ul>
+          <li><strong>Vercel</strong> - hosts this site. May log request metadata per <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener">Vercel's privacy policy</a>.</li>
+          <li><strong>Upstash (Vercel KV)</strong> - stores encrypted webhook data and rate-limit hashes. Data may be held in the EU or US. See <a href="https://upstash.com/trust/privacy.pdf" target="_blank" rel="noopener">Upstash's privacy policy</a>.</li>
+          <li><strong>Google Fonts</strong> - fonts are loaded from fonts.googleapis.com on every page visit, sharing your IP and User-Agent with Google. See <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's privacy policy</a>. You can block this via an ad blocker (the site remains fully functional).</li>
+          <li><strong>unpkg.com / Tesseract.js</strong> - the OCR library is loaded from unpkg.com only when you open the ban report feature. Your IP is shared with their CDN at that point. Your screenshot is never transmitted.</li>
+          <li><strong>Reddit (server-side only)</strong> - ban wave data is fetched from Reddit's public RSS feeds by our server only. Your browser never contacts Reddit directly.</li>
+        </ul>
+
+        <h3>Cookies</h3>
+        <p>This site sets no cookies. We use browser localStorage for the functionality described above. localStorage is not a cookie; it has no expiry and does not leave your device. You can clear it at any time via your browser settings (Settings &gt; Privacy &gt; Site data or Storage).</p>
+
+        <h3>Your rights under UK GDPR and EU GDPR</h3>
+        <p>You have the right to access, rectify, erase, restrict, object to, and port your personal data. Because IP data is stored only as a non-reversible hash and webhook data is accessible only via the token in your browser, you can exercise your right to erasure by deleting your webhook directly on the site. For any other request, contact us via the project's GitHub repository.</p>
+        <p>UK residents may lodge a complaint with the <a href="https://ico.org.uk/make-a-complaint" target="_blank" rel="noopener">Information Commissioner's Office (ICO)</a>. EU residents may contact their national supervisory authority.</p>
+
+        <h3>Data retention</h3>
+        <ul>
+          <li>Rate-limit hashes: 1 hour (notifications/ban reports) to 24 hours (webhook registrations), then automatically deleted</li>
+          <li>Encrypted webhook data: until deleted by you via the site</li>
+          <li>Ban report entries (executor name + platform + timestamp): 9 days, then automatically deleted</li>
+        </ul>
+
+        <h3>International transfers</h3>
+        <p>This site is hosted on Vercel infrastructure (USA and Europe). Data in Vercel KV may be handled by Upstash globally. Both operate under the EU-US Data Privacy Framework and/or Standard Contractual Clauses. By using this site you acknowledge these transfers.</p>
+
+        <h3>Children</h3>
+        <p>This site is not directed at children under 13 years of age (or 16 in jurisdictions where a higher minimum applies). We do not knowingly collect personal data from under-13s. If you believe we have inadvertently done so, please contact us via GitHub.</p>
+
+        <h3>Changes to this notice</h3>
+        <p>We may update this notice at any time. The date at the top reflects the most recent revision. Continued use of the site after a revision constitutes acceptance of the updated notice.</p>
+      </div>
+
+      <div class="legal-section" data-tab="terms" style="display:none">
+        <p><em>Last updated: 27 May 2026. By using this site you agree to these terms.</em></p>
+
+        <h3>1. Independent community project</h3>
+        <p>This site is an independent community project and is not affiliated with, endorsed by, sponsored by, or connected to Roblox Corporation, Roblox Ltd, or any Roblox executor developer. "Roblox," "Roblox Corporation," and all related marks and logos are trademarks of Roblox Corporation. Any reference to Roblox or its products is for informational purposes only.</p>
+
+        <h3>2. Information accuracy and disclaimer</h3>
+        <p>All data displayed is sourced from Reddit community posts and may be inaccurate, incomplete, delayed, or outdated. We make no representation or warranty as to its accuracy or reliability. <strong>Do not rely solely on this site</strong> to make any decision regarding game software use. Always verify information from multiple independent sources.</p>
+
+        <h3>3. Age requirement</h3>
+        <p>This site is not intended for use by persons under 13 years of age (or 16 in certain EU member states). By using this site you confirm you meet the minimum age requirement applicable in your jurisdiction.</p>
+
+        <h3>4. Acceptable use</h3>
+        <p>You must not: submit false, duplicate, or spam ban reports; attempt to circumvent rate limits by any means; use automated tools to scrape, flood, or abuse any part of the service; or use this site in any manner that violates applicable law. We reserve the right to block access to the site without prior notice or reason.</p>
+
+        <h3>5. No warranty</h3>
+        <p>This site is provided "as is" and "as available" without warranty of any kind, express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, and non-infringement. We do not warrant that the service will be uninterrupted, timely, secure, or error-free.</p>
+
+        <h3>6. Limitation of liability</h3>
+        <p>To the maximum extent permitted by applicable law, we exclude all liability for any direct, indirect, incidental, special, consequential, or exemplary damages arising out of or in connection with your use of, or inability to use, this site, including any loss arising from reliance on ban wave information displayed here. Nothing in these terms excludes or limits liability for death or personal injury caused by negligence, fraud, or any liability that cannot be excluded under applicable law.</p>
+
+        <h3>7. Third-party content and copyright</h3>
+        <p>This site displays summaries of Reddit posts. Copyright in those posts remains with the original authors. Display is consistent with Reddit's public content terms and constitutes nominative fair use or equivalent. If you are a copyright holder and believe your work is being displayed without authorisation, contact us via the project's GitHub repository.</p>
+
+        <h3>8. DMCA and copyright takedown</h3>
+        <p>If you believe content on this site infringes your copyright, submit a written notice via the project's GitHub repository including: (a) identification of the copyrighted work; (b) identification of the infringing material; (c) your contact information; (d) a statement of good faith belief; and (e) a statement that the information in the notice is accurate and, under penalty of perjury, that you are authorised to act on behalf of the rights owner.</p>
+
+        <h3>9. Links to third-party sites</h3>
+        <p>This site contains links to external websites (Reddit, Roblox, Discord). We have no control over and accept no responsibility for the content, privacy practices, or availability of those sites.</p>
+
+        <h3>10. Governing law and jurisdiction</h3>
+        <p>These terms are governed by and construed in accordance with the laws of England and Wales. Any disputes arising under these terms shall be subject to the exclusive jurisdiction of the courts of England and Wales, except where mandatory consumer protection laws in your jurisdiction confer jurisdiction on local courts.</p>
+
+        <h3>11. Consumer rights</h3>
+        <p>If you are a consumer in the UK or EU, nothing in these terms affects your statutory rights under applicable consumer protection legislation, including the Consumer Rights Act 2015 (UK) and equivalent EU directives.</p>
+
+        <h3>12. Changes to these terms</h3>
+        <p>We may update these terms at any time. The date at the top reflects the most recent revision. Continued use of the site after any change constitutes your acceptance of the revised terms.</p>
+      </div>
+
+    </div>
+  </div>
+</div>
 
 <!-- Report Ban Modal -->
 <div class="modal-overlay" id="reportModal" onclick="maybeCloseModal(event)">
@@ -603,6 +745,15 @@ footer a:hover{color:var(--text2)}
   </div>
 </div>
 
+<!-- Sticky ban report nudge -->
+<div class="ban-nudge hidden" id="banNudge">
+  <button class="bn-close" onclick="dismissBanNudge()" aria-label="Dismiss">&#x2715;</button>
+  <span class="bn-icon">🛡</span>
+  <div class="bn-title">Just got banned for exploiting?</div>
+  <div class="bn-sub">Submit a screenshot to help track the wave. Anonymous, verified by OCR, takes 30 seconds.</div>
+  <button class="bn-btn" onclick="dismissBanNudge();openReportModal()">Report Your Ban &rarr;</button>
+</div>
+
 <div class="toast-container" id="toastContainer"></div>
 
 <script>
@@ -613,10 +764,11 @@ const SCORE_WARN   = 1.0;
 const REFRESH_MS   = 5 * 60 * 1000;
 const BAN_RE       = /\b(moderat|terminat|suspend|banned|violation|warning)\b/i;
 
-const LS_TOKEN    = 'rbx_wh_token';
-const LS_WH_ID    = 'rbx_wh_id';
-const LS_STATUS   = 'rbx_last_status';
-const LS_NOTIFIED = 'rbx_last_notify_at';
+const LS_TOKEN         = 'rbx_wh_token';
+const LS_WH_ID         = 'rbx_wh_id';
+const LS_STATUS        = 'rbx_last_status';
+const LS_NOTIFIED      = 'rbx_last_notify_at';
+const LS_NUDGE_DISMISS = 'rbx_nudge_dismissed';
 
 let allPosts  = [];
 let curFilter = 'all';
@@ -646,8 +798,12 @@ function fmtNum(n) {
 
 function classify(title) {
   const t = title.toLowerCase();
-  if (/\balert\b|don.?t exploit|not safe|activated|going on|is detected|going through|hours of ban|⚠|currently|right now|is live|banwave[!]+/.test(t)) return 'alert';
-  if (/^(is |did |was |when |how |can |does |are |what |where |any )/.test(t)||/ over\??| still | end\??|explain|tracker|chances|possible/.test(t)) return 'question';
+  // off-topic meta: Discord tracking servers, news commentary, detection bots
+  if (/discord\s*(server|serv\w+|bot|channel|link|notif)|tweeted?|tracked?\s*(server|bot|site)|detection\s*(server|service|bot|disc)|follow.{0,20}(ban|wave)/.test(t)) return 'meta';
+  // explicit alert signals
+  if (/\balert\b|don.?t exploit|not safe|activated|going on|is detected|going through|\d+\s*h(ours?)?\s*(of\s*)?ban|⚠|currently|right now|is live|banwave[!?]+|wave\s*active|mass\s*ban|just\s*got\s*ban/.test(t)) return 'alert';
+  // questions / informational
+  if (/^(is |did |was |when |how |can |does |are |what |where |any )/.test(t)||/\?\s*$| over\??| still | end\??|explain|chances|possible|safe\s*(now|from|after)/.test(t)) return 'question';
   return 'general';
 }
 
@@ -656,7 +812,7 @@ function scorePost(p) {
   if (ageDays > 14) return 0;
   const recency = Math.pow(0.85, ageDays);
   const votes   = Math.log2(Math.max(1, p.score||0) + 1);
-  const tw      = p._type==='alert' ? 2.5 : p._type==='question' ? 0.2 : 0.5;
+  const tw      = p._type==='alert' ? 2.5 : p._type==='question' ? 0.2 : p._type==='meta' ? 0.05 : 0.5;
   return recency * (votes + 0.5) * tw;
 }
 
@@ -713,6 +869,19 @@ function shareStatus() {
   } else {
     navigator.clipboard.writeText(location.href).then(() => showToast('🔗','Link copied!'));
   }
+}
+
+// -- Ban nudge ---
+function showBanNudge() {
+  const dismissed = Number(localStorage.getItem(LS_NUDGE_DISMISS) || 0);
+  if (Date.now() - dismissed < 24 * 3600 * 1000) return;
+  const el = document.getElementById('banNudge');
+  if (el) el.classList.remove('hidden');
+}
+function dismissBanNudge() {
+  localStorage.setItem(LS_NUDGE_DISMISS, String(Date.now()));
+  const el = document.getElementById('banNudge');
+  if (el) el.classList.add('hidden');
 }
 
 // -- Fetch posts ---------------------------------------------------------------
@@ -801,7 +970,7 @@ function renderFeed(verifiedCount) {
   const recent    = allPosts.filter(p=>(Date.now()/1000-p.created_utc)<30*86400);
   let shown = recent;
   if (curFilter==='alert')    shown = recent.filter(p=>p._type==='alert');
-  if (curFilter==='question') shown = recent.filter(p=>p._type==='question');
+  if (curFilter==='question') shown = recent.filter(p=>p._type==='question'||p._type==='meta');
   countEl.textContent = shown.length+' post'+(shown.length!==1?'s':'')+' (last 30 days)';
 
   if (!shown.length) {
@@ -812,7 +981,8 @@ function renderFeed(verifiedCount) {
   container.innerHTML = shown.map((p,i) => {
     const tagHtml = p._type==='alert'
       ? '<span class="tag tag-alert">Alert</span>'
-      : p._type==='question' ? '<span class="tag tag-question">Question</span>' : '';
+      : p._type==='question' ? '<span class="tag tag-question">Question</span>'
+      : p._type==='meta' ? '<span class="tag tag-info">Info</span>' : '';
     const vBadge = (i===0 && verifiedCount>0)
       ? `<span class="tag tag-verified" title="Community-verified bans today">🛡 ${verifiedCount} verified today</span>`
       : '';
@@ -1015,11 +1185,27 @@ async function maybeTriggerNotify(status, topPost) {
   } catch {}
 }
 
+// -- Legal modal ---------------------------------------------------------------
+function openLegal(tab) {
+  showLegalTab(tab||'privacy');
+  document.getElementById('legalModal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeLegal() {
+  document.getElementById('legalModal').classList.remove('open');
+  document.body.style.overflow='';
+}
+function showLegalTab(tab) {
+  document.querySelectorAll('.legal-tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+  document.querySelectorAll('.legal-section').forEach(s=>s.style.display=s.dataset.tab===tab?'block':'none');
+  document.querySelector('.legal-body').scrollTop=0;
+}
+
 // -- Report modal --------------------------------------------------------------
 function openReportModal()  { document.getElementById('reportModal').classList.add('open'); document.body.style.overflow='hidden'; }
 function closeReportModal() { document.getElementById('reportModal').classList.remove('open'); document.body.style.overflow=''; }
 function maybeCloseModal(e) { if (e.target===document.getElementById('reportModal')) closeReportModal(); }
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeReportModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeReportModal();closeLegal();}});
 
 // -- OCR -----------------------------------------------------------------------
 function loadTesseract() {
@@ -1183,6 +1369,7 @@ async function load() {
 setInterval(load, REFRESH_MS);
 refreshWebhookUI();
 load();
+setTimeout(showBanNudge, 4000);
 </script>
 </body>
 </html>
