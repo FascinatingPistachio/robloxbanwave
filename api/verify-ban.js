@@ -1,11 +1,15 @@
 import { kv } from '@vercel/kv';
 import { createHash } from 'node:crypto';
 
-const VALID_EXECUTORS = ['synapse z', 'wave', 'fluxus', 'krnl', 'solara', 'arceus x', 'delta', 'other'];
+const VALID_EXECUTORS = [
+  'synapse z', 'wave', 'fluxus', 'krnl', 'solara', 'arceus x', 'delta',
+  'xeno', 'velocity', 'electron', 'jjsploit', 'hydrogen', 'script-ware',
+  'evon', 'trigon', 'celery', 'codex', 'vega x', 'other',
+];
 const VALID_PLATFORMS = ['pc', 'mobile-android', 'mobile-ios', 'console'];
 
 // Roblox ban message keywords - must match at least one
-const BAN_RE = /\b(moderat|terminat|suspend|banned|violation|account.*action|warning.*roblox|roblox.*moderat)\b/i;
+const BAN_RE = /\b(moderat|terminat|suspend|banned|violation|exploit|account.*action|warning.*roblox|roblox.*moderat)\b/i;
 
 function hashIp(req) {
   const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'unknown';
