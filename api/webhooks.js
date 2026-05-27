@@ -51,7 +51,7 @@ const DISCORD_RE = /^https:\/\/(discord\.com|discordapp\.com|ptb\.discord\.com|c
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
 
-  // ── POST: register a new webhook ─────────────────────────────────────────
+  // -- POST: register a new webhook -----------------------------------------
   if (req.method === 'POST') {
     const { webhookUrl } = req.body ?? {};
     if (!webhookUrl || !DISCORD_RE.test(webhookUrl)) {
@@ -66,7 +66,7 @@ export default async function handler(req, res) {
       if (cnt === 1) await kv.expire(rlKey, 86400);
       if (cnt > 5) return res.status(429).json({ error: 'Too many registrations today. Try again tomorrow.' });
     } catch (e) {
-      if (kvError(e)) return res.status(503).json({ error: 'Webhook storage not set up — add Vercel KV to your project.' });
+      if (kvError(e)) return res.status(503).json({ error: 'Webhook storage not set up - add Vercel KV to your project.' });
     }
 
     try {
@@ -80,12 +80,12 @@ export default async function handler(req, res) {
 
       return res.status(201).json({ token, webhookId });
     } catch (e) {
-      if (kvError(e)) return res.status(503).json({ error: 'Webhook storage not set up — add Vercel KV to your project.' });
+      if (kvError(e)) return res.status(503).json({ error: 'Webhook storage not set up - add Vercel KV to your project.' });
       return res.status(500).json({ error: 'Server error. Try again.' });
     }
   }
 
-  // ── PATCH: replace webhook URL (keep same token) ──────────────────────────
+  // -- PATCH: replace webhook URL (keep same token) --------------------------
   if (req.method === 'PATCH') {
     const { token, webhookUrl } = req.body ?? {};
     if (!token || !webhookUrl) {
@@ -111,7 +111,7 @@ export default async function handler(req, res) {
     }
   }
 
-  // ── DELETE: remove a webhook by token ────────────────────────────────────
+  // -- DELETE: remove a webhook by token ------------------------------------
   if (req.method === 'DELETE') {
     const { token } = req.query;
     if (!token) return res.status(400).json({ error: 'token required' });
@@ -119,7 +119,7 @@ export default async function handler(req, res) {
     try {
       const tokenHash = hashToken(token);
       const exists    = await kv.exists(`webhook:${tokenHash}`);
-      if (!exists) return res.status(404).json({ error: 'Webhook not found — may already be removed.' });
+      if (!exists) return res.status(404).json({ error: 'Webhook not found - may already be removed.' });
 
       await kv.del(`webhook:${tokenHash}`);
       await kv.srem('webhook:index', tokenHash);

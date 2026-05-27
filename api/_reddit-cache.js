@@ -3,7 +3,7 @@ import { parseAtom } from './_atom-parser.js';
 
 const CACHE_KEY = 'cache:reddit:posts:v3';
 const BASE_TTL  = 5 * 60 * 1000;   // 5 min normal refresh
-const MAX_MULT  = 12;               // max backoff → 60 min
+const MAX_MULT  = 12;               // max backoff -> 60 min
 const TIMEOUT   = 14000;            // 14 s per request
 
 // Try search endpoint first, then regular new feed as fallback.
@@ -48,7 +48,7 @@ async function safeKvSet(value) {
  *
  * source: 'reddit' | 'cache' | 'stale' | 'error'
  *
- * Always resolves — never throws. Callers get an empty array in the worst case.
+ * Always resolves - never throws. Callers get an empty array in the worst case.
  */
 export async function getPostsWithCache() {
   const now    = Date.now();
@@ -80,7 +80,7 @@ export async function getPostsWithCache() {
         return { posts: cached.posts, source: 'cache', fetchedAt: cached.fetchedAt };
       }
 
-      // Success — reset backoff
+      // Success - reset backoff
       await safeKvSet({ posts, fetchedAt: now, nextFetchAt: now + BASE_TTL, backoffMult: 1 });
       return { posts, source: 'reddit', fetchedAt: now };
 
@@ -89,7 +89,7 @@ export async function getPostsWithCache() {
     }
   }
 
-  // All endpoints failed — extend stale cache with backoff
+  // All endpoints failed - extend stale cache with backoff
   if (cached?.posts?.length) {
     const mult  = Math.min((cached.backoffMult || 1) * 2, MAX_MULT);
     await safeKvSet({ ...cached, nextFetchAt: now + BASE_TTL * mult, backoffMult: mult });
@@ -102,6 +102,6 @@ export async function getPostsWithCache() {
     };
   }
 
-  // No cache at all — return empty
+  // No cache at all - return empty
   return { posts: [], source: 'error', fetchedAt: now, error: lastError || 'All Reddit endpoints unavailable' };
 }

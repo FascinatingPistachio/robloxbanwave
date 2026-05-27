@@ -1,4 +1,4 @@
-// GitHub Issues search — executor devs file issues when byfron/hyperion patches them.
+// GitHub Issues search - executor devs file issues when byfron/hyperion patches them.
 // No auth needed for public search (60 req/hr unauthenticated).
 const QUERY = 'roblox (banwave OR byfron OR hyperion OR "executor detected" OR "hwid ban" OR "krnl" OR "synapse" OR "delta executor" OR "fluxus" OR "evon")';
 

@@ -4,7 +4,7 @@ import { createHash } from 'node:crypto';
 const VALID_EXECUTORS = ['synapse z', 'wave', 'fluxus', 'krnl', 'solara', 'arceus x', 'delta', 'other'];
 const VALID_PLATFORMS = ['pc', 'mobile-android', 'mobile-ios', 'console'];
 
-// Roblox ban message keywords — must match at least one
+// Roblox ban message keywords - must match at least one
 const BAN_RE = /\b(moderat|terminat|suspend|banned|violation|account.*action|warning.*roblox|roblox.*moderat)\b/i;
 
 function hashIp(req) {
@@ -23,7 +23,7 @@ function kvError(e) {
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
 
-  // ── GET: return today's verified ban count ────────────────────────────────
+  // -- GET: return today's verified ban count --------------------------------
   if (req.method === 'GET') {
     const d = req.query.date || todayKey();
     try {
@@ -31,6 +31,7 @@ export default async function handler(req, res) {
       const entries = (raw || []).map(e => { try { return JSON.parse(e); } catch { return null; } }).filter(Boolean);
       const byExecutor = {};
       for (const e of entries) byExecutor[e.executor] = (byExecutor[e.executor] || 0) + 1;
+      res.setHeader('Cache-Control', 's-maxage=30, stale-while-revalidate=60');
       return res.json({ count: entries.length, byExecutor, date: d });
     } catch (e) {
       if (kvError(e)) return res.status(503).json({ error: 'KV not configured', count: 0 });
@@ -38,7 +39,7 @@ export default async function handler(req, res) {
     }
   }
 
-  // ── POST: submit a verified ban report ────────────────────────────────────
+  // -- POST: submit a verified ban report ------------------------------------
   if (req.method === 'POST') {
     const { ocrText, executor, platform } = req.body ?? {};
 

@@ -23,18 +23,18 @@ export default async function handler(req, res) {
 
   const { topPost, test, token } = req.body ?? {};
 
-  // ── Test mode: send a single test notification to the caller's webhook ──────
+  // -- Test mode: send a single test notification to the caller's webhook ------
   if (test) {
     if (!token) return res.status(400).json({ error: 'token required for test mode' });
 
     try {
       const tokenHash = hashToken(token);
       const entry     = await kv.get(`webhook:${tokenHash}`);
-      if (!entry?.encrypted) return res.status(404).json({ error: 'Webhook not found — register it first.' });
+      if (!entry?.encrypted) return res.status(404).json({ error: 'Webhook not found - register it first.' });
 
       const webhookUrl = decrypt(entry.encrypted);
       const embed = {
-        title:       '✅  Test — RBX Radar',
+        title:       '✅  Test - RBX Radar',
         description: "Your Discord webhook is connected and working correctly!\nYou'll receive a notification like this whenever an active Roblox ban wave is detected on r/robloxhackers.",
         color:       0x22c55e,
         url:         'https://robloxbanwave.vercel.app',
@@ -59,7 +59,7 @@ export default async function handler(req, res) {
     }
   }
 
-  // ── Normal broadcast: rate-limit by IP to prevent abuse ──────────────────────
+  // -- Normal broadcast: rate-limit by IP to prevent abuse ----------------------
   const ipHash = hashIp(req);
   try {
     const rlKey = `rl:notify:${ipHash}`;

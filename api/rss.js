@@ -34,7 +34,7 @@ export default async function handler(req, res) {
   <channel>
     <title>Roblox Ban Wave Monitor</title>
     <link>https://robloxbanwave.vercel.app</link>
-    <description>Real-time Roblox executor ban wave tracker — community posts from r/robloxhackers. Not affiliated with Roblox Corporation.</description>
+    <description>Real-time Roblox executor ban wave tracker - community posts from r/robloxhackers. Not affiliated with Roblox Corporation.</description>
     <language>en-us</language>
     <ttl>5</ttl>
     <lastBuildDate>${lastBuild}</lastBuildDate>
