@@ -22,21 +22,21 @@
   --text:#f0ece6;--text2:#9ebdd6;--text3:#5e88aa;
   --accent:#4e8cc8;--accent-dim:rgba(78,140,200,.12);
   --accent-glow:rgba(78,140,200,.25);--accent-border:rgba(78,140,200,.4);
-  --green:#4aab8a;--red:#d4554c;--amber:#c4913a;
+  --green:#4aab8a;--red:#f0ece6;--amber:#c4913a;
   --sans:'Inter',system-ui,sans-serif;
   --display:'Syne',sans-serif;
   --mono:'JetBrains Mono',monospace;
   --r:14px;--t:.2s cubic-bezier(.4,0,.2,1);
 }
-body.active  {--accent:#d4554c;--accent-dim:rgba(212,85,76,.1);--accent-glow:rgba(212,85,76,.28);--accent-border:rgba(212,85,76,.44);--surface:rgba(212,85,76,.07);--surface-h:rgba(212,85,76,.13);--border:rgba(212,85,76,.18);--border-h:rgba(212,85,76,.32);}
+body.active  {--accent:#f0ece6;--accent-dim:rgba(240,236,230,.1);--accent-glow:rgba(240,236,230,.22);--accent-border:rgba(240,236,230,.4);--surface:rgba(240,236,230,.07);--surface-h:rgba(240,236,230,.13);--border:rgba(240,236,230,.18);--border-h:rgba(240,236,230,.3);}
 body.warning {--accent:#c4913a;--accent-dim:rgba(196,145,58,.08);--accent-glow:rgba(196,145,58,.22);--accent-border:rgba(196,145,58,.38);--surface:rgba(196,145,58,.06);--surface-h:rgba(196,145,58,.11);--border:rgba(196,145,58,.17);--border-h:rgba(196,145,58,.3);}
 body.clear   {--accent:#4aab8a;--accent-dim:rgba(74,171,138,.08);--accent-glow:rgba(74,171,138,.2);--accent-border:rgba(74,171,138,.35);--surface:rgba(74,171,138,.07);--surface-h:rgba(74,171,138,.13);--border:rgba(74,171,138,.18);--border-h:rgba(74,171,138,.3);}
 
 body{background-color:#0b1c36;background-image:radial-gradient(circle,rgba(78,140,200,.04) 1px,transparent 1px),linear-gradient(180deg,#0d2040 0%,#0b1c36 55%,#091830 100%);background-size:28px 28px,100% 100%;color:var(--text);font-family:var(--sans);min-height:100vh;line-height:1.6;-webkit-font-smoothing:antialiased}
 body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 100% 35% at 50% -5%,rgba(11,44,120,.15) 0%,transparent 60%);pointer-events:none;z-index:0;transition:background 1.4s}
-body.active::before{background:radial-gradient(ellipse 100% 35% at 50% -5%,rgba(180,40,40,.13) 0%,transparent 60%)}
+body.active::before{background:radial-gradient(ellipse 100% 35% at 50% -5%,rgba(240,236,230,.06) 0%,transparent 60%)}
 body.warning::before{background:radial-gradient(ellipse 100% 35% at 50% -5%,rgba(150,100,20,.11) 0%,transparent 60%)}
-body.active::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(212,85,76,.012) 3px,rgba(212,85,76,.012) 4px);pointer-events:none;z-index:90;animation:scanlines 7s linear infinite}
+body.active::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(240,236,230,.01) 3px,rgba(240,236,230,.01) 4px);pointer-events:none;z-index:90;animation:scanlines 7s linear infinite}
 @keyframes scanlines{0%{background-position:0 0}100%{background-position:0 80px}}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
@@ -86,11 +86,11 @@ body.active .logo-dot,body.warning .logo-dot{animation:dot-pulse 1s ease-in-out 
 
 
 /* Per-state headline color — no glow */
-body.active  .status-headline{color:#d4554c}
+body.active  .status-headline{color:#f0ece6}
 body.warning .status-headline{color:#c4913a}
 body.clear   .status-headline{color:#4aab8a}
 /* Status-aware live pill */
-body.active  .live-pill{border-color:rgba(212,85,76,.5);background:rgba(212,85,76,.1);color:#d4554c}
+body.active  .live-pill{border-color:rgba(240,236,230,.4);background:rgba(240,236,230,.08);color:#f0ece6}
 body.warning .live-pill{border-color:rgba(196,145,58,.42);background:rgba(196,145,58,.08);color:#c4913a}
 body.clear   .live-pill{border-color:rgba(74,171,138,.42);background:rgba(74,171,138,.08);color:#4aab8a}
 /* Card elevation */
@@ -100,10 +100,10 @@ body.clear   .live-pill{border-color:rgba(74,171,138,.42);background:rgba(74,171
 .post-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.5),0 0 0 1px var(--border-h);transform:translateX(3px)}
 /* Button glow on hover */
 .wh-btn:hover,.report-btn:hover,.modal-submit:hover,.bn-btn:hover{box-shadow:0 4px 20px rgba(78,140,200,.25)}
-body.active .wh-btn:hover,body.active .report-btn:hover,body.active .modal-submit:hover{box-shadow:0 4px 20px rgba(212,85,76,.28)}
+body.active .wh-btn:hover,body.active .report-btn:hover,body.active .modal-submit:hover{box-shadow:0 4px 20px rgba(240,236,230,.2)}
 /* Alert post left border glow */
 .post-card[data-type="alert"]{border-left-width:3px}
-body.active .recent-post{border-color:rgba(212,85,76,.5);box-shadow:0 0 30px rgba(212,85,76,.12)}
+body.active .recent-post{border-color:rgba(240,236,230,.4);box-shadow:0 0 30px rgba(240,236,230,.08)}
 
 .live-pill{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:5px 14px;border-radius:100px;border:1px solid var(--accent-border);background:var(--accent-dim);color:var(--accent);margin-bottom:20px;transition:all var(--t)}
 .live-pill-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0}
@@ -167,8 +167,8 @@ body.active .live-pill-dot,body.warning .live-pill-dot{animation:dot-pulse 1s ea
 .g-bar{flex:1;border-radius:3px 3px 0 0;background:rgba(255,255,255,.05);min-height:2px;cursor:pointer;transition:background var(--t)}
 .g-bar.has-data{background:rgba(78,140,200,.3)}
 .g-bar.has-data:hover{background:rgba(78,140,200,.65)}
-body.active  .g-bar.has-data{background:rgba(212,85,76,.32)}
-body.active  .g-bar.has-data:hover{background:rgba(212,85,76,.7)}
+body.active  .g-bar.has-data{background:rgba(240,236,230,.28)}
+body.active  .g-bar.has-data:hover{background:rgba(240,236,230,.6)}
 body.warning .g-bar.has-data{background:rgba(196,145,58,.3)}
 body.warning .g-bar.has-data:hover{background:rgba(196,145,58,.65)}
 .g-bar.cur{outline:1px solid rgba(255,255,255,.15)}
@@ -217,7 +217,7 @@ body.warning .g-bar.has-data:hover{background:rgba(196,145,58,.65)}
 .wh-btn-sm:hover{background:var(--surface-h);border-color:var(--border-h);color:var(--text)}
 .wh-btn-sm:disabled{opacity:.4;cursor:not-allowed}
 .wh-btn-danger{background:transparent;border:1px solid var(--border);color:var(--text2)}
-.wh-btn-danger:hover{border-color:#d4554c;color:#d4554c}
+.wh-btn-danger:hover{border-color:#f0ece6;color:#f0ece6}
 .wh-active-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
 .wh-active-indicator{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--text2)}
 .wh-dot{width:7px;height:7px;border-radius:50%;background:#4aab8a;box-shadow:0 0 6px rgba(74,171,138,.7);animation:dot-pulse 2s ease-in-out infinite}
@@ -225,7 +225,7 @@ body.warning .g-bar.has-data:hover{background:rgba(196,145,58,.65)}
 .wh-id code{background:var(--bg2);border:1px solid var(--border);padding:2px 8px;border-radius:4px;font-size:10px;color:var(--text2)}
 .wh-msg{margin-top:10px;font-family:var(--mono);font-size:11px;padding:7px 11px;border-radius:7px;display:none}
 .wh-msg.ok {background:rgba(74,171,138,.1); color:#4aab8a;border:1px solid rgba(74,171,138,.25);display:block}
-.wh-msg.err{background:rgba(212,85,76,.1);  color:#d4554c;border:1px solid rgba(212,85,76,.25);display:block}
+.wh-msg.err{background:rgba(240,236,230,.07);color:#f0ece6;border:1px solid rgba(240,236,230,.2);display:block}
 .wh-update-form{margin-top:12px;display:none}
 .wh-update-form.open{display:block}
 .wh-privacy{margin-top:14px;font-family:var(--mono);font-size:10px;color:var(--text3);line-height:1.6;display:flex;gap:8px;align-items:flex-start;border-top:1px solid var(--border);padding-top:14px}
@@ -280,7 +280,7 @@ body.warning .g-bar.has-data:hover{background:rgba(196,145,58,.65)}
 .ocr-status{font-family:var(--mono);font-size:11px;padding:8px 12px;border-radius:8px;margin-bottom:14px;display:none}
 .ocr-status.scanning{background:rgba(196,145,58,.08);color:#c4913a;border:1px solid rgba(196,145,58,.22);display:block}
 .ocr-status.pass{background:rgba(74,171,138,.08);color:#4aab8a;border:1px solid rgba(74,171,138,.22);display:block}
-.ocr-status.fail{background:rgba(212,85,76,.08);color:#d4554c;border:1px solid rgba(212,85,76,.22);display:block}
+.ocr-status.fail{background:rgba(240,236,230,.07);color:#f0ece6;border:1px solid rgba(240,236,230,.2);display:block}
 .ocr-bar{height:3px;background:var(--border);border-radius:100px;margin-top:6px;overflow:hidden;display:none}
 .ocr-bar.show{display:block}
 .ocr-bar-fill{height:100%;background:#c4913a;border-radius:100px;width:0;transition:width .2s}
@@ -334,19 +334,19 @@ footer a:hover{color:var(--text2)}
 .tag-info{background:rgba(148,163,184,.1);color:#7a9ab5;border:1px solid rgba(148,163,184,.2)}
 
 /* Ban report nudge */
-.ban-nudge{position:fixed;bottom:28px;left:28px;z-index:400;background:#081828;border:1px solid rgba(212,85,76,.35);border-radius:16px;padding:18px 20px 16px;max-width:260px;box-shadow:0 8px 40px rgba(0,0,0,.55),0 0 0 1px rgba(212,85,76,.08);animation:nudgeIn .45s cubic-bezier(.34,1.56,.64,1) both}
+.ban-nudge{position:fixed;bottom:28px;left:28px;z-index:400;background:#081828;border:1px solid rgba(240,236,230,.22);border-radius:16px;padding:18px 20px 16px;max-width:260px;box-shadow:0 8px 40px rgba(0,0,0,.55),0 0 0 1px rgba(240,236,230,.06);animation:nudgeIn .45s cubic-bezier(.34,1.56,.64,1) both}
 .ban-nudge.hidden{display:none}
 @keyframes nudgeIn{from{opacity:0;transform:translateY(18px) scale(.93)}to{opacity:1;transform:translateY(0) scale(1)}}
-body.active .ban-nudge{border-color:rgba(212,85,76,.6);box-shadow:0 8px 40px rgba(212,85,76,.2),0 0 0 1px rgba(212,85,76,.14)}
+body.active .ban-nudge{border-color:rgba(240,236,230,.45);box-shadow:0 8px 40px rgba(240,236,230,.08),0 0 0 1px rgba(240,236,230,.12)}
 .bn-close{position:absolute;top:10px;right:10px;background:none;border:none;color:var(--text3);cursor:pointer;padding:4px;border-radius:4px;font-size:13px;line-height:1;transition:color var(--t)}
 .bn-close:hover{color:var(--text)}
 .bn-icon{display:block;margin-bottom:8px}
 .bn-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:5px;padding-right:18px;line-height:1.3}
 .bn-sub{font-size:11px;color:var(--text2);line-height:1.6;margin-bottom:13px}
-.bn-btn{display:block;width:100%;background:#d4554c;color:#fff;border:none;padding:10px 14px;border-radius:9px;font-family:var(--mono);font-size:11px;font-weight:700;cursor:pointer;transition:opacity var(--t);letter-spacing:.03em;text-align:center}
+.bn-btn{display:block;width:100%;background:#f0ece6;color:#0b1c36;border:none;padding:10px 14px;border-radius:9px;font-family:var(--mono);font-size:11px;font-weight:700;cursor:pointer;transition:opacity var(--t);letter-spacing:.03em;text-align:center}
 .bn-btn:hover{opacity:.85}
-.hdr-report-btn{background:rgba(212,85,76,.08);border:1px solid rgba(212,85,76,.24);color:#d4554c;padding:4px 12px;border-radius:100px;font-family:var(--mono);font-size:10px;font-weight:700;cursor:pointer;transition:all var(--t);white-space:nowrap;display:flex;align-items:center;gap:5px}
-.hdr-report-btn:hover{background:rgba(212,85,76,.16);border-color:rgba(212,85,76,.44)}
+.hdr-report-btn{background:rgba(240,236,230,.07);border:1px solid rgba(240,236,230,.22);color:#f0ece6;padding:4px 12px;border-radius:100px;font-family:var(--mono);font-size:10px;font-weight:700;cursor:pointer;transition:all var(--t);white-space:nowrap;display:flex;align-items:center;gap:5px}
+.hdr-report-btn:hover{background:rgba(240,236,230,.14);border-color:rgba(240,236,230,.38)}
 .hdr-report-btn svg{width:12px;height:12px;flex-shrink:0}
 
 /* Per-post vote buttons (alert cards only) */
@@ -354,7 +354,7 @@ body.active .ban-nudge{border-color:rgba(212,85,76,.6);box-shadow:0 8px 40px rgb
 .pc-vote-btn{background:var(--bg2);border:1px solid var(--border);color:var(--text3);padding:2px 8px;border-radius:5px;font-family:var(--mono);font-size:10px;font-weight:700;cursor:pointer;transition:all var(--t);display:inline-flex;align-items:center;gap:3px;line-height:1.6}
 .pc-vote-btn:hover:not(:disabled){background:var(--surface-h);border-color:var(--border-h);color:var(--text2)}
 .pc-vote-btn.voted-up{background:rgba(74,171,138,.1);border-color:rgba(74,171,138,.36);color:#4aab8a}
-.pc-vote-btn.voted-down{background:rgba(212,85,76,.08);border-color:rgba(212,85,76,.3);color:#d4554c}
+.pc-vote-btn.voted-down{background:rgba(240,236,230,.07);border-color:rgba(240,236,230,.28);color:#f0ece6}
 .pc-vote-btn:disabled{opacity:.55;cursor:not-allowed}
 .pc-vote-lbl{font-family:var(--mono);font-size:10px;color:var(--text3)}
 
@@ -365,7 +365,7 @@ body.active .ban-nudge{border-color:rgba(212,85,76,.6);box-shadow:0 8px 40px rgb
 .contact-char-count{font-family:var(--mono);font-size:10px;color:var(--text3);text-align:right;margin-top:4px}
 .contact-msg{margin-top:10px;font-family:var(--mono);font-size:11px;padding:7px 11px;border-radius:7px;display:none}
 .contact-msg.ok{background:rgba(74,171,138,.1);color:#4aab8a;border:1px solid rgba(74,171,138,.25);display:block}
-.contact-msg.err{background:rgba(212,85,76,.1);color:#d4554c;border:1px solid rgba(212,85,76,.25);display:block}
+.contact-msg.err{background:rgba(240,236,230,.07);color:#f0ece6;border:1px solid rgba(240,236,230,.2);display:block}
 
 /* Footer */
 footer{padding:18px 24px 14px;border-top:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--text3)}
@@ -899,7 +899,7 @@ img.emoji{height:1em;width:1em;margin:0 .05em 0 .1em;vertical-align:-.1em}
 <!-- Sticky ban report nudge -->
 <div class="ban-nudge hidden" id="banNudge">
   <button class="bn-close" onclick="dismissBanNudge()" aria-label="Dismiss">&#x2715;</button>
-  <svg class="bn-icon" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;display:block;margin-bottom:8px;color:#d4554c"><path d="M11,2 L18,5 L18,11 C18,15.5 15,18.5 11,20 C7,18.5 4,15.5 4,11 L4,5 Z"/><line x1="11" y1="8" x2="11" y2="12"/><circle cx="11" cy="14.5" r=".8" fill="currentColor" stroke="none"/></svg>
+  <svg class="bn-icon" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;display:block;margin-bottom:8px;color:#f0ece6"><path d="M11,2 L18,5 L18,11 C18,15.5 15,18.5 11,20 C7,18.5 4,15.5 4,11 L4,5 Z"/><line x1="11" y1="8" x2="11" y2="12"/><circle cx="11" cy="14.5" r=".8" fill="currentColor" stroke="none"/></svg>
   <div class="bn-title">Just got banned for exploiting?</div>
   <div class="bn-sub">Submit a screenshot to help track the wave. Anonymous, verified by OCR, takes 30 seconds.</div>
   <button class="bn-btn" onclick="dismissBanNudge();openReportModal()">Report Your Ban &rarr;</button>
