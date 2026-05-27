@@ -1,75 +1,43 @@
+import { getPostsWithCache } from './_reddit-cache.js';
+
 function xmlEsc(s) {
   return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
-function htmlDecode(s) {
-  return (s || '')
-    .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&#x27;/g, "'");
-}
-
-function parseAtom(xml) {
-  const posts = [];
-  for (const [, entry] of xml.matchAll(/<entry>([\s\S]*?)<\/entry>/g)) {
-    const get = tag => {
-      const m = entry.match(new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`));
-      return m ? htmlDecode(m[1].trim()) : '';
-    };
-    const href  = (entry.match(/href="([^"]+)"/) || [])[1] || '';
-    const id    = get('id');
-    const title = get('title');
-    if (!/ban\s*wave/i.test(title)) continue;
-
-    const scoreMatch = entry.match(/<(?:\w+:)?score[^>]*>(\d+)<\/(?:\w+:)?score>/);
-    const score      = scoreMatch ? parseInt(scoreMatch[1], 10) : 0;
-    const postId     = (id.match(/comments\/([a-z0-9]+)\//) || [])[1] || id.slice(-8);
-    const updated    = get('updated') || get('published');
-    const author     = get('name').replace(/^\/u\//, '');
-
-    const rawContent = (entry.match(/<content[^>]*>([\s\S]*?)<\/content>/) || [])[1] || '';
-    const selftext   = htmlDecode(rawContent).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 300);
-
-    posts.push({
-      id:     postId,
-      title,
-      url:    href || `https://www.reddit.com/r/robloxhackers/comments/${postId}/`,
-      author,
-      score,
-      desc:   selftext || `Banwave report from r/robloxhackers. Score: ${score}`,
-      date:   updated ? new Date(updated) : new Date(),
-    });
-  }
-  return posts;
-}
 
 export default async function handler(req, res) {
-  try {
-    const url = 'https://www.reddit.com/r/robloxhackers/search.rss?q=banwave&sort=new&t=month&limit=25&restrict_sr=1';
-    const r   = await fetch(url, {
-      headers: { 'User-Agent': 'RBXRadar/1.0 (robloxbanwave.vercel.app)', Accept: 'application/atom+xml, */*' },
-    });
-    if (!r.ok) throw new Error('Reddit returned ' + r.status);
-    const xml   = await r.text();
-    const posts = parseAtom(xml);
+  const { posts, source, fetchedAt } = await getPostsWithCache();
 
-    const items = posts.map(p => `
+  const items = posts.map(p => {
+    const url     = p.permalink.startsWith('http')
+      ? p.permalink
+      : `https://www.reddit.com${p.permalink}`;
+    const pubDate = new Date(p.created_utc * 1000).toUTCString();
+    const desc    = p.selftext
+      ? xmlEsc(p.selftext.slice(0, 300))
+      : `Banwave report from r/robloxhackers. Score: ${p.score}`;
+
+    return `
   <item>
     <title>${xmlEsc(p.title)}</title>
-    <link>${xmlEsc(p.url)}</link>
-    <guid isPermaLink="true">${xmlEsc(p.url)}</guid>
-    <pubDate>${p.date.toUTCString()}</pubDate>
+    <link>${xmlEsc(url)}</link>
+    <guid isPermaLink="true">${xmlEsc(url)}</guid>
+    <pubDate>${pubDate}</pubDate>
     <author>noreply@reddit.com (u/${xmlEsc(p.author)})</author>
-    <description>${xmlEsc(p.desc)}</description>
-    <source url="https://robloxbanwave.vercel.app/api/rss">Roblox Ban Wave Monitor</source>
-  </item>`).join('');
+    <description>${desc}</description>
+  </item>`;
+  }).join('');
 
-    const rss = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  const lastBuild = fetchedAt ? new Date(fetchedAt).toUTCString() : new Date().toUTCString();
+
+  const rss = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Roblox Ban Wave Monitor</title>
     <link>https://robloxbanwave.vercel.app</link>
-    <description>Real-time Roblox executor ban wave tracker — community posts from r/robloxhackers.</description>
+    <description>Real-time Roblox executor ban wave tracker — community posts from r/robloxhackers. Not affiliated with Roblox Corporation.</description>
     <language>en-us</language>
-    <ttl>60</ttl>
+    <ttl>5</ttl>
+    <lastBuildDate>${lastBuild}</lastBuildDate>
     <atom:link href="https://robloxbanwave.vercel.app/api/rss" rel="self" type="application/rss+xml"/>
     <image>
       <url>https://robloxbanwave.vercel.app/favicon.svg</url>
@@ -80,11 +48,8 @@ export default async function handler(req, res) {
   </channel>
 </rss>`;
 
-    res.setHeader('Content-Type', 'application/rss+xml; charset=utf-8');
-    res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=600');
-    return res.send(rss);
-  } catch (e) {
-    res.setHeader('Content-Type', 'application/json');
-    return res.status(500).json({ error: e.message });
-  }
+  res.setHeader('Content-Type', 'application/rss+xml; charset=utf-8');
+  res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=600');
+  res.setHeader('X-Data-Source', source);
+  return res.send(rss);
 }

@@ -37,12 +37,21 @@ function kvError(e) {
   return /KV_|UPSTASH|fetch failed/i.test(e?.message ?? '');
 }
 
+// Extract the public webhook ID (numeric snowflake) from a Discord webhook URL.
+// URL format: https://discord.com/api/webhooks/{id}/{token}
+function extractWebhookId(url) {
+  try {
+    const parts = new URL(url).pathname.split('/');
+    return parts[4] || '';
+  } catch { return ''; }
+}
+
 const DISCORD_RE = /^https:\/\/(discord\.com|discordapp\.com|ptb\.discord\.com|canary\.discord\.com)\/api\/webhooks\/\d+\/.+/;
 
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
 
-  // ── POST: register a new webhook ──────────────────────────────────────────
+  // ── POST: register a new webhook ─────────────────────────────────────────
   if (req.method === 'POST') {
     const { webhookUrl } = req.body ?? {};
     if (!webhookUrl || !DISCORD_RE.test(webhookUrl)) {
@@ -61,17 +70,44 @@ export default async function handler(req, res) {
     }
 
     try {
-      const token     = randomUUID();
-      const tokenHash = hashToken(token);
-      const encrypted = encrypt(webhookUrl);
+      const token      = randomUUID();
+      const tokenHash  = hashToken(token);
+      const encrypted  = encrypt(webhookUrl);
+      const webhookId  = extractWebhookId(webhookUrl);
 
-      await kv.set(`webhook:${tokenHash}`, { encrypted, createdAt: Date.now() });
+      await kv.set(`webhook:${tokenHash}`, { encrypted, webhookId, createdAt: Date.now() });
       await kv.sadd('webhook:index', tokenHash);
 
-      return res.status(201).json({ token });
+      return res.status(201).json({ token, webhookId });
     } catch (e) {
       if (kvError(e)) return res.status(503).json({ error: 'Webhook storage not set up — add Vercel KV to your project.' });
       return res.status(500).json({ error: 'Server error. Try again.' });
+    }
+  }
+
+  // ── PATCH: replace webhook URL (keep same token) ──────────────────────────
+  if (req.method === 'PATCH') {
+    const { token, webhookUrl } = req.body ?? {};
+    if (!token || !webhookUrl) {
+      return res.status(400).json({ error: 'token and webhookUrl required.' });
+    }
+    if (!DISCORD_RE.test(webhookUrl)) {
+      return res.status(400).json({ error: 'Provide a valid Discord webhook URL.' });
+    }
+
+    try {
+      const tokenHash = hashToken(token);
+      const entry     = await kv.get(`webhook:${tokenHash}`);
+      if (!entry?.encrypted) return res.status(404).json({ error: 'Webhook not found.' });
+
+      const encrypted = encrypt(webhookUrl);
+      const webhookId = extractWebhookId(webhookUrl);
+      await kv.set(`webhook:${tokenHash}`, { ...entry, encrypted, webhookId, updatedAt: Date.now() });
+
+      return res.status(200).json({ ok: true, webhookId });
+    } catch (e) {
+      if (kvError(e)) return res.status(503).json({ error: 'Webhook storage not configured.' });
+      return res.status(500).json({ error: 'Server error.' });
     }
   }
 
