@@ -32,14 +32,13 @@ body.active  {--accent:#f87171;--accent-dim:rgba(248,113,113,.09);--accent-glow:
 body.warning {--accent:#fbbf24;--accent-dim:rgba(251,191,36,.08);--accent-glow:rgba(251,191,36,.2);--accent-border:rgba(251,191,36,.36);}
 body.clear   {--accent:#34d399;--accent-dim:rgba(52,211,153,.07);--accent-glow:rgba(52,211,153,.16);--accent-border:rgba(52,211,153,.3);}
 
-body{background:linear-gradient(180deg,#030e1b 0%,#04101f 55%,#030e1b 100%);color:var(--text);font-family:var(--sans);min-height:100vh;line-height:1.6;-webkit-font-smoothing:antialiased;transition:background .5s}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 130% 40% at 50% -8%,rgba(14,76,160,.15) 0%,transparent 65%);pointer-events:none;z-index:9997;transition:background 1.2s}
-body.active::before{background:radial-gradient(ellipse 130% 40% at 50% -8%,rgba(180,20,20,.13) 0%,transparent 65%)}
-body.warning::before{background:radial-gradient(ellipse 130% 40% at 50% -8%,rgba(140,90,0,.12) 0%,transparent 65%)}
+body{background-color:#030e1b;background-image:radial-gradient(circle,rgba(56,140,220,.045) 1px,transparent 1px),linear-gradient(180deg,#040f1e 0%,#030c18 55%,#020b16 100%);background-size:28px 28px,100% 100%;color:var(--text);font-family:var(--sans);min-height:100vh;line-height:1.6;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 130% 45% at 50% -5%,rgba(14,76,160,.18) 0%,transparent 65%);pointer-events:none;z-index:0;transition:background 1.2s}
+body.active::before{background:radial-gradient(ellipse 130% 45% at 50% -5%,rgba(180,20,20,.16) 0%,transparent 65%)}
+body.warning::before{background:radial-gradient(ellipse 130% 45% at 50% -5%,rgba(140,90,0,.14) 0%,transparent 65%)}
 body.active::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(248,113,113,.012) 3px,rgba(248,113,113,.012) 4px);pointer-events:none;z-index:9998;animation:scanlines 7s linear infinite}
 @keyframes scanlines{0%{background-position:0 0}100%{background-position:0 80px}}
 
-/* Lift all real content above the fixed wave bg (z-index:0) */
 header,section,.sep,.feed,.graph-wrap,.section-wrap,.wh-wrap,footer{position:relative;z-index:1}
 
 /* Header */
@@ -70,45 +69,12 @@ body.active .logo-dot,body.warning .logo-dot{animation:dot-pulse 1s ease-in-out 
 .lang-btn:hover{background:var(--surface-h);color:var(--text)}
 
 /* Hero */
-.hero{position:relative;min-height:72vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:72px 24px 130px;overflow:hidden}
+.hero{position:relative;min-height:68vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:72px 24px 80px;overflow:hidden}
 .hero::before{content:'';position:absolute;top:-15%;left:50%;transform:translateX(-50%);width:900px;height:640px;background:radial-gradient(ellipse at center,var(--accent-glow) 0%,transparent 65%);pointer-events:none;transition:background .8s;z-index:0;animation:hero-glow 9s ease-in-out infinite alternate}
 @keyframes hero-glow{0%{transform:translateX(-50%) scale(1);opacity:.8}100%{transform:translateX(-50%) scale(1.12);opacity:1}}
 .hero-inner{position:relative;z-index:2;max-width:700px;width:100%;text-align:center;animation:fadeUp .5s cubic-bezier(.4,0,.2,1) both}
 @keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
 
-/* ---- Shared horizontal wave flow animation ---- */
-@keyframes pw-flow{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-
-/* Page-wide flowing wave background (fixed, very subtle) */
-.page-wave-bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-.pw-svg{position:absolute;left:0;width:200%;height:80px;color:rgba(56,189,248,.055);will-change:transform;transition:color 1.4s}
-.pw-1{top:10%;animation:pw-flow 28s linear infinite}
-.pw-2{top:32%;animation:pw-flow 42s linear infinite reverse}
-.pw-3{top:54%;animation:pw-flow 20s linear infinite}
-.pw-4{top:74%;animation:pw-flow 34s linear infinite reverse}
-.pw-5{top:88%;height:100px;color:rgba(56,189,248,.085);animation:pw-flow 15s linear infinite}
-body.active  .pw-svg{color:rgba(248,113,113,.075)}
-body.active  .pw-5{color:rgba(248,113,113,.13)}
-body.warning .pw-svg{color:rgba(251,191,36,.06)}
-body.warning .pw-5{color:rgba(251,191,36,.11)}
-body.clear   .pw-svg{color:rgba(52,211,153,.052)}
-body.clear   .pw-5{color:rgba(52,211,153,.095)}
-
-/* Hero local wave accent (bottom of hero) */
-.ocean-waves{position:absolute;bottom:0;left:0;width:100%;height:220px;z-index:1;overflow:hidden;pointer-events:none}
-.ow-svg{position:absolute;bottom:0;left:0;width:200%;height:100%;will-change:transform;transition:color 1.4s}
-.ow-1{color:rgba(56,189,248,.16);animation:pw-flow 9s linear infinite}
-.ow-2{height:80%;bottom:0;color:rgba(14,165,233,.1);animation:pw-flow 16s linear infinite reverse}
-.ow-3{height:60%;bottom:0;color:rgba(2,132,199,.06);animation:pw-flow 24s linear infinite}
-body.active  .ow-1{color:rgba(248,113,113,.15);animation-duration:3.2s}
-body.active  .ow-2{color:rgba(239,68,68,.1);animation-duration:2.1s}
-body.active  .ow-3{color:rgba(220,38,38,.07);animation-duration:4.8s}
-body.warning .ow-1{color:rgba(251,191,36,.13);animation-duration:6s}
-body.warning .ow-2{color:rgba(245,158,11,.09);animation-duration:9s}
-body.warning .ow-3{color:rgba(217,119,6,.05);animation-duration:13s}
-body.clear   .ow-1{color:rgba(52,211,153,.11);animation-duration:11s}
-body.clear   .ow-2{color:rgba(16,185,129,.07);animation-duration:17s}
-body.clear   .ow-3{color:rgba(5,150,105,.04);animation-duration:25s}
 
 /* Per-state headline glow */
 body.active  .status-headline{color:#f87171;text-shadow:0 0 60px rgba(248,113,113,.45),0 0 120px rgba(248,113,113,.18)}
@@ -429,15 +395,6 @@ img.emoji{height:1em;width:1em;margin:0 .05em 0 .1em;vertical-align:-.1em}
 </head>
 <body class="loading">
 
-<!-- Page-wide flowing wave background -->
-<div class="page-wave-bg" aria-hidden="true">
-  <svg class="pw-svg pw-1" viewBox="0 0 2880 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="M0,40 C180,10 540,70 720,40 C900,10 1260,70 1440,40 C1620,10 1980,70 2160,40 C2340,10 2700,70 2880,40 L2880,80 L0,80 Z" fill="currentColor"/></svg>
-  <svg class="pw-svg pw-2" viewBox="0 0 2880 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="M0,40 C180,10 540,70 720,40 C900,10 1260,70 1440,40 C1620,10 1980,70 2160,40 C2340,10 2700,70 2880,40 L2880,80 L0,80 Z" fill="currentColor"/></svg>
-  <svg class="pw-svg pw-3" viewBox="0 0 2880 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="M0,40 C180,10 540,70 720,40 C900,10 1260,70 1440,40 C1620,10 1980,70 2160,40 C2340,10 2700,70 2880,40 L2880,80 L0,80 Z" fill="currentColor"/></svg>
-  <svg class="pw-svg pw-4" viewBox="0 0 2880 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="M0,40 C180,10 540,70 720,40 C900,10 1260,70 1440,40 C1620,10 1980,70 2160,40 C2340,10 2700,70 2880,40 L2880,80 L0,80 Z" fill="currentColor"/></svg>
-  <svg class="pw-svg pw-5" viewBox="0 0 2880 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="M0,50 C180,12 540,88 720,50 C900,12 1260,88 1440,50 C1620,12 1980,88 2160,50 C2340,12 2700,88 2880,50 L2880,100 L0,100 Z" fill="currentColor"/></svg>
-</div>
-
 <header>
   <a class="logo" href="/">
     <span class="logo-dot"></span>
@@ -494,11 +451,6 @@ img.emoji{height:1em;width:1em;margin:0 .05em 0 .1em;vertical-align:-.1em}
 <section class="hero">
   <div class="hero-inner" id="heroInner">
     <div class="state-box"><div class="spinner"></div><br>Checking r/robloxhackers…</div>
-  </div>
-  <div class="ocean-waves" aria-hidden="true">
-    <svg class="ow-svg ow-1" viewBox="0 0 2880 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="M0,50 C180,12 540,88 720,50 C900,12 1260,88 1440,50 C1620,12 1980,88 2160,50 C2340,12 2700,88 2880,50 L2880,100 L0,100 Z" fill="currentColor"/></svg>
-    <svg class="ow-svg ow-2" viewBox="0 0 2880 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="M0,50 C180,12 540,88 720,50 C900,12 1260,88 1440,50 C1620,12 1980,88 2160,50 C2340,12 2700,88 2880,50 L2880,100 L0,100 Z" fill="currentColor"/></svg>
-    <svg class="ow-svg ow-3" viewBox="0 0 2880 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="M0,50 C180,12 540,88 720,50 C900,12 1260,88 1440,50 C1620,12 1980,88 2160,50 C2340,12 2700,88 2880,50 L2880,100 L0,100 Z" fill="currentColor"/></svg>
   </div>
 </section>
 
