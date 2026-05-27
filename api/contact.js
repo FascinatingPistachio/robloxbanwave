@@ -17,7 +17,10 @@ export default async function handler(req, res) {
   if (msg.length > 1800) return res.status(400).json({ error: 'Message too long (max 1800 characters).' });
   const cat = VALID_CATEGORIES.includes(String(category || '').toLowerCase()) ? String(category).toLowerCase() : 'general';
 
-  const webhookUrl = process.env.CONTACT_WEBHOOK_URL;
+  let webhookUrl = process.env.CONTACT_WEBHOOK_URL;
+  if (!webhookUrl) {
+    try { webhookUrl = await kv.get('config:contact:webhook'); } catch { /* non-fatal */ }
+  }
   if (!webhookUrl) {
     return res.status(503).json({ error: 'Contact form not configured yet - please open a GitHub issue instead.' });
   }

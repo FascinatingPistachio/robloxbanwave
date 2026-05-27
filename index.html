@@ -311,19 +311,14 @@ body.active .ban-nudge{border-color:rgba(239,68,68,.6);box-shadow:0 8px 40px rgb
 .hdr-report-btn:hover{background:rgba(239,68,68,.16);border-color:rgba(239,68,68,.42)}
 .hdr-report-btn svg{width:12px;height:12px;flex-shrink:0}
 
-/* Vote widget */
-.vote-wrap{max-width:720px;margin:0 auto;padding:0 20px 32px}
-.vote-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.vote-label{flex:1;min-width:160px}
-.vote-label strong{font-size:13px;color:var(--text);display:block;margin-bottom:2px}
-.vote-label span{font-size:11px;color:var(--text2)}
-.vote-btns{display:flex;gap:8px;align-items:center}
-.vote-btn{background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:6px 16px;border-radius:8px;font-family:var(--mono);font-size:11px;font-weight:700;cursor:pointer;transition:all var(--t);display:flex;align-items:center;gap:6px}
-.vote-btn:hover:not(:disabled){background:var(--surface-h);border-color:var(--border-h);color:var(--text)}
-.vote-btn.voted-up{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.4);color:#22c55e}
-.vote-btn.voted-down{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.35);color:#ef4444}
-.vote-btn:disabled{opacity:.55;cursor:not-allowed}
-.vote-tally{font-family:var(--mono);font-size:10px;color:var(--text3);text-align:center;min-width:60px}
+/* Per-post vote buttons (alert cards only) */
+.pc-vote-row{display:flex;gap:5px;align-items:center;margin-top:7px;flex-wrap:wrap}
+.pc-vote-btn{background:var(--bg2);border:1px solid var(--border);color:var(--text3);padding:2px 8px;border-radius:5px;font-family:var(--mono);font-size:9px;font-weight:700;cursor:pointer;transition:all var(--t);display:inline-flex;align-items:center;gap:3px;line-height:1.6}
+.pc-vote-btn:hover:not(:disabled){background:var(--surface-h);border-color:var(--border-h);color:var(--text2)}
+.pc-vote-btn.voted-up{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.35);color:#22c55e}
+.pc-vote-btn.voted-down{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.3);color:#ef4444}
+.pc-vote-btn:disabled{opacity:.55;cursor:not-allowed}
+.pc-vote-lbl{font-family:var(--mono);font-size:9px;color:var(--text3)}
 
 /* Contact modal */
 .contact-textarea{width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:8px;font-family:var(--mono);font-size:12px;outline:none;resize:vertical;min-height:120px;transition:border-color var(--t);line-height:1.6}
@@ -335,18 +330,19 @@ body.active .ban-nudge{border-color:rgba(239,68,68,.6);box-shadow:0 8px 40px rgb
 .contact-msg.err{background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.25);display:block}
 
 /* Footer */
-footer{padding:32px 24px 28px;border-top:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--text3)}
-.footer-inner{max-width:720px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:16px}
-.footer-pledges{display:flex;justify-content:center;flex-wrap:wrap;gap:10px 16px}
-.pledge{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3)}
-.footer-nav{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 14px}
-.footer-nav a,.footer-nav button{color:var(--text3);text-decoration:none;background:none;border:none;cursor:pointer;font-family:var(--mono);font-size:10px;padding:0;transition:color var(--t)}
-.footer-nav a:hover,.footer-nav button:hover{color:var(--text2)}
-.footer-sep{color:var(--border-h)}
-.footer-github-btn{display:inline-flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:7px 14px;border-radius:8px;font-family:var(--mono);font-size:11px;font-weight:700;text-decoration:none;transition:all var(--t)}
-.footer-github-btn:hover{background:var(--surface-h);border-color:var(--border-h);color:var(--text)}
-.footer-github-btn svg{width:14px;height:14px;flex-shrink:0}
-.footer-disclaimer{font-size:10px;color:var(--text3);text-align:center;line-height:1.7}
+footer{padding:18px 24px 14px;border-top:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--text3)}
+.footer-inner{max-width:720px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:8px}
+.footer-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center}
+.footer-pledges{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 10px}
+.pledge{display:flex;align-items:center;gap:3px;font-size:9.5px;color:var(--text3)}
+.footer-nav{display:flex;flex-wrap:wrap;justify-content:center;gap:3px 8px;font-size:10px}
+.footer-nav a{color:var(--text3);text-decoration:none;transition:color var(--t)}
+.footer-nav a:hover{color:var(--text2)}
+.footer-sep{opacity:.3}
+.footer-gh-btn{display:inline-flex;align-items:center;gap:5px;background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:4px 10px;border-radius:6px;font-family:var(--mono);font-size:10px;font-weight:700;text-decoration:none;transition:all var(--t);flex-shrink:0}
+.footer-gh-btn:hover{background:var(--surface-h);border-color:var(--border-h);color:var(--text)}
+.footer-gh-btn svg{width:12px;height:12px;flex-shrink:0}
+.footer-disclaimer{font-size:9px;color:var(--text3);text-align:center}
 img.emoji{height:1em;width:1em;margin:0 .05em 0 .1em;vertical-align:-.1em}
 
 @media(max-width:600px){
@@ -363,7 +359,6 @@ img.emoji{height:1em;width:1em;margin:0 .05em 0 .1em;vertical-align:-.1em}
   .report-card{flex-direction:column}
   .ban-nudge{left:12px;right:12px;max-width:none;bottom:16px}
   .hdr-report-txt{display:none}
-  .vote-card{flex-direction:column;align-items:flex-start}
 }
 </style>
 </head>
@@ -437,24 +432,6 @@ img.emoji{height:1em;width:1em;margin:0 .05em 0 .1em;vertical-align:-.1em}
     <span class="feed-count" id="feedCount"></span>
   </div>
   <div class="posts" id="postsContainer"></div>
-</div>
-
-<!-- Vote widget -->
-<div class="vote-wrap" id="voteSection">
-  <div class="vote-card">
-    <div class="vote-label">
-      <strong>Is there really a ban wave right now?</strong>
-      <span>Upvote if there is an active wave, downvote if reports look like a false alarm.</span>
-    </div>
-    <div class="vote-btns">
-      <button class="vote-btn" id="voteUpBtn" onclick="submitVote('up')" title="Yes, there is a ban wave">
-        <span>&#128077;</span> <span id="voteUpCount">-</span>
-      </button>
-      <button class="vote-btn" id="voteDownBtn" onclick="submitVote('down')" title="No, this is a false alarm">
-        <span>&#128078;</span> <span id="voteDownCount">-</span>
-      </button>
-    </div>
-  </div>
 </div>
 
 <div class="sep" id="graphSep" style="display:none"><span>Banwave mention frequency</span></div>
@@ -636,30 +613,22 @@ img.emoji{height:1em;width:1em;margin:0 .05em 0 .1em;vertical-align:-.1em}
 
 <footer>
   <div class="footer-inner">
-    <div class="footer-pledges">
-      <span class="pledge">&#x1F6AB; No ads ever</span>
-      <span class="pledge">&#x1F50D; No trackers ever</span>
-      <span class="pledge">&#x1F193; Always free</span>
-      <span class="pledge">&#x2764;&#xFE0F; Made with love in &#x1F1EC;&#x1F1E7; the UK</span>
+    <div class="footer-top">
+      <div class="footer-pledges">
+        <span class="pledge">&#x1F6AB; No ads</span>
+        <span class="pledge">&#x1F50D; No trackers</span>
+        <span class="pledge">&#x1F193; Free forever</span>
+        <span class="pledge">&#x2764;&#xFE0F; Made in &#x1F1EC;&#x1F1E7;</span>
+      </div>
+      <a class="footer-gh-btn" href="https://github.com/FascinatingPistachio/robloxbanwave" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+        &#x2B50; Star
+      </a>
     </div>
-    <a class="footer-github-btn" href="https://github.com/FascinatingPistachio/robloxbanwave" target="_blank" rel="noopener">
-      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
-      Star on GitHub
-    </a>
     <div class="footer-nav">
-      <a href="https://reddit.com/r/robloxhackers" target="_blank" rel="noopener">r/robloxhackers</a>
-      <span class="footer-sep">·</span>
-      <a href="/api/rss">RSS Feed</a>
-      <span class="footer-sep">·</span>
-      <a href="/privacy" onclick="openLegal('privacy');return false;">Privacy Notice</a>
-      <span class="footer-sep">·</span>
-      <a href="/terms" onclick="openLegal('terms');return false;">Terms of Use</a>
-      <span class="footer-sep">·</span>
-      <a href="/contact" onclick="openContact();return false;">Contact</a>
-      <span class="footer-sep">·</span>
-      <a href="https://github.com/FascinatingPistachio/robloxbanwave/issues" target="_blank" rel="noopener">Bug Reports</a>
+      <a href="https://reddit.com/r/robloxhackers" target="_blank" rel="noopener">r/robloxhackers</a><span class="footer-sep"> · </span><a href="/api/rss">RSS</a><span class="footer-sep"> · </span><a href="/privacy" onclick="openLegal('privacy');return false;">Privacy</a><span class="footer-sep"> · </span><a href="/terms" onclick="openLegal('terms');return false;">Terms</a><span class="footer-sep"> · </span><a href="/contact" onclick="openContact();return false;">Contact</a><span class="footer-sep"> · </span><a href="https://github.com/FascinatingPistachio/robloxbanwave/issues" target="_blank" rel="noopener">Bug Reports</a>
     </div>
-    <div class="footer-disclaimer">Community tracker &mdash; not affiliated with Roblox Corporation. Data may be delayed or inaccurate.</div>
+    <div class="footer-disclaimer">Community tracker &mdash; not affiliated with Roblox Corporation</div>
   </div>
 </footer>
 
@@ -1012,7 +981,7 @@ async function fetchPosts() {
 
 // -- Hero ----------------------------------------------------------------------
 function renderHero(posts, totalScore, source, fetchedAt) {
-  const recent = posts[0] || null;
+  const recent = posts.find(p=>p._type==='alert') || posts.find(p=>p._type!=='meta') || posts[0] || null;
   let status, kicker, headline, desc;
 
   if (totalScore >= SCORE_ACTIVE) {
@@ -1096,7 +1065,11 @@ function renderFeed(verifiedCount) {
       : p._type==='question' ? '<span class="tag tag-question">Question</span>'
       : p._type==='meta' ? '<span class="tag tag-info">Info</span>' : '';
     const vBadge = (i===0 && verifiedCount>0)
-      ? `<span class="tag tag-verified" title="Community-verified bans today">🛡 ${verifiedCount} verified today</span>`
+      ? `<span class="tag tag-verified" title="Community-verified bans today">&#x1F6E1; ${verifiedCount} verified today</span>`
+      : '';
+    const pid = esc(p.id||'');
+    const voteRow = p._type==='alert' && pid
+      ? `<div class="pc-vote-row"><button class="pc-vote-btn" id="pv-up-${pid}" onclick="votePost(event,'${pid}','up')">&#128077; <span id="pvc-up-${pid}">-</span></button><button class="pc-vote-btn" id="pv-down-${pid}" onclick="votePost(event,'${pid}','down')">&#128078; <span id="pvc-down-${pid}">-</span></button><span class="pc-vote-lbl">Active ban wave?</span></div>`
       : '';
     return `
       <a class="post-card" data-type="${esc(p._type)}" href="${esc(p._url)}" target="_blank" rel="noopener">
@@ -1104,8 +1077,9 @@ function renderFeed(verifiedCount) {
         <div class="pc-body">
           <div class="pc-title">${esc(p.title)}</div>
           <div class="pc-meta">${tagHtml}${vBadge}<span>${timeAgo(p.created_utc)}</span></div>
+          ${voteRow}
         </div>
-        <div class="pc-link-icon">↗</div>
+        <div class="pc-link-icon">&#8599;</div>
       </a>`;
   }).join('');
 }
@@ -1115,6 +1089,7 @@ function setFilter(f,btn) {
   document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   renderFeed(window._verifiedCount||0);
+  loadPostVotes();
 }
 
 // -- Graph ---------------------------------------------------------------------
@@ -1505,50 +1480,70 @@ async function submitBanReport() {
   } finally { btn.disabled=false; btn.textContent='Submit Report'; }
 }
 
-// -- Vote widget ----------------------------------------------------------------
-const LS_VOTE = 'rbx_voted';
-async function loadVotes() {
-  try {
-    const r = await fetch('/api/vote');
-    if (!r.ok) return;
-    const d = await r.json();
-    document.getElementById('voteUpCount').textContent   = d.up   || 0;
-    document.getElementById('voteDownCount').textContent = d.down || 0;
-  } catch {}
-  const voted = localStorage.getItem(LS_VOTE);
-  if (voted) {
-    document.getElementById('voteUpBtn').disabled   = true;
-    document.getElementById('voteDownBtn').disabled = true;
-    document.getElementById('voteUpBtn').classList.toggle('voted-up', voted === 'up');
-    document.getElementById('voteDownBtn').classList.toggle('voted-down', voted === 'down');
-  }
+// -- Per-post votes ------------------------------------------------------------
+const LS_VOTED_POSTS = 'rbx_voted_posts';
+
+function getVotedPosts() {
+  try { return JSON.parse(localStorage.getItem(LS_VOTED_POSTS) || '{}'); } catch { return {}; }
 }
-async function submitVote(type) {
-  if (localStorage.getItem(LS_VOTE)) { showToast('ℹ️', 'You already voted today.'); return; }
-  document.getElementById('voteUpBtn').disabled   = true;
-  document.getElementById('voteDownBtn').disabled = true;
+
+async function loadPostVotes() {
+  const alertPosts = allPosts.filter(p => p._type === 'alert' && p.id);
+  if (!alertPosts.length) return;
+  const voted = getVotedPosts();
+  for (const p of alertPosts) {
+    const v = voted[p.id];
+    if (!v) continue;
+    const up   = document.getElementById(`pv-up-${p.id}`);
+    const down = document.getElementById(`pv-down-${p.id}`);
+    if (up)   { up.disabled   = true; up.classList.toggle('voted-up',   v === 'up'); }
+    if (down) { down.disabled = true; down.classList.toggle('voted-down', v === 'down'); }
+  }
   try {
-    const res  = await fetch('/api/vote', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type }) });
+    const ids  = alertPosts.map(p => p.id).join(',');
+    const r    = await fetch(`/api/vote?posts=${encodeURIComponent(ids)}`);
+    if (!r.ok) return;
+    const { votes } = await r.json();
+    for (const [id, counts] of Object.entries(votes || {})) {
+      const uel = document.getElementById(`pvc-up-${id}`);
+      const del = document.getElementById(`pvc-down-${id}`);
+      if (uel) uel.textContent = counts.up   ?? 0;
+      if (del) del.textContent = counts.down ?? 0;
+    }
+  } catch {}
+}
+
+async function votePost(e, postId, type) {
+  e.preventDefault();
+  e.stopPropagation();
+  const voted = getVotedPosts();
+  if (voted[postId]) { showToast('&#x2139;&#xFE0F;', 'Already voted on this post.'); return; }
+  const upBtn   = document.getElementById(`pv-up-${postId}`);
+  const downBtn = document.getElementById(`pv-down-${postId}`);
+  if (upBtn)   upBtn.disabled   = true;
+  if (downBtn) downBtn.disabled = true;
+  try {
+    const res  = await fetch('/api/vote', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ postId, type }) });
     const data = await res.json();
     if (res.ok || res.status === 201) {
-      localStorage.setItem(LS_VOTE, type);
-      document.getElementById('voteUpCount').textContent   = data.up   || 0;
-      document.getElementById('voteDownCount').textContent = data.down || 0;
-      document.getElementById('voteUpBtn').classList.toggle('voted-up', type === 'up');
-      document.getElementById('voteDownBtn').classList.toggle('voted-down', type === 'down');
-      showToast(type === 'up' ? '👍' : '👎', type === 'up' ? 'Thanks! Upvoted.' : 'Thanks! Downvoted.');
+      voted[postId] = type;
+      localStorage.setItem(LS_VOTED_POSTS, JSON.stringify(voted));
+      if (upBtn)   { upBtn.classList.toggle('voted-up',     type === 'up');   const c = document.getElementById(`pvc-up-${postId}`);   if (c) c.textContent = data.up   ?? 0; }
+      if (downBtn) { downBtn.classList.toggle('voted-down', type === 'down'); const c = document.getElementById(`pvc-down-${postId}`); if (c) c.textContent = data.down ?? 0; }
+      showToast(type === 'up' ? '&#128077;' : '&#128078;', type === 'up' ? 'Upvoted - active wave.' : 'Downvoted - false alarm?');
     } else if (res.status === 429) {
-      localStorage.setItem(LS_VOTE, type);
-      showToast('ℹ️', 'You already voted today.');
+      voted[postId] = type;
+      localStorage.setItem(LS_VOTED_POSTS, JSON.stringify(voted));
+      showToast('&#x2139;&#xFE0F;', data.error || 'Already voted.');
     } else {
-      document.getElementById('voteUpBtn').disabled   = false;
-      document.getElementById('voteDownBtn').disabled = false;
-      showToast('❌', data.error || 'Vote failed.');
+      if (upBtn)   upBtn.disabled   = false;
+      if (downBtn) downBtn.disabled = false;
+      showToast('&#x274C;', data.error || 'Vote failed.');
     }
-  } catch (e) {
-    document.getElementById('voteUpBtn').disabled   = false;
-    document.getElementById('voteDownBtn').disabled = false;
-    showToast('❌', 'Network error: ' + e.message);
+  } catch (err) {
+    if (upBtn)   upBtn.disabled   = false;
+    if (downBtn) downBtn.disabled = false;
+    showToast('&#x274C;', 'Network error: ' + err.message);
   }
 }
 
@@ -1566,13 +1561,18 @@ async function load() {
   document.getElementById('graphSection').style.display='none';
 
   try {
-    const [{posts,source,fetchedAt}, verifiedCount] = await Promise.all([fetchPosts(), loadVerifiedCount(), loadVotes()]);
+    const [{posts,source,fetchedAt}, verifiedCount] = await Promise.all([fetchPosts(), loadVerifiedCount()]);
 
     allPosts = posts.map(p=>({
       ...p,
       _type: classify(p.title||''),
       _url:  (()=>{ const rp=(p.permalink||'').replace(/['"<>]/g,''); return rp.startsWith('http')?rp:'https://reddit.com'+rp; })(),
-    })).sort((a,b)=>b.created_utc-a.created_utc);
+    })).sort((a,b)=>{
+      const ar=a._type==='alert'?0:a._type==='meta'?2:1;
+      const br=b._type==='alert'?0:b._type==='meta'?2:1;
+      if(ar!==br)return ar-br;
+      return b.created_utc-a.created_utc;
+    });
 
     const totalScore=allPosts.reduce((s,p)=>s+scorePost(p),0);
     renderHero(allPosts,totalScore,source,fetchedAt);
@@ -1582,6 +1582,7 @@ async function load() {
       document.getElementById('feedSection').style.display='block';
       renderFeed(verifiedCount);
       renderGraph(allPosts);
+      loadPostVotes();
     }
 
     document.getElementById('lastCheck').textContent='Checked '+new Date().toLocaleTimeString();
